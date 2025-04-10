@@ -40,12 +40,12 @@ export const Button = ({
 }: ButtonProps) => {
   const getClassNames = () => {
     const classNames = [
-      styles.a_button,
-      styles[`a_button__${size}`],
-      styles[`a_button__${type}`],
-      isSolid && styles[`a_button__${type}_solid`],
-      isRadius && styles.a_button__radius,
-      isFull && styles.a_button__full
+      styles.button,
+      styles[`button__${size}`],
+      styles[`button__${type}`],
+      isSolid && styles[`button__${type}_solid`],
+      isRadius && styles.button__radius,
+      isFull && styles.button__full
     ].filter(Boolean);
 
     return classNames.join(" ");

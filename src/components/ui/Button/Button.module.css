@@ -1,4 +1,4 @@
-.a_button {
+.button {
   font-family: "Nunito Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 700;
   border: 0;
@@ -8,7 +8,7 @@
   border-radius: 4px;
 }
 
-.a_button:disabled {
+.button:disabled {
   color: rgb(106, 122, 129);
   cursor: not-allowed;
   background-color: rgba(0, 0, 0, 0);
@@ -19,7 +19,7 @@
   }
 }
 
-.a_button__primary {
+.button__primary {
   color: rgb(0, 121, 173);
   background-color: #fff;
   border: solid 1px rgb(0, 121, 173);
@@ -29,7 +29,7 @@
   }
 }
 
-.a_button__primary_solid {
+.button__primary_solid {
   color: #fff;
   background-color: rgb(0, 121, 173);
   border: solid 1px rgb(0, 121, 173);
@@ -39,7 +39,7 @@
   }
 }
 
-.a_button__success {
+.button__success {
   color: rgb(66, 129, 14);
   background-color: #fff;
   border: solid 1px rgb(66, 129, 14);
@@ -49,7 +49,7 @@
   }
 }
 
-.a_button__success_solid {
+.button__success_solid {
   color: #fff;
   background-color: rgb(66, 129, 14);
   border: solid 1px rgb(66, 129, 14);
@@ -59,7 +59,7 @@
   }
 }
 
-.a_button__warning {
+.button__warning {
   color: rgb(163, 101, 0);
   background-color: #fff;
   border: solid 1px rgb(163, 101, 0);
@@ -69,7 +69,7 @@
   }
 }
 
-.a_button__warning_solid {
+.button__warning_solid {
   color: #000;
   background-color: rgb(255, 185, 46);
   border: solid 1px rgb(255, 185, 46);
@@ -79,7 +79,7 @@
   }
 }
 
-.a_button__danger {
+.button__danger {
   color: rgb(224, 34, 0);
   background-color: #fff;
   border: solid 1px rgb(224, 34, 0);
@@ -89,7 +89,7 @@
   }
 }
 
-.a_button__danger_solid {
+.button__danger_solid {
   color: #fff;
   background-color: rgb(224, 34, 0);
   border: solid 1px rgb(224, 34, 0);
@@ -99,7 +99,7 @@
   }
 }
 
-.a_button__neutral {
+.button__neutral {
   color: rgb(79, 97, 105);
   background-color: #fff;
   border: solid 1px rgb(79, 97, 105);
@@ -109,7 +109,7 @@
   }
 }
 
-.a_button__danger_solid {
+.button__neutral_solid {
   color: #fff;
   background-color: rgb(79, 97, 105);
   border: solid 1px rgb(79, 97, 105);
@@ -119,25 +119,25 @@
   }
 }
 
-.a_button__small {
+.button__small {
   font-size: 12px;
   padding: 10px 16px;
 }
 
-.a_button__medium {
+.button__medium {
   font-size: 14px;
   padding: 11px 20px;
 }
 
-.a_button__large {
+.button__large {
   font-size: 16px;
   padding: 12px 24px;
 }
 
-.a_button__radius {
+.button__radius {
   border-radius: 3em;
 }
 
-.a_button__full {
+.button__full {
   width: 100%;
 }
