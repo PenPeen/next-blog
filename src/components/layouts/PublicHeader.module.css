@@ -10,6 +10,7 @@
 
 .container {
   width: 100%;
+  max-width: 1440px;
   margin: 0 auto;
   padding: 0 16px;
 }
@@ -18,6 +19,11 @@
   .container {
     padding: 0 32px;
   }
+
+  .searchBox {
+    position: relative;
+    display: block !important;
+  }
 }
 
 .content {
@@ -25,8 +31,10 @@
   justify-content: space-between;
   align-items: center;
   height: 64px;
-  max-width: 1440px;
-  margin: 0 auto;
+}
+
+.searchBox {
+  display: none;
 }
 
 .logo {
@@ -53,17 +61,6 @@
   display: flex;
   align-items: center;
   gap: 16px;
-}
-
-.searchBox {
-  position: relative;
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .searchBox {
-    display: block;
-  }
 }
 
 .searchInput {
