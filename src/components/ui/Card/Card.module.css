@@ -1,0 +1,59 @@
+.card {
+  width: 100%;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background-color: white;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.imageContainer {
+  position: relative;
+  aspect-ratio: 16/9;
+  width: 100%;
+}
+
+.content {
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.title {
+  font-weight: bold;
+  font-size: clamp(1.25rem, 2vw, 1.5rem);
+  margin-bottom: 0.75rem;
+}
+
+.description {
+  color: #4a5568;
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  line-height: 1.5;
+}
+
+/* Post variant styles */
+.postVariant .imageContainer {
+  aspect-ratio: 16/9;
+}
+
+.postVariant .title {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.postVariant .description {
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .imageContainer {
+    aspect-ratio: 4/3;
+  }
+
+  .content {
+    padding: 1rem;
+  }
+}
