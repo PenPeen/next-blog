@@ -1,10 +1,3 @@
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  margin-top: 4rem;
-}
-
 .cardContainer {
   display: grid;
   grid-template-columns: repeat(1, 1fr);
