@@ -5,7 +5,7 @@ import styles from './Card.module.css'
 type CardVariant = 'default' | 'post'
 
 type CardProps = {
-  img: string
+  img?: string
   title: string
   description: string
   variant?: CardVariant
@@ -27,19 +27,33 @@ export default function Card({
     return variant === 'post' ? styles.postVariant : ''
   }
 
+  const imageContainerClassName = imageAspectRatio
+    ? `${styles.imageContainer} ${styles[`aspectRatio-${imageAspectRatio?.replace('/', '-')}`] || ''}`
+    : styles.imageContainer
+
+  const titleClassName = titleSize
+    ? `${styles.title} ${styles[`titleSize-${titleSize}`] || ''}`
+    : styles.title
+
+  const descriptionClassName = descriptionSize
+    ? `${styles.description} ${styles[`descriptionSize-${descriptionSize}`] || ''}`
+    : styles.description
+
   return (
     <div className={`${styles.card} ${getVariantClass()}`}>
-      <div className={styles.imageContainer} style={{ aspectRatio: imageAspectRatio }}>
-        <Image
-          src={img}
-          alt={title}
-          fill
-          className="object-cover"
-        />
-      </div>
+      {img && (
+        <div className={imageContainerClassName}>
+          <Image
+            src={img}
+            alt={title}
+            fill
+            className="object-cover"
+          />
+        </div>
+      )}
       <div className={styles.content}>
-        <div className={styles.title} style={{ fontSize: titleSize }}>{title}</div>
-        <p className={styles.description} style={{ fontSize: descriptionSize }}>{description}</p>
+        <div className={titleClassName}>{title}</div>
+        <p className={descriptionClassName}>{description}</p>
       </div>
     </div>
   )

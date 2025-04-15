@@ -17,6 +17,23 @@
   width: 100%;
 }
 
+/* アスペクト比のカスタムクラス */
+.aspectRatio-4-3 {
+  aspect-ratio: 4/3;
+}
+
+.aspectRatio-1-1 {
+  aspect-ratio: 1/1;
+}
+
+.aspectRatio-3-2 {
+  aspect-ratio: 3/2;
+}
+
+.aspectRatio-2-1 {
+  aspect-ratio: 2/1;
+}
+
 .content {
   padding: clamp(1rem, 3vw, 1.5rem);
 }
@@ -27,10 +44,40 @@
   margin-bottom: 0.75rem;
 }
 
+/* タイトルのフォントサイズ */
+.titleSize-small {
+  font-size: 1rem;
+}
+
+.titleSize-medium {
+  font-size: 1.25rem;
+}
+
+.titleSize-large {
+  font-size: 1.5rem;
+}
+
+.titleSize-xl {
+  font-size: 1.75rem;
+}
+
 .description {
   color: #4a5568;
   font-size: clamp(1rem, 1.5vw, 1.125rem);
   line-height: 1.5;
+}
+
+/* ディスクリプションのフォントサイズ */
+.descriptionSize-small {
+  font-size: 0.875rem;
+}
+
+.descriptionSize-medium {
+  font-size: 1rem;
+}
+
+.descriptionSize-large {
+  font-size: 1.125rem;
 }
 
 /* Post variant styles */
