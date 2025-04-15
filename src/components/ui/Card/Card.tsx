@@ -12,6 +12,7 @@ type CardProps = {
   imageAspectRatio?: string
   titleSize?: string
   descriptionSize?: string
+  unoptimized?: boolean
 }
 
 export default function Card({
@@ -21,7 +22,8 @@ export default function Card({
   variant = 'default',
   imageAspectRatio,
   titleSize,
-  descriptionSize
+  descriptionSize,
+  unoptimized = false
 }: CardProps) {
   const getVariantClass = () => {
     return variant === 'post' ? styles.postVariant : ''
@@ -47,7 +49,8 @@ export default function Card({
             src={img}
             alt={title}
             fill
-            className="object-cover"
+            className={styles.naturalImage}
+            unoptimized={unoptimized}
           />
         </div>
       )}
