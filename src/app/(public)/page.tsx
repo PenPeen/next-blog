@@ -8,7 +8,6 @@ export default async function Home() {
 
   return (
     <div>
-      <main className={styles.container}>
         <div className={styles.cardContainer}>
           {posts.map((post: Post) => {
             return(
@@ -24,7 +23,6 @@ export default async function Home() {
             )
           })}
         </div>
-      </main>
     </div>
   );
 }
