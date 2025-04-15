@@ -24,4 +24,10 @@ describe('Button', () => {
     const button = screen.getByRole('button', { name: 'Danger'});
     expect(button).toHaveClass('button__danger');
   })
+
+  it('draft miss test', () => {
+    render(<Button type="danger">Danger</Button>);
+    const button = screen.getByRole('button', { name: 'Danger'});
+    expect(button).toHaveClass('abc');
+  })
 })
