@@ -6,11 +6,12 @@ import { getPosts } from "@/app/(public)/posts/fetcher";
 
 export default async function Home() {
   const posts = await getPosts();
+  const postsJson = await posts.json();
 
   return (
     <div>
         <div className={styles.cardContainer}>
-          {posts.map((post: Post) => {
+          {postsJson.map((post: Post) => {
             return(
               <Link href={`/posts/${post.id}`} key={post.id}>
                 <Card
