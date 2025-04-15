@@ -13,8 +13,14 @@
 
 .imageContainer {
   position: relative;
-  aspect-ratio: 16/9;
   width: 100%;
+  height: 200px;
+  background-color: #f9f9f9;
+  overflow: hidden;
+}
+
+.naturalImage {
+  object-fit: contain;
 }
 
 .aspectRatio-4-3 {
@@ -78,10 +84,6 @@
 }
 
 /* Post variant styles */
-.postVariant .imageContainer {
-  aspect-ratio: 16/9;
-}
-
 .postVariant .title {
   font-size: 1.5rem;
   margin-bottom: 0.75rem;
@@ -93,10 +95,6 @@
 }
 
 @media (max-width: 768px) {
-  .imageContainer {
-    aspect-ratio: 4/3;
-  }
-
   .content {
     padding: 1rem;
   }
