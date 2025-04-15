@@ -2,9 +2,10 @@ import Card from "@/components/ui/Card/Card";
 import styles from './page.module.css';
 import { Post } from "@/app/types/post";
 import Link from "next/link";
+import { getPosts } from "@/app/(public)/posts/fetcher";
 
 export default async function Home() {
-  const posts = await fetch(`http://${process.env.NEXT_PUBLIC_RAILS_API_DOMAIN}/api/v1/posts`).then(res => res.json());
+  const posts = await getPosts();
 
   return (
     <div>
