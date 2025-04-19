@@ -1,0 +1,16 @@
+.backButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: #666;
+  text-decoration: none;
+  transition: color 0.2s;
+  font-size: inherit;
+  padding: 0;
+}
+
+.backButton:hover {
+  color: #000;
+}
