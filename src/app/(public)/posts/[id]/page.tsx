@@ -12,12 +12,12 @@ type Params = {
 
 export default async function page({ params }: Params) {
   const { id } = await params;
-  const post = await getPost(id);
+  const data = await getPost(id);
+  const post = await data.json();
 
-  if(!post.ok) {
+  if(!post) {
     notFound();
   }
-  const postJson = await post.json();
 
   return (
     <article className={styles.container}>
@@ -25,15 +25,15 @@ export default async function page({ params }: Params) {
         <BackButton>
           ← 戻る
         </BackButton>
-        <MainTitle>{postJson.title}</MainTitle>
-        <FormattedDate date={postJson.created_at} />
+        <MainTitle>{post.title}</MainTitle>
+        <FormattedDate date={post.createdAt} />
       </div>
 
-      {postJson.thumbnail_url && (
+      {post.thumbnailUrl && (
         <div className={styles.thumbnailContainer}>
           <Image
-            src={postJson.thumbnail_url}
-            alt={postJson.title}
+            src={post.thumbnailUrl}
+            alt={post.title}
             fill
             className={styles.thumbnail}
             priority
@@ -43,7 +43,7 @@ export default async function page({ params }: Params) {
       )}
 
       <div className={styles.content}>
-        {postJson.content}
+        {post.content}
       </div>
     </article>
   )

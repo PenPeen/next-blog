@@ -14,3 +14,14 @@ export const GET_PUBLISHED_POSTS = gql`
     }
   }
 `;
+
+export const GET_POST = gql`
+  query GetPost($id: ID!) {
+    post(id: $id) {
+      title
+      content
+      thumbnailUrl
+      createdAt
+    }
+  }
+`;
