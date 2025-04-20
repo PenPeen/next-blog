@@ -1,0 +1,10 @@
+schema: http://${NEXT_PUBLIC_RAILS_API_DOMAIN}/graphql
+documents: './src/app/graphql/**/*.ts'
+generates:
+  ./src/app/graphql/generated.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+    config:
+      scalars:
+        ISO8601DateTime: string

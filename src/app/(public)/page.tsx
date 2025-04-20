@@ -1,8 +1,8 @@
 import Card from "@/components/ui/Card/Card";
 import styles from './page.module.css';
-import { Post } from "@/app/types/post";
 import Link from "next/link";
 import { getPosts } from "@/app/(public)/posts/fetcher";
+import { Post } from "../types";
 
 export default async function Home() {
   const posts = await getPosts();
@@ -15,7 +15,7 @@ export default async function Home() {
             return(
               <Link href={`/posts/${post.id}`} key={post.id}>
                 <Card
-                  img={post.thumbnail_url}
+                  img={post.thumbnailUrl}
                   title={post.title}
                   description={post.content}
                   variant="post"
