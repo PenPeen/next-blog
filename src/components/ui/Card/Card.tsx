@@ -13,6 +13,8 @@ type CardProps = {
   titleSize?: string
   descriptionSize?: string
   unoptimized?: boolean
+  maxLines?: number
+  titleMaxLines?: boolean
 }
 
 export default function Card({
@@ -23,7 +25,9 @@ export default function Card({
   imageAspectRatio,
   titleSize,
   descriptionSize,
-  unoptimized = false
+  unoptimized = false,
+  maxLines = 0,
+  titleMaxLines = false
 }: CardProps) {
   const getVariantClass = () => {
     return variant === 'post' ? styles.postVariant : ''
@@ -33,13 +37,16 @@ export default function Card({
     ? `${styles.imageContainer} ${styles[`aspectRatio-${imageAspectRatio?.replace('/', '-')}`] || ''}`
     : styles.imageContainer
 
-  const titleClassName = titleSize
-    ? `${styles.title} ${styles[`titleSize-${titleSize}`] || ''}`
-    : styles.title
+  const titleClassName = `${styles.title} ${titleSize ? styles[`titleSize-${titleSize}`] || '' : ''} ${titleMaxLines ? styles.titleLineClamp2 : ''}`
 
-  const descriptionClassName = descriptionSize
-    ? `${styles.description} ${styles[`descriptionSize-${descriptionSize}`] || ''}`
-    : styles.description
+  const getLineClampClass = () => {
+    if (maxLines > 0 && maxLines <= 5) {
+      return styles[`lineClamp${maxLines}`]
+    }
+    return ''
+  }
+
+  const descriptionClassName = `${styles.description} ${descriptionSize ? styles[`descriptionSize-${descriptionSize}`] || '' : ''} ${getLineClampClass()}`
 
   return (
     <div className={`${styles.card} ${getVariantClass()}`}>
