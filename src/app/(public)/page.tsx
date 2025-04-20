@@ -20,6 +20,8 @@ export default async function Home() {
                   description={post.content}
                   variant="post"
                   unoptimized={true}
+                  maxLines={3}
+                  titleMaxLines={true}
                   />
               </Link>
             )

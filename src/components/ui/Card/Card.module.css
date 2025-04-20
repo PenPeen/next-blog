@@ -41,12 +41,16 @@
 
 .content {
   padding: clamp(1rem, 3vw, 1.5rem);
+  display: flex;
+  flex-direction: column;
 }
 
 .title {
   font-weight: bold;
   font-size: clamp(1.25rem, 2vw, 1.5rem);
   margin-bottom: 0.75rem;
+  min-height: calc(1.5em * 2); /* 2行分の高さを確保 */
+  line-height: 1.5;
 }
 
 .titleSize-small {
@@ -69,6 +73,11 @@
   color: #4a5568;
   font-size: clamp(1rem, 1.5vw, 1.125rem);
   line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .descriptionSize-small {
@@ -92,10 +101,67 @@
 .postVariant .description {
   font-size: 1.125rem;
   line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.postVariant .content {
+  min-height: 150px;
 }
 
 @media (max-width: 768px) {
   .content {
     padding: 1rem;
   }
+}
+
+.lineClamp1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lineClamp2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lineClamp3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lineClamp4 {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lineClamp5 {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.titleLineClamp2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
