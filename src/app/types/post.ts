@@ -8,3 +8,13 @@ export type Post = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type PostsResponse = {
+  posts: Post[];
+  pagination: {
+    totalCount: number;
+    limitValue: number;
+    totalPages: number;
+    currentPage: number;
+  };
+};
