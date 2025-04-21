@@ -6,8 +6,8 @@ describe('Pagination', () => {
     render(<Pagination totalCount={100} limitValue={10} totalPages={10} currentPage={1} />);
 
     const paginationNav = screen.getByRole('navigation', { name: 'Pagination' });
-    const previousButton = screen.getByLabelText('Previous page');
-    const nextButton = screen.getByLabelText('Next page');
+    const previousButton = screen.getByRole('link', { name: 'Previous page' });
+    const nextButton = screen.getByRole('link', { name: 'Next page' });
     const currentPageLink = screen.getByRole('link', { current: 'page' });
 
     expect(paginationNav).toBeVisible();
@@ -23,22 +23,22 @@ describe('Pagination', () => {
     it('最初のページでは「戻る」ボタンが非活性であること', () => {
       render(<Pagination totalCount={100} limitValue={10} totalPages={10} currentPage={1} />);
 
-      const previousButton = screen.getByLabelText('Previous page');
+      const previousButton = screen.getByRole('link', { name: 'Previous page' });
       expect(previousButton).toHaveAttribute('aria-disabled', 'true');
     });
 
     it('最後のページでは「次へ」ボタンが非活性であること', () => {
       render(<Pagination totalCount={100} limitValue={10} totalPages={10} currentPage={10} />);
 
-      const nextButton = screen.getByLabelText('Next page');
+      const nextButton = screen.getByRole('link', { name: 'Next page' });
       expect(nextButton).toHaveAttribute('aria-disabled', 'true');
     });
 
     it('中間のページでは「戻る」ボタンと「次へ」ボタンが活性であること', () => {
       render(<Pagination totalCount={100} limitValue={10} totalPages={10} currentPage={5} />);
 
-      const prevButton = screen.getByLabelText('Previous page');
-      const nextButton = screen.getByLabelText('Next page');
+      const prevButton = screen.getByRole('link', { name: 'Previous page' });
+      const nextButton = screen.getByRole('link', { name: 'Next page' });
       expect(prevButton).toHaveAttribute('aria-disabled', 'false');
       expect(nextButton).toHaveAttribute('aria-disabled', 'false');
     });
@@ -49,7 +49,8 @@ describe('Pagination', () => {
       render(<Pagination totalCount={70} limitValue={10} totalPages={7} currentPage={1} />);
 
       for (let i = 1; i <= 7; i++) {
-        expect(screen.getByText(String(i))).toBeInTheDocument();
+        const pageNumber = String(i);
+        expect(screen.getByRole('link', { name: pageNumber })).toBeInTheDocument();
       }
 
       const dots = screen.queryAllByText('…');
@@ -60,7 +61,8 @@ describe('Pagination', () => {
       render(<Pagination totalCount={100} limitValue={10} totalPages={10} currentPage={2} />);
 
       [1, 2, 3, 4, 9, 10].forEach(num => {
-        expect(screen.getByText(String(num))).toBeInTheDocument();
+        const pageNumber = String(num);
+        expect(screen.getByRole('link', { name: pageNumber })).toBeInTheDocument();
       });
 
       const dots = screen.queryAllByText('…');
@@ -71,7 +73,8 @@ describe('Pagination', () => {
       render(<Pagination totalCount={100} limitValue={10} totalPages={10} currentPage={8} />);
 
       [1, 2, 7, 8, 9, 10].forEach(num => {
-        expect(screen.getByText(String(num))).toBeInTheDocument();
+        const pageNumber = String(num);
+        expect(screen.getByRole('link', { name: pageNumber })).toBeInTheDocument();
       });
 
       const dots = screen.queryAllByText('…');
@@ -82,7 +85,8 @@ describe('Pagination', () => {
       render(<Pagination totalCount={100} limitValue={10} totalPages={10} currentPage={5} />);
 
       [1, 4, 5, 6, 10].forEach(num => {
-        expect(screen.getByText(String(num))).toBeInTheDocument();
+        const pageNumber = String(num);
+        expect(screen.getByRole('link', { name: pageNumber })).toBeInTheDocument();
       });
 
       const dots = screen.queryAllByText('…');
