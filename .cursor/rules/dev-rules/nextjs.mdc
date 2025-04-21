@@ -103,63 +103,22 @@ src/
 ## 3. API実装
 
 - データフェッチ用のAPIはなるべく作成しないでください。サーバーコンポーネントでのデータフェッチを強く推奨します。
-- `app/api`ディレクトリ内に API エンドポイントを作成
-- HTTP メソッドごとに適切なハンドラーを実装:
-- GET の API はなるべく作らないでください。データフェッチはサーバーコンポーネントでお願いします。
-- API の仕様は POST/PATCH/PUT/DELETE のみに絞ってください。
+- Apollo Clientを使用して、Railsプロジェクトの `GraphQL` に対してリクエストを行ってください。
 
 ```typescript
-// app/api/articles/route.ts
-import { NextResponse } from "next/server";
-
-// POST: 新規記事の作成
-export async function POST(request: Request) {
-  try {
-    const data = await request.json();
-    const article = await prisma.article.create({
-      data,
-    });
-    return NextResponse.json(article, { status: 201 });
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
-}
+export async function getPosts(page = 1, perPage = 15) {
+  const { data } = await apolloClient.query({
+    query: GET_PUBLISHED_POSTS,
+    variables: { page, perPage }
+  });
+  return { json: () => Promise.resolve(data.publishedPosts as PostsResponse) };
+};
 ```
 
 ### クライアントサイドでのユーザーデータ操作
 
 - `fetch` を使用して API を呼び出し
 - エラーハンドリングとローディング状態の管理:
-- ServerActionsでも可
-
-```typescript
-// components/articles/create-article.tsx
-"use client";
-
-export async function createArticle(data: ArticleData) {
-  try {
-    const response = await fetch("/api/articles", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw new Error("API request failed");
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error creating article:", error);
-    throw error;
-  }
-}
-```
 
 ### キャッシュと再検証
 
