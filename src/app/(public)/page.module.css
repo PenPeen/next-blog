@@ -17,3 +17,23 @@
     gap: 2rem;
   }
 }
+
+.paginationContainer {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  margin-top: 2rem;
+}
+
+.paginationLink {
+  padding: 0.5rem 1rem;
+  background-color: #f0f0f0;
+  border-radius: 0.25rem;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.paginationLink:hover {
+  background-color: #e0e0e0;
+}
