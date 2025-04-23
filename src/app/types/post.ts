@@ -10,17 +10,11 @@ export type Post = {
 };
 
 export type PostsResponse = {
-  edges: {
-    cursor: string;
-    node: Post;
-  }[];
-  pageInfo: {
-    endCursor: string;
-    hasNextPage: boolean;
-    startCursor: string;
-    hasPreviousPage: boolean;
+  posts: Post[];
+  pagination: {
+    totalCount: number;
+    limitValue: number;
+    totalPages: number;
+    currentPage: number;
   };
-  totalCount: number;
-  currentPage: number;
-  totalPage: number;
 };

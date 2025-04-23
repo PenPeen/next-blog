@@ -1,30 +1,24 @@
 import { gql } from '@apollo/client';
 
 export const GET_PUBLISHED_POSTS = gql`
-  query GetPublishedPosts($first: Int, $after: String, $last: Int, $before: String) {
-    posts(first: $first, after: $after, last: $last, before: $before) {
-      edges {
-        cursor
-        node {
-          id
-          userId
-          title
-          content
-          thumbnailUrl
-          published
-          createdAt
-          updatedAt
-        }
+  query GetPublishedPosts($page: Int, $perPage: Int) {
+    publishedPosts(page: $page, perPage: $perPage) {
+      posts {
+        id
+        userId
+        title
+        content
+        thumbnailUrl
+        published
+        createdAt
+        updatedAt
       }
-      pageInfo {
-        endCursor
-        hasNextPage
-        startCursor
-        hasPreviousPage
+      pagination {
+        totalCount
+        limitValue
+        totalPages
+        currentPage
       }
-      totalCount
-      currentPage
-      totalPage
     }
   }
 `;
