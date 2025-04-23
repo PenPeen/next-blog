@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const GET_PUBLISHED_POSTS = gql`
-  query GetPublishedPosts($page: Int, $perPage: Int) {
-    publishedPosts(page: $page, perPage: $perPage) {
+export const GET_POSTS = gql`
+  query GetPosts($page: Int, $perPage: Int) {
+    posts(page: $page, perPage: $perPage) {
       posts {
         id
         userId
