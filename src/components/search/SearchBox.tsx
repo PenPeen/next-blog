@@ -7,7 +7,7 @@ import styles from './SearchBox.module.css';
 export default function SearchBox() {
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(searchParams.get('title') || '');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
   const router = useRouter();
 
   useEffect(() => {
