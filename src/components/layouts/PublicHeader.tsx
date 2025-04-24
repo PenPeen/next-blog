@@ -2,6 +2,7 @@ import Image from 'next/image'
 import styles from './PublicHeader.module.css'
 import { Button } from '../ui/Button/Button'
 import Link from 'next/link'
+import SearchBox from '../search/SearchBox'
 
 export default function PublicHeader() {
   return (
@@ -22,13 +23,7 @@ export default function PublicHeader() {
           </div>
 
           <div className={styles.navigation}>
-            <div className={styles.searchBox}>
-              <input
-                type="text"
-                placeholder="記事を検索..."
-                className={styles.searchInput}
-              />
-            </div>
+            <SearchBox />
 
             <Button type="neutral">ログイン</Button>
             <Button>登録</Button>
