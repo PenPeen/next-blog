@@ -23,6 +23,29 @@ export const GET_POSTS = gql`
   }
 `;
 
+export const SEARCH_POSTS = gql`
+  query SearchPosts($title: String!, $page: Int, $perPage: Int) {
+    searchPosts(title: $title, page: $page, perPage: $perPage) {
+      posts {
+        id
+        userId
+        title
+        content
+        thumbnailUrl
+        published
+        createdAt
+        updatedAt
+      }
+      pagination {
+        totalCount
+        limitValue
+        totalPages
+        currentPage
+      }
+    }
+  }
+`;
+
 export const GET_POST = gql`
   query GetPost($id: ID!) {
     post(id: $id) {

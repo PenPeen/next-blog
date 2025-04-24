@@ -17,3 +17,19 @@
     gap: 2rem;
   }
 }
+
+.searchResults {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #111827;
+}
+
+.noResults {
+  text-align: center;
+  padding: 2rem;
+  color: #4b5563;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+  font-size: 1.1rem;
+}
