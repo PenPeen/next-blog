@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# PenBlog - Next.js ブログアプリケーション
 
-## Getting Started
+このプロジェクトは Next.js を使用したブログアプリケーションです。
 
-First, run the development server:
+## 技術スタック
+
+### コア技術
+- TypeScript: ^5.0.0
+- Node.js: ^20.0.0
+
+### フロントエンド
+- Next.js: ^15.2.5
+- React: ^19.0.0
+
+### バックエンド
+- Railsプロジェクト連携
+  - rails_blog
+
+### 開発ツール
+- npm: ^10.0.0
+- ESLint: ^9.0.0
+
+## はじめに
+
+開発サーバーを起動するには:
 
 ```bash
 npm run dev
-# or
+# または
 yarn dev
-# or
+# または
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで [http://localhost:3000](http://localhost:3000) を開くと結果が表示されます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`app/page.tsx` を編集することでページを更新できます。ファイルを編集すると、ページは自動的に更新されます。
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ディレクトリ構造
 
-## Learn More
+```
+src/
+├── app/                    # ルーティングとページコンポーネント
+│   ├── (public)/          # 公開ページ
+│   ├── types/             # 型定義
+│   ├── graphql/           # GraphQL関連
+│   └── ...                # その他のページコンポーネント
+│
+├── components/            # Reactコンポーネント
+│   ├── search/            # 検索関連コンポーネント
+│   ├── layouts/           # レイアウトコンポーネント
+│   └── ui/                # UIコンポーネント
+│
+└── ...
 
-To learn more about Next.js, take a look at the following resources:
+public/                    # 静的アセット
+    ├── app_logo.png       # アプリケーションロゴ
+    └── ...                # その他の静的ファイル
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 学習リソース
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Next.js について詳しく学ぶには、以下のリソースを参照してください:
 
-## Deploy on Vercel
+- [Next.js ドキュメント](https://nextjs.org/docs) - Next.js の機能とAPIについて学ぶ
+- [Next.js チュートリアル](https://nextjs.org/learn) - インタラクティブな Next.js チュートリアル
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Vercelへのデプロイ
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Next.js アプリをデプロイする最も簡単な方法は、Next.js の作成者による [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) を使用することです。
+
+詳細については [Next.js デプロイドキュメント](https://nextjs.org/docs/app/building-your-application/deploying) を参照してください。
