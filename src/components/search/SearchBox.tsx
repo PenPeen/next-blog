@@ -20,12 +20,10 @@ export default function SearchBox() {
   }, [search]);
 
   useEffect(() => {
-    if (pathname === '/') {
-      if (debouncedSearch.trim()) {
-        router.push(`/?title=${debouncedSearch.trim()}`);
-      } else if (debouncedSearch === '') {
-        router.push('/');
-      }
+    if (debouncedSearch.trim()) {
+      router.push(`/?title=${debouncedSearch.trim()}`);
+    } else if (debouncedSearch === '' && pathname === '/') {
+      router.push('/');
     }
   }, [debouncedSearch, router, pathname]);
 
