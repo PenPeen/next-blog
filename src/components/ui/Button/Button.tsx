@@ -16,6 +16,7 @@ const BUTTON_SIZES = {
 
 type ButtonType = typeof BUTTON_TYPES[keyof typeof BUTTON_TYPES];
 type ButtonSize = typeof BUTTON_SIZES[keyof typeof BUTTON_SIZES];
+type HTMLButtonType = "button" | "submit" | "reset";
 
 interface ButtonProps {
   children: React.ReactNode
@@ -25,12 +26,14 @@ interface ButtonProps {
   isSolid?: boolean;
   isFull?: boolean;
   isDisabled?: boolean;
+  buttonType?: HTMLButtonType;
   handleClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
 export const Button = ({
   type = BUTTON_TYPES.PRIMARY,
   size = BUTTON_SIZES.MEDIUM,
+  buttonType = "button",
   isRadius = false,
   isSolid = false,
   isFull = false,
@@ -53,7 +56,7 @@ export const Button = ({
 
   return (
     <button
-      type='button'
+      type={buttonType}
       disabled={isDisabled}
       className={getClassNames()}
       onClick={handleClick}

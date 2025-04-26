@@ -6,8 +6,8 @@ type CardVariant = 'default' | 'post'
 
 type CardProps = {
   img?: string
-  title: string
-  description: string
+  title?: string
+  description?: string
   variant?: CardVariant
   imageAspectRatio?: string
   titleSize?: string
@@ -15,6 +15,7 @@ type CardProps = {
   unoptimized?: boolean
   maxLines?: number
   titleMaxLines?: boolean
+  children?: React.ReactNode
 }
 
 export default function Card({
@@ -27,7 +28,8 @@ export default function Card({
   descriptionSize,
   unoptimized = false,
   maxLines = 0,
-  titleMaxLines = false
+  titleMaxLines = false,
+  children
 }: CardProps) {
   const getVariantClass = () => {
     return variant === 'post' ? styles.postVariant : ''
@@ -54,7 +56,7 @@ export default function Card({
         <div className={imageContainerClassName}>
           <Image
             src={img}
-            alt={title}
+            alt={title || ''}
             fill
             className={styles.naturalImage}
             unoptimized={unoptimized}
@@ -62,8 +64,9 @@ export default function Card({
         </div>
       )}
       <div className={styles.content}>
-        <div className={titleClassName}>{title}</div>
-        <p className={descriptionClassName}>{description}</p>
+        {title && <div className={titleClassName}>{title}</div>}
+        {description && <p className={descriptionClassName}>{description}</p>}
+        {children}
       </div>
     </div>
   )
