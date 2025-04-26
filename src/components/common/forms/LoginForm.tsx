@@ -5,8 +5,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import styles from "./LoginForm.module.css";
-import { Button } from "../../../components/ui/Button/Button";
-import Card from "../../../components/ui/Card/Card";
+import { Button } from "@/components/ui/Button/Button";
+import Card from "@/components/ui/Card/Card";
 
 const loginSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),
