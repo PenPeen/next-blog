@@ -9,7 +9,7 @@ export default function PublicHeader() {
     <header className={styles.header}>
       <div className={styles.container}>
         <div className={styles.content}>
-          <div className={styles.logo}>
+          <Link href="/" className={styles.logoLink}>
             <Image
               src="/app_logo.png"
               alt="PenBlog Logo"
@@ -17,15 +17,15 @@ export default function PublicHeader() {
               height={50}
               className={styles.logoImage}
             />
-            <Link href="/">
-              <h1 className={styles.logoText}>PenBlog</h1>
-            </Link>
-          </div>
+            <h1 className={styles.logoText}>PenBlog</h1>
+          </Link>
 
           <div className={styles.navigation}>
             <SearchBox />
 
-            <Button type="neutral">ログイン</Button>
+            <Link href="/signin">
+              <Button type="neutral">ログイン</Button>
+            </Link>
             <Button>登録</Button>
           </div>
         </div>

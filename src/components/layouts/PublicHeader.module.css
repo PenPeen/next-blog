@@ -28,7 +28,7 @@
   height: 64px;
 }
 
-.logo {
+.logoLink {
   display: flex;
   align-items: center;
   gap: 12px;
