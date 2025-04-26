@@ -16,6 +16,10 @@ alwaysApply: true
 - Next.js: ^15.2.5
 - React: ^19.0.0
 
+## スタイル指定
+- CSS Modules
+※ TailWind CSS などのサードパーティライブラリは使用禁止。
+
 ## バックエンド
 - Railsプロジェクトで管理
   - @Desktop/dev/rails_blog

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import styles from './SearchBox.module.css';
 
 export default function SearchBox() {
@@ -9,6 +9,7 @@ export default function SearchBox() {
   const [search, setSearch] = useState(searchParams.get('title') || '');
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -21,10 +22,10 @@ export default function SearchBox() {
   useEffect(() => {
     if (debouncedSearch.trim()) {
       router.push(`/?title=${debouncedSearch.trim()}`);
-    } else if (debouncedSearch === '') {
+    } else if (debouncedSearch === '' && pathname === '/') {
       router.push('/');
     }
-  }, [debouncedSearch, router]);
+  }, [debouncedSearch, router, pathname]);
 
   return (
     <div className={styles.searchContainer}>
