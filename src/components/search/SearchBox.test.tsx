@@ -6,6 +6,7 @@ import * as nextNavigation from "next/navigation";
 jest.mock("next/navigation", () => ({
   useSearchParams: jest.fn(),
   useRouter: jest.fn(),
+  usePathname: jest.fn(),
 }));
 
 describe('SearchBox', () => {
