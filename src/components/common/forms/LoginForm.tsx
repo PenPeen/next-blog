@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { useAuth } from "@/hooks";
 import styles from "./LoginForm.module.css";
 import Button from "@/components/ui/Button/Button";
 import Card from "@/components/ui/Card/Card";
@@ -16,8 +17,8 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
-  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { login, isLoading } = useAuth();
 
   const {
     register,
@@ -29,16 +30,16 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
     setErrorMessage(null);
 
     try {
-      // TODO: Login
-      console.log('ログイン処理:', data);
+      const result = await login(data.email, data.password);
+
+      if (!result.success) {
+        setErrorMessage(result.error || "ログインに失敗しました。メールアドレスとパスワードを確認してください。");
+      }
     } catch {
       setErrorMessage("ログインに失敗しました。メールアドレスとパスワードを確認してください。");
-    } finally {
-      setIsLoading(false);
     }
   };
 
