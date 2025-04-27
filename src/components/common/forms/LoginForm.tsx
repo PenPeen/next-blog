@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import styles from "./LoginForm.module.css";
-import { Button } from "@/components/ui/Button/Button";
+import Button from "@/components/ui/Button/Button";
 import Card from "@/components/ui/Card/Card";
 
 const loginSchema = z.object({
@@ -83,7 +83,7 @@ export default function LoginForm() {
                   className={`${styles.fieldInput} ${errors.password ? styles.fieldInputError : ""}`}
                   placeholder="例）password123"
                 />
-                <p className={styles.helpText}>パスワードは6文字以上で入力してください</p>
+                <p className={styles.helpText}>6文字以上の文字列</p>
                 {errors.password && (
                   <p className={styles.errorMessage}>{errors.password.message}</p>
                 )}
