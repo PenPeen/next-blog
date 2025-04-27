@@ -30,7 +30,7 @@ interface ButtonProps {
   handleClick?: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export const Button = ({
+export default function Button({
   type = BUTTON_TYPES.PRIMARY,
   size = BUTTON_SIZES.MEDIUM,
   buttonType = "button",
@@ -40,7 +40,7 @@ export const Button = ({
   isDisabled = false,
   handleClick,
   children,
-}: ButtonProps) => {
+}: ButtonProps) {
   const getClassNames = () => {
     const classNames = [
       styles.button,
@@ -64,4 +64,4 @@ export const Button = ({
       {children}
     </button>
   );
-};
+}
