@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { NextRequest } from "next/server";
 import { apolloClient } from "../graphql";
 import { CURRENT_USER_QUERY } from "../graphql/auth/queries";

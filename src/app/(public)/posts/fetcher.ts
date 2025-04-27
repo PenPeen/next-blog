@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { GET_POSTS, GET_POST, SEARCH_POSTS } from '@/app/graphql/posts/queries';
 import { apolloClient } from '@/app/graphql/apollo-client';
 import { Post, PostsResponse } from '@/app/types';
