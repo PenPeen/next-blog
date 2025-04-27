@@ -7,10 +7,6 @@
   transition: transform 0.2s ease-in-out;
 }
 
-.card:hover {
-  transform: translateY(-4px);
-}
-
 .imageContainer {
   position: relative;
   width: 100%;
