@@ -34,7 +34,7 @@ export function useAuth(): UseAuthReturn {
       if (data?.login?.user) {
         setUser(data.login.user);
 
-        router.push("/");
+        router.push("/account");
         return { success: true };
       }
 
