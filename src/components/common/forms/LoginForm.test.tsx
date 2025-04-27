@@ -3,6 +3,26 @@ import userEvent from '@testing-library/user-event'
 import LoginForm from './LoginForm'
 import React from 'react';
 
+jest.mock('next/navigation', () => ({
+  useRouter() {
+    return {
+      push: jest.fn(),
+    };
+  },
+}));
+
+const mockUseAuth = {
+  login: jest.fn().mockResolvedValue({ success: true }),
+  isLoading: false,
+  user: null,
+  logout: jest.fn(),
+  isAuthenticated: false
+};
+
+jest.mock('@/hooks', () => ({
+  useAuth: () => mockUseAuth
+}));
+
 jest.mock('react', () => {
   const originalReact = jest.requireActual('react');
   return {
@@ -17,6 +37,7 @@ describe('LoginForm', () => {
     (React.useState as jest.Mock).mockImplementation(
       jest.requireActual('react').useState
     );
+    mockUseAuth.isLoading = false;
   });
 
   describe('初期状態', () => {
@@ -69,15 +90,9 @@ describe('LoginForm', () => {
     })
 
     it('送信中はボタンのテキストが変更されて非活性になること', async () => {
-      (React.useState as jest.Mock).mockImplementation((initialValue) => {
-        if (initialValue === false) {
-          return [true, jest.fn()];
-        }
-        return jest.requireActual('react').useState(initialValue);
-      });
+      mockUseAuth.isLoading = true;
 
       render(<LoginForm />)
-
       expect(screen.getByRole('button')).toHaveTextContent('ログイン中...')
       expect(screen.getByRole('button')).toBeDisabled()
     })
