@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import styles from './PublicHeader.module.css'
-import { Button } from '../ui/Button/Button'
+import Button from '../ui/Button/Button'
 import Link from 'next/link'
 import SearchBox from '../search/SearchBox'
 
