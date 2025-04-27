@@ -1,7 +1,8 @@
-import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
+import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 
 const endpoint = new HttpLink({
   uri: `http://${process.env.NEXT_PUBLIC_RAILS_API_DOMAIN}/graphql`,
+  credentials: 'include',
 });
 
 export const apolloClient = new ApolloClient({
@@ -9,6 +10,9 @@ export const apolloClient = new ApolloClient({
   cache: new InMemoryCache(),
   defaultOptions: {
     query: {
+      fetchPolicy: 'no-cache',
+    },
+    mutate: {
       fetchPolicy: 'no-cache',
     },
   },
