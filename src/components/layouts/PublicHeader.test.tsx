@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import PublicHeader from './PublicHeader'
+import { getCurrentUser } from '@/app/(auth)/fetcher'
 
 jest.mock('@/components/search/SearchBox', () => {
   return function MockSearchBox() {
@@ -7,25 +8,38 @@ jest.mock('@/components/search/SearchBox', () => {
   }
 })
 
+jest.mock('@/app/(auth)/fetcher', () => ({
+  getCurrentUser: jest.fn()
+}))
+
 describe('PublicHeader', () => {
-  describe('初期状態', () => {
-    it('コンテンツが適切に表示されること', () => {
-      render(<PublicHeader />)
+  describe('未ログイン状態', () => {
+    beforeEach(() => {
+      (getCurrentUser as jest.Mock).mockResolvedValue(null)
+    })
 
-      const logo = screen.getByAltText('PenBlog Logo')
-      expect(logo).toBeInTheDocument()
-
-      const title = screen.getByText('PenBlog')
-      expect(title).toBeInTheDocument()
-
-      const searchBox = screen.getByText('SearchBox')
-      expect(searchBox).toBeInTheDocument()
+    it('ログインボタンが表示されること', async () => {
+      render(await PublicHeader())
 
       const loginButton = screen.getByText('ログイン')
       expect(loginButton).toBeInTheDocument()
+    })
+  })
 
-      const registerButton = screen.getByText('登録')
-      expect(registerButton).toBeInTheDocument()
+  describe('ログイン状態', () => {
+    beforeEach(() => {
+      (getCurrentUser as jest.Mock).mockResolvedValue({
+        id: '1',
+        email: 'test@example.com',
+        name: 'Test User',
+      })
+    })
+
+    it('マイページボタンが表示されること', async () => {
+      render(await PublicHeader())
+
+      const myPageButton = screen.getByText('マイページ')
+      expect(myPageButton).toBeInTheDocument()
     })
   })
 })
