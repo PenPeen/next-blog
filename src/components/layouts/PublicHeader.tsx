@@ -3,8 +3,11 @@ import styles from './PublicHeader.module.css'
 import Button from '../ui/Button/Button'
 import Link from 'next/link'
 import SearchBox from '../search/SearchBox'
+import { getCurrentUser } from '@/app/(auth)/fetcher'
 
-export default function PublicHeader() {
+export default async function PublicHeader() {
+  const currentUser = await getCurrentUser();
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -23,10 +26,15 @@ export default function PublicHeader() {
           <div className={styles.navigation}>
             <SearchBox />
 
-            <Link href="/signin">
-              <Button type="neutral">ログイン</Button>
-            </Link>
-            <Button>登録</Button>
+            {currentUser ? (
+              <Link href="/account">
+                <Button type="primary">マイページ</Button>
+              </Link>
+            ) : (
+              <Link href="/signin">
+                <Button type="neutral">ログイン</Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
