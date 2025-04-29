@@ -1,0 +1,21 @@
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.badge__draft {
+  background-color: rgb(238, 252, 227);
+  color: rgb(66, 129, 14);
+  border: 1px solid rgb(66, 129, 14);
+}
+
+.badge__published {
+  background-color: rgb(230, 247, 255);
+  color: rgb(0, 121, 173);
+  border: 1px solid rgb(0, 121, 173);
+}
