@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import PublicHeader from './PublicHeader'
+import PublicHeader from '@/components/layouts/PublicHeader/PublicHeader'
 import { getCurrentUser } from '@/app/(auth)/fetcher'
 
 jest.mock('@/components/search/SearchBox', () => {

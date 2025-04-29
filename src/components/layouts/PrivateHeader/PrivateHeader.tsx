@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import styles from './PrivateHeader.module.css'
-import Button from '../ui/Button/Button'
 import Link from 'next/link'
+import LogoutButton from '@/components/layouts/LogoutButton/LogoutButton'
 
 export default function PrivateHeader() {
   return (
@@ -20,7 +20,7 @@ export default function PrivateHeader() {
           </Link>
 
           <div className={styles.navigation}>
-            <Button type="neutral">ログアウト</Button>
+            <LogoutButton />
           </div>
         </div>
       </div>
