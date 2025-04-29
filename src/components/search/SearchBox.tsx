@@ -6,10 +6,19 @@ import styles from './SearchBox.module.css';
 
 export default function SearchBox() {
   const searchParams = useSearchParams();
-  const [search, setSearch] = useState(searchParams.get('title') || '');
-  const [debouncedSearch, setDebouncedSearch] = useState(search);
   const router = useRouter();
   const pathname = usePathname();
+
+  const [search, setSearch] = useState(searchParams.get('title') || '');
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+
+  // パスが変わったら離検索ボックスを空にする
+  useEffect(() => {
+    if(pathname !== '/'){
+      setSearch('');
+      setDebouncedSearch('');
+    }
+  }, [pathname]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -22,10 +31,12 @@ export default function SearchBox() {
   useEffect(() => {
     if (debouncedSearch.trim()) {
       router.push(`/?title=${debouncedSearch.trim()}`);
-    } else if (debouncedSearch === '' && pathname === '/') {
-      router.push('/');
     }
-  }, [debouncedSearch, router, pathname]);
+    // FIXME: TOPページで検索ボックスが空になった場合に / に遷移したい（以下は期待通り動作しない）
+    // } else if (debouncedSearch === '' && pathname === '/') {
+    //   router.push('/');
+    // }
+  }, [debouncedSearch, router]);
 
   return (
     <div className={styles.searchContainer}>
