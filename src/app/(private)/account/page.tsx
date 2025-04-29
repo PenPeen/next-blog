@@ -1,9 +1,19 @@
 import MyPostsList from '@/components/features/posts/MyPostsList';
 
-export default function AccountPage() {
+type PageProps = {
+  searchParams: Promise<{
+    page?: string;
+  }>;
+};
+
+export default async function AccountPage({ searchParams }: PageProps) {
+  const queryParams = await searchParams;
+  const currentPage = Number(queryParams.page) || 1;
+  const perPage = 15;
+
   return (
     <>
-      <MyPostsList />
+      <MyPostsList currentPage={currentPage} perPage={perPage} />
     </>
   )
 }
