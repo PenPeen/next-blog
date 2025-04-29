@@ -39,7 +39,7 @@ export default async function Home({ searchParams }: PageProps) {
           return(
             <Link href={`/posts/${post.id}`} key={post.id}>
               <Card
-                img={post.thumbnailUrl}
+                img={post.thumbnailUrl || '/default-thumbnail.png'}
                 title={post.title}
                 description={post.content}
                 variant="post"
