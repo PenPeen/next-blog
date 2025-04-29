@@ -1,0 +1,28 @@
+.container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.postList {
+  list-style-type: none;
+  padding: 0;
+  margin: 2rem 0;
+}
+
+.postItem {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.postItem:last-child {
+  border-bottom: none;
+}
+
+.emptyMessage {
+  text-align: center;
+  color: #666;
+  margin: 2rem 0;
+  font-size: 1.1rem;
+}
