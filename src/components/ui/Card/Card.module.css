@@ -120,6 +120,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  height: 1.5em;
+  line-height: 1.5;
 }
 
 .lineClamp2 {
@@ -128,6 +130,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  height: 3em;
+  line-height: 1.5;
 }
 
 .lineClamp3 {
@@ -136,6 +140,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  height: 4.5em;
+  line-height: 1.5;
 }
 
 .lineClamp4 {
@@ -144,6 +150,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  height: 6em;
+  line-height: 1.5;
 }
 
 .lineClamp5 {
@@ -152,6 +160,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  height: 7.5em;
+  line-height: 1.5;
 }
 
 .titleLineClamp2 {
