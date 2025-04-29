@@ -3,7 +3,7 @@
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { LOGIN_MUTATION } from "@/app/graphql/auth/mutations";
+import { LOGIN_MUTATION, LOGOUT_MUTATION } from "@/app/graphql/auth/mutations";
 import { User } from "@/app/types";
 
 interface UseAuthReturn {
@@ -22,7 +22,7 @@ export function useAuth(): UseAuthReturn {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loginMutation] = useMutation(LOGIN_MUTATION);
-
+  const [logoutMutation] = useMutation(LOGOUT_MUTATION);
   const login = async (email: string, password: string) => {
     setIsLoading(true);
 
@@ -52,8 +52,16 @@ export function useAuth(): UseAuthReturn {
     }
   };
 
-  // TODO:
-  const logout = () => {};
+  const logout = async () => {
+    setIsLoading(true);
+    try {
+      await logoutMutation();
+      setUser(null);
+      router.push("/");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return {
     user,
