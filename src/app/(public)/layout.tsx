@@ -10,13 +10,16 @@ export const metadata: Metadata = {
 
 export default function PublicLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <main className={styles.container}>
       <PublicHeader />
       {children}
+      {modal}
     </main>
   );
 }
