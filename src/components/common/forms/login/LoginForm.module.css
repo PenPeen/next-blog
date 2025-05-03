@@ -129,3 +129,19 @@
   background-color: #a5b4fc;
   cursor: not-allowed;
 }
+
+.registerLink {
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 0.875rem;
+}
+
+.registerLink a {
+  color: #4f46e5;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.registerLink a:hover {
+  text-decoration: underline;
+}
