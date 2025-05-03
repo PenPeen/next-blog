@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks";
 import styles from "./LoginForm.module.css";
 import Button from "@/components/ui/Button/Button";
 import Card from "@/components/ui/Card/Card";
+import Link from "next/link";
 
 const loginSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),
@@ -102,6 +103,10 @@ export default function LoginForm() {
               >
                 {isLoading ? "ログイン中..." : "ログイン"}
               </Button>
+            </div>
+
+            <div className={styles.registerLink}>
+              <p>初めてご利用ですか？ <Link href="/register">新規登録はこちら</Link></p>
             </div>
           </form>
         </Card>
