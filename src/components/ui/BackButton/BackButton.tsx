@@ -6,18 +6,13 @@ import styles from './BackButton.module.css';
 
 type BackButtonProps = {
   children: React.ReactNode;
-  onBack?: () => void;
 };
 
-export default function BackButton({ children, onBack }: BackButtonProps) {
+export default function BackButton({ children }: BackButtonProps) {
   const router = useRouter();
 
   const handleBack = () => {
-    if (onBack) {
-      onBack();
-    } else {
-      router.back();
-    }
+    router.back();
   };
 
   return (
