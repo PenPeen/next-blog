@@ -1,9 +1,8 @@
-import Card from "@/components/ui/Card";
 import styles from './page.module.css';
-import Link from "next/link";
 import { Pagination } from "@/components/ui/Pagination";
 import { getPosts, searchPosts } from "@/app/(public)/posts/fetcher";
-import { PostsResponse, Post } from "../types";
+import { PostsResponse } from "../types";
+import Posts from "@/components/ui/Posts";
 
 type PageProps = {
   searchParams: Promise<{
@@ -34,23 +33,7 @@ export default async function Home({ searchParams }: PageProps) {
         <p className={styles.noResults}>検索結果が見つかりませんでした。別のキーワードをお試しください。</p>
       )}
 
-      <div className={styles.cardContainer}>
-        {res.posts.map((post: Post) => {
-          return(
-            <Link href={`/posts/${post.id}`} key={post.id}>
-              <Card
-                img={post.thumbnailUrl || '/default-thumbnail.png'}
-                title={post.title}
-                description={post.content}
-                variant="post"
-                unoptimized={true}
-                maxLines={3}
-                titleMaxLines={true}
-              />
-            </Link>
-          )
-        })}
-      </div>
+      <Posts posts={res.posts} />
 
       <Pagination
         totalCount={res.pagination.totalCount}
