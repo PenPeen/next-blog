@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import LoginForm from './LoginForm'
+import LoginForm from '.'
 import React from 'react';
 
 jest.mock('next/navigation', () => ({

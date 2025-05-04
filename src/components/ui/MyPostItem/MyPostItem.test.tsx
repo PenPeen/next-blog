@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { MyPostItem } from "./MyPostItem";
+import { MyPostItem } from ".";
 
-jest.mock('@/components/features/posts/StatusBadge', () => ({
+jest.mock('@/components/ui/StatusBadge', () => ({
   StatusBadge: function MockStatusBadge() {
     return <div>公開ステータス</div>;
   }

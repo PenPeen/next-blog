@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './MyPostsList.module.css';
-import { MyPostItem } from '@/components/ui/MyPostItem/MyPostItem';
-import MainTitle from '@/components/ui/MainTitle/MainTitle';
+import { MyPostItem } from '@/components/ui/MyPostItem';
+import MainTitle from '@/components/ui/MainTitle';
 import { getMyPosts } from '@/app/(private)/account/fetcher';
 
 type MyPostsListProps = {

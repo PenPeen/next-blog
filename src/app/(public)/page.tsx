@@ -1,7 +1,7 @@
-import Card from "@/components/ui/Card/Card";
+import Card from "@/components/ui/Card";
 import styles from './page.module.css';
 import Link from "next/link";
-import { Pagination } from "@/components/ui/Pagination/Pagination";
+import { Pagination } from "@/components/ui/Pagination";
 import { getPosts, searchPosts } from "@/app/(public)/posts/fetcher";
 import { PostsResponse, Post } from "../types";
 

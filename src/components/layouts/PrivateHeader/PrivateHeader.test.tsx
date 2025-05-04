@@ -1,12 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import PrivateHeader from '@/components/layouts/PrivateHeader/PrivateHeader'
 
-jest.mock('@/components/search/SearchBox', () => {
-  return function MockSearchBox() {
-    return <div data-testid="search-box">SearchBox</div>
-  }
-})
-
 jest.mock('@/components/layouts/LogoutButton/LogoutButton', () => {
   return function MockLogoutButton() {
     return <div data-testid="logout-button">LogoutButton</div>

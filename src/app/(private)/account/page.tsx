@@ -1,4 +1,4 @@
-import MyPostsList from '@/components/ui/MyPostsList/MyPostsList';
+import MyPostsList from '@/components/ui/MyPostsList';
 
 type PageProps = {
   searchParams: Promise<{

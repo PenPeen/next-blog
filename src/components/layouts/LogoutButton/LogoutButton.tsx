@@ -1,6 +1,6 @@
 'use client';
 
-import Button from '../../ui/Button/Button'
+import Button from '../../ui/Button'
 import { useAuth } from '@/hooks/auth/useAuth'
 
 export default function LogoutButton() {

@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import styles from "./RegisterForm.module.css";
-import Button from "@/components/ui/Button/Button";
-import Card from "@/components/ui/Card/Card";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 import Link from "next/link";
 import { useRegister } from "@/hooks/auth/useRegister";
 

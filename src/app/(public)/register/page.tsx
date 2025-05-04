@@ -1,6 +1,6 @@
 export const dynamic = 'force-static'
 
-import RegisterForm from "@/components/ui/common/forms/register/RegisterForm";
+import RegisterForm from "@/components/ui/RegisterForm";
 
 export default function RegisterPage() {
   return (
