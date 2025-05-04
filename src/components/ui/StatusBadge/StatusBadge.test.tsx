@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { StatusBadge } from "../posts/StatusBadge";
+import { StatusBadge } from "@/components/ui/StatusBadge";
 
 describe('StatusBadge', () => {
   describe('初期表示', () => {
