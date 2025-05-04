@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import styles from './error.module.css';
 
 type ErrorProps = {
@@ -9,10 +8,6 @@ type ErrorProps = {
 };
 
 export default function Error({ error, reset }: ErrorProps) {
-  useEffect(() => {
-    console.error('アプリケーションエラー:', error);
-  }, [error]);
-
   return (
     <div className={styles.errorContainer}>
       <div className={styles.errorContent}>
