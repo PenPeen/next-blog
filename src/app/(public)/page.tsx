@@ -21,7 +21,7 @@ export default async function Home({ searchParams }: PageProps) {
     ? await searchPosts(titleQuery, currentPage, perPage )
     : await getPosts(currentPage, perPage);
 
-  const res = await data.json() as PostsResponse;
+  const { posts, pagination } = await data.json() as PostsResponse;
 
   return (
     <div>
@@ -29,17 +29,17 @@ export default async function Home({ searchParams }: PageProps) {
         <h1 className={styles.searchResults}>「{titleQuery}」の検索結果</h1>
       )}
 
-      {res.posts.length === 0 && titleQuery && (
+      {posts.length === 0 && titleQuery && (
         <p className={styles.noResults}>検索結果が見つかりませんでした。別のキーワードをお試しください。</p>
       )}
 
-      <Posts posts={res.posts} />
+      <Posts posts={posts} />
 
       <Pagination
-        totalCount={res.pagination.totalCount}
-        limitValue={res.pagination.limitValue}
-        totalPages={res.pagination.totalPages}
-        currentPage={res.pagination.currentPage}
+        totalCount={pagination.totalCount}
+        limitValue={pagination.limitValue}
+        totalPages={pagination.totalPages}
+        currentPage={pagination.currentPage}
       />
     </div>
   );
