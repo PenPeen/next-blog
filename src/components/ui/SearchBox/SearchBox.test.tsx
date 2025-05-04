@@ -1,6 +1,6 @@
 import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import SearchBox from "./SearchBox";
+import SearchBox from ".";
 import * as nextNavigation from "next/navigation";
 
 jest.mock("next/navigation", () => ({

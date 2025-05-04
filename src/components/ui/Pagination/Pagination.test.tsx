@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { Pagination } from "./Pagination";
+import { Pagination } from ".";
 
 describe('Pagination', () => {
   it('初期状態の検証', () => {

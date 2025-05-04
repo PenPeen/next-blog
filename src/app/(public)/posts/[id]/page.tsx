@@ -2,9 +2,9 @@ import { getPost } from '../fetcher';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import styles from './page.module.css';
-import FormattedDate from '@/components/ui/DateFormatter/FormattedDate';
-import MainTitle from '@/components/ui/MainTitle/MainTitle';
-import BackButton from '@/components/ui/BackButton/BackButton';
+import FormattedDate from '@/components/ui/DateFormatter';
+import MainTitle from '@/components/ui/MainTitle';
+import BackButton from '@/components/ui/BackButton';
 
 type Params = {
   params: Promise<{ id: string }>

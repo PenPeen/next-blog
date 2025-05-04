@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuth } from "@/hooks";
 import styles from "./LoginForm.module.css";
-import Button from "@/components/ui/Button/Button";
-import Card from "@/components/ui/Card/Card";
+import Button from "@/components/ui/Button";
+import Card from "@/components/ui/Card";
 import Link from "next/link";
 
 const loginSchema = z.object({

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react'
 import PublicHeader from '@/components/layouts/PublicHeader/PublicHeader'
 import { getCurrentUser } from '@/app/(auth)/fetcher'
 
-jest.mock('@/components/search/SearchBox', () => {
+jest.mock('@/components/ui/SearchBox', () => {
   return function MockSearchBox() {
     return <div data-testid="search-box">SearchBox</div>
   }

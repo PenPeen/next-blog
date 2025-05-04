@@ -1,7 +1,7 @@
 import React from 'react'
 import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import RegisterForm from './RegisterForm'
+import RegisterForm from '.'
 
 jest.mock('@/hooks/auth/useRegister', () => ({
   useRegister: () => mockUseRegister
