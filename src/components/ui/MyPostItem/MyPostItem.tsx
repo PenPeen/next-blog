@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './MyPostItem.module.css';
-import { StatusBadge } from '@/components/features/posts/StatusBadge';
+import { StatusBadge } from '@/components/ui/StatusBadge/StatusBadge';
 import { Post } from '@/app/types';
 
 export function MyPostItem({ post }: { post: Post }) {
