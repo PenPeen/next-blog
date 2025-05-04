@@ -54,10 +54,11 @@ export function useAuth(): UseAuthReturn {
 
   const logout = async () => {
     setIsLoading(true);
+
     try {
       await logoutMutation();
       setUser(null);
-      router.push("/");
+      router.refresh();
     } finally {
       setIsLoading(false);
     }

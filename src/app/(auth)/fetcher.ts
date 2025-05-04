@@ -28,6 +28,7 @@ export async function getCurrentUser(request?: NextRequest): Promise<User | null
         Cookie: cookieHeader,
       },
     },
+    fetchPolicy: 'no-cache',
   });
   return data.currentUser as User;
 }
