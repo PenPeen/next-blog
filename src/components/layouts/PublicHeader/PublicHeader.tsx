@@ -4,6 +4,7 @@ import Button from '@/components/ui/Button'
 import Link from 'next/link'
 import SearchBox from '@/components/ui/SearchBox'
 import { getCurrentUser } from '@/app/(auth)/fetcher'
+import UserDropDownMenu from '@/components/ui/UserDropDownMenu'
 
 export default async function PublicHeader() {
   const currentUser = await getCurrentUser();
@@ -27,9 +28,9 @@ export default async function PublicHeader() {
             <SearchBox />
 
             {currentUser ? (
-              <Link href="/account">
-                <Button type="primary">マイページ</Button>
-              </Link>
+              <>
+                <UserDropDownMenu user={currentUser} />
+              </>
             ) : (
               <Link href="/signin">
                 <Button type="neutral">ログイン</Button>

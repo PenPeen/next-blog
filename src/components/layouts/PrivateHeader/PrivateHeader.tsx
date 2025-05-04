@@ -1,9 +1,12 @@
 import Image from 'next/image'
 import styles from './PrivateHeader.module.css'
 import Link from 'next/link'
-import LogoutButton from '@/components/layouts/LogoutButton/LogoutButton'
+import UserDropDownMenu from '@/components/ui/UserDropDownMenu'
+import { getCurrentUser } from '@/app/(auth)/fetcher';
 
-export default function PrivateHeader() {
+export default async function PrivateHeader() {
+  const currentUser = await getCurrentUser();
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -20,7 +23,7 @@ export default function PrivateHeader() {
           </Link>
 
           <div className={styles.navigation}>
-            <LogoutButton />
+            <UserDropDownMenu user={currentUser!} />
           </div>
         </div>
       </div>
