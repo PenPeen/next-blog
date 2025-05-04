@@ -12,6 +12,12 @@ jest.mock('@/app/(auth)/fetcher', () => ({
   getCurrentUser: jest.fn()
 }))
 
+jest.mock('@/components/ui/UserDropDownMenu', () => {
+  return function MockUserDropDownMenu() {
+    return <div data-testid="user-drop-down-menu">UserDropDownMenu</div>
+  }
+})
+
 describe('PublicHeader', () => {
   describe('未ログイン状態', () => {
     beforeEach(() => {
@@ -35,11 +41,11 @@ describe('PublicHeader', () => {
       })
     })
 
-    it('マイページボタンが表示されること', async () => {
+    it('ドロップダウンが表示されること', async () => {
       render(await PublicHeader())
 
-      const myPageButton = screen.getByText('マイページ')
-      expect(myPageButton).toBeInTheDocument()
+      const userDropDownMenu = screen.getByText('UserDropDownMenu')
+      expect(userDropDownMenu).toBeInTheDocument()
     })
   })
 })
