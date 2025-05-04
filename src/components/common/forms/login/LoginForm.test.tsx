@@ -3,98 +3,95 @@ import userEvent from '@testing-library/user-event'
 import LoginForm from './LoginForm'
 import React from 'react';
 
+// Server Actionsをモック
+jest.mock('@/app/actions/auth', () => ({
+  login: jest.fn().mockResolvedValue({ success: true })
+}))
+
+// React hooksのモック
+jest.mock('react', () => ({
+  ...jest.requireActual('react'),
+  useState: jest.fn().mockImplementation((initialValue) => [initialValue, jest.fn()]),
+  useTransition: jest.fn().mockImplementation(() => [false, jest.fn()])
+}))
+
+// 次のページへのナビゲーションをモック
 jest.mock('next/navigation', () => ({
-  useRouter() {
-    return {
-      push: jest.fn(),
-    };
-  },
+  useRouter: () => ({
+    push: jest.fn(),
+  }),
 }));
-
-const mockUseAuth = {
-  login: jest.fn().mockResolvedValue({ success: true }),
-  isLoading: false,
-  user: null,
-  logout: jest.fn(),
-  isAuthenticated: false
-};
-
-jest.mock('@/hooks', () => ({
-  useAuth: () => mockUseAuth
-}));
-
-jest.mock('react', () => {
-  const originalReact = jest.requireActual('react');
-  return {
-    ...originalReact,
-    useState: jest.fn().mockImplementation(originalReact.useState)
-  };
-});
 
 describe('LoginForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (React.useState as jest.Mock).mockImplementation(
-      jest.requireActual('react').useState
-    );
-    mockUseAuth.isLoading = false;
   });
 
-  describe('初期状態', () => {
-    it('フォームの要素が正しく表示されること', () => {
-      render(<LoginForm />)
+  it('初期状態で正しくレンダリングされる', () => {
+    render(<LoginForm />)
 
-      expect(screen.getByLabelText('メールアドレス')).toBeInTheDocument()
-      expect(screen.getByLabelText('パスワード')).toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'ログイン' })).toBeInTheDocument()
-    })
+    expect(screen.getByLabelText(/メールアドレス/)).toBeInTheDocument()
+    expect(screen.getByLabelText(/パスワード/)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /ログイン/ })).toBeInTheDocument()
+  })
 
-    it('フォームの初期値が空であること', () => {
-      render(<LoginForm />)
+  it('バリデーションエラーを表示する', async () => {
+    const user = userEvent.setup()
+    render(<LoginForm />)
 
-      expect(screen.getByLabelText('メールアドレス')).toHaveValue('')
-      expect(screen.getByLabelText('パスワード')).toHaveValue('')
-    })
+    // 無効なメールアドレスを入力
+    await user.type(screen.getByLabelText(/メールアドレス/), 'invalid-email')
+    await user.tab()
 
-    it('エラーメッセージが表示されていないこと', () => {
-      render(<LoginForm />)
+    // 短いパスワードを入力
+    await user.type(screen.getByLabelText(/パスワード/), '12345')
+    await user.tab()
 
-      expect(screen.queryByText('有効なメールアドレスを入力してください')).not.toBeInTheDocument()
+    // フォーム送信
+    await user.click(screen.getByRole('button', { name: /ログイン/ }))
+
+    // エラーメッセージが表示されるか確認
+    await waitFor(() => {
+      expect(screen.getByText(/有効なメールアドレスを入力してください/)).toBeInTheDocument()
+      expect(screen.getByText(/パスワードは6文字以上で入力してください/)).toBeInTheDocument()
     })
   })
 
-  describe('各種処理', () => {
-    it('無効なメールアドレスを入力するとエラーメッセージが表示されること', async () => {
-      render(<LoginForm />)
-      const user = userEvent.setup()
+  it('有効なフォーム送信でログインアクションが呼ばれる', async () => {
+    const { login } = jest.requireMock('@/app/actions/auth')
+    const user = userEvent.setup()
 
-      const emailInput = screen.getByLabelText('メールアドレス')
-      await user.type(emailInput, 'invalid-email')
-      await user.tab()
+    render(<LoginForm />)
 
-      await waitFor(() => {
-        expect(screen.getByText('有効なメールアドレスを入力してください')).toBeInTheDocument()
-      })
+    // 有効な値を入力
+    await user.type(screen.getByLabelText(/メールアドレス/), 'test@example.com')
+    await user.type(screen.getByLabelText(/パスワード/), 'password123')
+
+    // フォーム送信
+    await user.click(screen.getByRole('button', { name: /ログイン/ }))
+
+    // loginアクションが正しく呼ばれたか確認
+    await waitFor(() => {
+      expect(login).toHaveBeenCalledWith('test@example.com', 'password123')
     })
+  })
 
-    it('短すぎるパスワードを入力するとエラーメッセージが表示されること', async () => {
-      render(<LoginForm />)
-      const user = userEvent.setup()
+  it('ログイン失敗時にエラーメッセージを表示する', async () => {
+    // ログイン失敗のモック
+    const { login } = jest.requireMock('@/app/actions/auth')
+    login.mockResolvedValueOnce({ success: false, error: 'ログインに失敗しました' })
 
-      const passwordInput = screen.getByLabelText('パスワード')
-      await user.type(passwordInput, '12345')
-      await user.tab()
+    const user = userEvent.setup()
+    render(<LoginForm />)
 
-      const errorElement = screen.getByText('パスワードは6文字以上で入力してください');
-      expect(errorElement).toBeVisible();
-    })
+    // フォーム入力と送信
+    await user.type(screen.getByLabelText(/メールアドレス/), 'test@example.com')
+    await user.type(screen.getByLabelText(/パスワード/), 'password123')
+    await user.click(screen.getByRole('button', { name: /ログイン/ }))
 
-    it('送信中はボタンのテキストが変更されて非活性になること', async () => {
-      mockUseAuth.isLoading = true;
-
-      render(<LoginForm />)
-      expect(screen.getByRole('button')).toHaveTextContent('ログイン中...')
-      expect(screen.getByRole('button')).toBeDisabled()
+    // エラーメッセージが表示されるか確認
+    await waitFor(() => {
+      expect(screen.getByText(/ログインに失敗しました/)).toBeInTheDocument()
     })
   })
 })

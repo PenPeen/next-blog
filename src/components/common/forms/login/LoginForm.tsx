@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useAuth } from "@/hooks";
 import styles from "./LoginForm.module.css";
 import Button from "@/components/ui/Button/Button";
 import Card from "@/components/ui/Card/Card";
 import Link from "next/link";
+import { login } from "@/app/actions/auth";
+import { useRouter } from "next/navigation";
 
 const loginSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),
@@ -19,7 +20,8 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { login, isLoading } = useAuth();
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const {
     register,
@@ -33,15 +35,19 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     setErrorMessage(null);
 
-    try {
-      const result = await login(data.email, data.password);
+    startTransition(async () => {
+      try {
+        const result = await login(data.email, data.password);
 
-      if (!result.success) {
-        setErrorMessage(result.error || "ログインに失敗しました。メールアドレスとパスワードを確認してください。");
+        if (result.success) {
+          router.push("/account");
+        } else {
+          setErrorMessage(result.error || "ログインに失敗しました。メールアドレスとパスワードを確認してください。");
+        }
+      } catch {
+        setErrorMessage("ログインに失敗しました。メールアドレスとパスワードを確認してください。");
       }
-    } catch {
-      setErrorMessage("ログインに失敗しました。メールアドレスとパスワードを確認してください。");
-    }
+    });
   };
 
   return (
@@ -99,9 +105,9 @@ export default function LoginForm() {
                 buttonType="submit"
                 isSolid
                 isFull
-                isDisabled={isLoading}
+                isDisabled={isPending}
               >
-                {isLoading ? "ログイン中..." : "ログイン"}
+                {isPending ? "ログイン中..." : "ログイン"}
               </Button>
             </div>
 
