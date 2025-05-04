@@ -12,7 +12,6 @@ export default function SearchBox() {
   const [search, setSearch] = useState(searchParams.get('title') || '');
   const [debouncedSearch, setDebouncedSearch] = useState(search);
 
-  // パスが変わったら離検索ボックスを空にする
   useEffect(() => {
     if(pathname !== '/'){
       setSearch('');

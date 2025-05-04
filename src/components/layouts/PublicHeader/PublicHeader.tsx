@@ -1,8 +1,8 @@
 import Image from 'next/image'
 import styles from './PublicHeader.module.css'
-import Button from '../../ui/Button/Button'
+import Button from '@/components/ui/Button/Button'
 import Link from 'next/link'
-import SearchBox from '../../search/SearchBox'
+import SearchBox from '@/components/ui/SearchBox/SearchBox'
 import { getCurrentUser } from '@/app/(auth)/fetcher'
 
 export default async function PublicHeader() {
