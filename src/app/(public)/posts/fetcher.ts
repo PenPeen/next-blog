@@ -1,27 +1,26 @@
-import { GET_POSTS, GET_POST, SEARCH_POSTS } from '@/app/graphql/posts/queries';
 import { apolloClient } from '@/app/graphql/apollo-client';
-import { Post, PostsResponse } from '@/app/types';
+import { GetPostDocument, GetPostsDocument, SearchPostsDocument } from '@/app/graphql';
 
 export async function getPosts(page = 1, perPage = 15) {
   const { data } = await apolloClient.query({
-    query: GET_POSTS,
+    query: GetPostsDocument,
     variables: { page, perPage }
   });
-  return { json: () => Promise.resolve(data.posts as PostsResponse) };
+  return { json: () => Promise.resolve(data.posts) };
 };
 
 export async function getPost(id: string) {
   const { data } = await apolloClient.query({
-    query: GET_POST,
+    query: GetPostDocument,
     variables: { id }
   });
-  return { json: () => Promise.resolve(data.post as Post) };
+  return { json: () => Promise.resolve(data.post) };
 }
 
 export async function searchPosts(title: string, page = 1, perPage = 15) {
   const { data } = await apolloClient.query({
-    query: SEARCH_POSTS,
+    query: SearchPostsDocument,
     variables: { title, page, perPage }
   });
-  return { json: () => Promise.resolve(data.searchPosts as PostsResponse) };
+  return { json: () => Promise.resolve(data.searchPosts) };
 }

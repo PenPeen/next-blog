@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './MyPostItem.module.css';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Post } from '@/app/types';
+import { Post } from '@/app/graphql';
 
 export function MyPostItem({ post }: { post: Post }) {
   return (

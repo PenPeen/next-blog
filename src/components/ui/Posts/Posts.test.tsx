@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react"
 import Posts from "."
-import { Post } from "@/app/types"
+import { Post } from "@/app/graphql"
 
 jest.mock("next/link", () => ({
   __esModule: true,
@@ -24,24 +24,38 @@ jest.mock("@/components/ui/Card", () => ({
 describe('Posts', () => {
   const mockPosts: Post[] = [
     {
-      id: 1,
+      id: "1",
       title: "テスト記事1",
       content: "テスト内容1",
       thumbnailUrl: "/test1.jpg",
       published: true,
       createdAt: "2023-01-01T00:00:00Z",
       updatedAt: "2023-01-01T00:00:00Z",
-      userId: 1
+      userId: 1,
+      user: {
+        id: "1",
+        name: "テストユーザー1",
+        email: "test1@example.com",
+        createdAt: "2023-01-01T00:00:00Z",
+        updatedAt: "2023-01-01T00:00:00Z",
+      }
     },
     {
-      id: 2,
+      id: "2",
       title: "テスト記事2",
       content: "テスト内容2",
       thumbnailUrl: "/test2.jpg",
       published: true,
       createdAt: "2023-01-02T00:00:00Z",
       updatedAt: "2023-01-02T00:00:00Z",
-      userId: 2
+      userId: 2,
+      user: {
+        id: "2",
+        name: "テストユーザー2",
+        email: "test2@example.com",
+        createdAt: "2023-01-02T00:00:00Z",
+        updatedAt: "2023-01-02T00:00:00Z",
+      }
     }
   ]
 

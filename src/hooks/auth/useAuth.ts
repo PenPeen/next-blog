@@ -4,7 +4,7 @@ import { useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LOGIN_MUTATION, LOGOUT_MUTATION } from "@/app/graphql/auth/mutations";
-import { User } from "@/app/types";
+import { User } from "@/app/graphql";
 
 interface UseAuthReturn {
   user: User | null;
