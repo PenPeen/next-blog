@@ -1,8 +1,9 @@
 import { NextRequest } from "next/server";
 import { apolloClient, CurrentUserDocument, CurrentUserQuery } from "@/app/graphql";
 import { cookies } from "next/headers";
+import { cache } from "react";
 
-export async function getCurrentUser(request?: NextRequest): Promise<CurrentUserQuery['currentUser']> {
+export const getCurrentUser = cache(async (request?: NextRequest): Promise<CurrentUserQuery['currentUser']> => {
   let cookieHeader: string | null = null;
 
   // NOTE: call from middleware
@@ -19,15 +20,21 @@ export async function getCurrentUser(request?: NextRequest): Promise<CurrentUser
     return null;
   }
 
+  return getUserFromCookie(cookieHeader)
+});
+
+const getUserFromCookie = cache(async (cookieHeader: string) => {
   const { data } = await apolloClient.query({
     query: CurrentUserDocument,
     context: {
       headers: {
         Cookie: cookieHeader,
       },
+      fetchOptions: {
+        next: { revalidate: 1 },
+      },
     },
-    fetchPolicy: 'no-cache',
   });
 
   return data.currentUser
-}
+});

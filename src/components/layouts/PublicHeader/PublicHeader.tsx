@@ -3,9 +3,9 @@ import styles from './PublicHeader.module.css'
 import Button from '@/components/ui/Button'
 import Link from 'next/link'
 import SearchBox from '@/components/ui/SearchBox'
-import { getCurrentUser } from '@/app/(auth)/fetcher'
+import { getCurrentUser } from '@/fetcher/getCurrentUser'
 import UserDropDownMenu from '@/components/ui/UserDropDownMenu'
-
+import { User } from '@/app/graphql';
 export default async function PublicHeader() {
   const currentUser = await getCurrentUser();
 
@@ -29,7 +29,7 @@ export default async function PublicHeader() {
 
             {currentUser ? (
               <>
-                <UserDropDownMenu user={currentUser} />
+                <UserDropDownMenu user={currentUser as User} />
               </>
             ) : (
               <Link href="/signin">

@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import MyPostsList from ".";
-import { getMyPosts } from "@/app/(private)/account/fetcher";
+import { getMyPosts } from "@/fetcher/getMyPosts";
 
 jest.mock('@/app/(private)/account/fetcher', () => ({
   getMyPosts: jest.fn()

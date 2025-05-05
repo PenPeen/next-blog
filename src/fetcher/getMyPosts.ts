@@ -1,8 +1,9 @@
 import { GetMyPostsDocument } from '@/app/graphql';
 import { apolloClient } from '@/app/graphql/apollo-client';
 import { cookies } from "next/headers";
+import { cache } from 'react';
 
-export async function getMyPosts(page = 1, perPage = 15) {
+export const getMyPosts = cache(async (page = 1, perPage = 15) => {
   const cookiesObj = await cookies();
   const cookieHeader = cookiesObj.toString();
 
@@ -16,4 +17,4 @@ export async function getMyPosts(page = 1, perPage = 15) {
     },
   });
   return { json: () => Promise.resolve(data.myPosts) };
-};
+});
