@@ -1,7 +1,7 @@
 import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import SearchBox from ".";
-import * as nextNavigation from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 jest.mock("next/navigation", () => ({
   useSearchParams: jest.fn(),
@@ -17,11 +17,11 @@ describe('SearchBox', () => {
     jest.useFakeTimers();
     user = userEvent.setup({ delay: null });
 
-    (nextNavigation.useSearchParams as jest.Mock).mockReturnValue({
+    (useSearchParams as jest.Mock).mockReturnValue({
       get: jest.fn().mockReturnValue(''),
     });
 
-    (nextNavigation.useRouter as jest.Mock).mockReturnValue({
+    (useRouter as jest.Mock).mockReturnValue({
       push: mockPush,
     });
   });
