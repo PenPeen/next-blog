@@ -5,7 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import styles from "./UserDropDownMenu.module.css"
 import { useAuth } from "@/hooks"
-import { User } from "@/app/types"
+import { User } from "@/app/graphql"
 import { usePathname } from "next/navigation"
 
 type UserDropDownMenuProps = {

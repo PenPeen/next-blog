@@ -3,6 +3,7 @@ import styles from './MyPostsList.module.css';
 import { MyPostItem } from '@/components/ui/MyPostItem';
 import MainTitle from '@/components/ui/MainTitle';
 import { getMyPosts } from '@/app/(private)/account/fetcher';
+import { Post } from '@/app/graphql';
 
 type MyPostsListProps = {
   currentPage: number;
@@ -17,13 +18,13 @@ export default async function MyPostsList({ currentPage, perPage }: MyPostsListP
     <div className={styles.container}>
       <MainTitle>記事一覧</MainTitle>
 
-      {myPosts.posts.length === 0 ? (
+      {myPosts.posts && myPosts.posts.length === 0 ? (
         <p className={styles.emptyMessage}>記事がありません。新しい記事を作成しましょう。</p>
       ) : (
         <ul className={styles.postList}>
-          {myPosts.posts.map((post) => (
+          {myPosts.posts?.map((post) => (
             <li key={post.id} className={styles.postItem}>
-              <MyPostItem post={post} />
+              <MyPostItem post={post as Post} />
             </li>
           ))}
         </ul>

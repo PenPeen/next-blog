@@ -1,6 +1,5 @@
-import { GET_MY_POSTS } from '@/app/graphql/posts/queries';
+import { GetMyPostsDocument } from '@/app/graphql';
 import { apolloClient } from '@/app/graphql/apollo-client';
-import { PostsResponse } from '@/app/types';
 import { cookies } from "next/headers";
 
 export async function getMyPosts(page = 1, perPage = 15) {
@@ -8,7 +7,7 @@ export async function getMyPosts(page = 1, perPage = 15) {
   const cookieHeader = cookiesObj.toString();
 
   const { data } = await apolloClient.query({
-    query: GET_MY_POSTS,
+    query: GetMyPostsDocument,
     variables: { page, perPage },
     context: {
       headers: {
@@ -16,5 +15,5 @@ export async function getMyPosts(page = 1, perPage = 15) {
       },
     },
   });
-  return { json: () => Promise.resolve(data.myPosts as PostsResponse) };
+  return { json: () => Promise.resolve(data.myPosts) };
 };
