@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import PublicHeader from '@/components/layouts/PublicHeader/PublicHeader'
-import { getCurrentUser } from '@/fetcher/getCurrentUser'
+import { getCurrentUser } from '@/fetcher'
 
 jest.mock('@/components/ui/SearchBox', () => {
   return function MockSearchBox() {
@@ -8,7 +8,7 @@ jest.mock('@/components/ui/SearchBox', () => {
   }
 })
 
-jest.mock('@/app/(auth)/fetcher', () => ({
+jest.mock('@/fetcher', () => ({
   getCurrentUser: jest.fn()
 }))
 

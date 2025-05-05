@@ -2,7 +2,7 @@ import Image from 'next/image'
 import styles from './PrivateHeader.module.css'
 import Link from 'next/link'
 import UserDropDownMenu from '@/components/ui/UserDropDownMenu'
-import { getCurrentUser } from '@/fetcher/getCurrentUser';
+import { getCurrentUser } from '@/fetcher';
 import { User } from '@/app/graphql';
 export default async function PrivateHeader() {
   const currentUser = await getCurrentUser();
