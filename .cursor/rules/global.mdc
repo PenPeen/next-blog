@@ -107,8 +107,11 @@ alwaysApply: true
 ---
 
 # 技術スタック
+リクエストごとに以下を確認してください。
+現在のバージョンでのベストプラクティスを回答してください。
 
-@technologystack.md
+[technologystack.mdc](mdc:.cursor/rules/dev-rules/technologystack.mdc)
+[nextjs.mdc](mdc:.cursor/rules/dev-rules/nextjs.mdc)
 
 ---
 
