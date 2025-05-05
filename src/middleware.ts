@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { getCurrentUser } from './app/(auth)/fetcher';
+import { getCurrentUser } from './fetcher/getCurrentUser';
 
 const protectedRoutes = ['/account'];
 

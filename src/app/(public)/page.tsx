@@ -1,8 +1,8 @@
 import styles from './page.module.css';
 import { Pagination } from "@/components/ui/Pagination";
-import { getPosts, searchPosts } from "@/app/(public)/posts/fetcher";
+import { getPosts, searchPosts } from "@/fetcher";
 import Posts from "@/components/ui/Posts";
-import { Post } from '@/app/graphql';
+import { Post } from '../graphql';
 
 type PageProps = {
   searchParams: Promise<{
@@ -16,7 +16,6 @@ export default async function Home({ searchParams }: PageProps) {
   const currentPage = Number(queryParams.page) || 1;
   const perPage = 15;
   const titleQuery = queryParams.title || '';
-
   const data = titleQuery
     ? await searchPosts(titleQuery, currentPage, perPage )
     : await getPosts(currentPage, perPage);

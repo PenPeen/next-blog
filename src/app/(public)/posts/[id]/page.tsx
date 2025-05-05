@@ -1,4 +1,4 @@
-import { getPost } from '../fetcher';
+import { getPost } from '@/fetcher';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import styles from './page.module.css';

@@ -7,7 +7,7 @@ jest.mock('@/components/ui/UserDropDownMenu', () => {
   }
 })
 
-jest.mock('@/app/(auth)/fetcher', () => ({
+jest.mock('@/fetcher', () => ({
   getCurrentUser: jest.fn().mockResolvedValue({
     id: '1',
     name: 'test',

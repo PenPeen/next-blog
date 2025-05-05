@@ -2,8 +2,8 @@ import Image from 'next/image'
 import styles from './PrivateHeader.module.css'
 import Link from 'next/link'
 import UserDropDownMenu from '@/components/ui/UserDropDownMenu'
-import { getCurrentUser } from '@/app/(auth)/fetcher';
-
+import { getCurrentUser } from '@/fetcher';
+import { User } from '@/app/graphql';
 export default async function PrivateHeader() {
   const currentUser = await getCurrentUser();
 
@@ -23,7 +23,7 @@ export default async function PrivateHeader() {
           </Link>
 
           <div className={styles.navigation}>
-            <UserDropDownMenu user={currentUser!} />
+            <UserDropDownMenu user={currentUser as User} />
           </div>
         </div>
       </div>
