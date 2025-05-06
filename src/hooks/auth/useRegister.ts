@@ -1,4 +1,4 @@
-import { CREATE_USER_MUTATION } from '@/app/graphql/auth/mutations';
+import { CreateUserDocument } from '@/app/graphql';
 import { useMutation } from '@apollo/client';
 import { useRouter } from "next/navigation";
 import { useState } from 'react';
@@ -6,8 +6,8 @@ import { useState } from 'react';
 export function useRegister() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [createUserMutation] = useMutation(CREATE_USER_MUTATION);
+  const [error, setError] = useState<string | null | undefined>(null);
+  const [createUserMutation] = useMutation(CreateUserDocument);
 
   const register = async (name: string, email: string, password: string) => {
     setIsLoading(true);
