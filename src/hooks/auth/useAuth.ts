@@ -3,8 +3,7 @@
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { LOGIN_MUTATION, LOGOUT_MUTATION } from "@/app/graphql/auth/mutations";
-import { User } from "@/app/graphql";
+import { LoginDocument, LogoutDocument, User } from "@/app/graphql";
 
 interface UseAuthReturn {
   user: User | null;
@@ -21,8 +20,8 @@ export function useAuth(): UseAuthReturn {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [loginMutation] = useMutation(LOGIN_MUTATION);
-  const [logoutMutation] = useMutation(LOGOUT_MUTATION);
+  const [loginMutation] = useMutation(LoginDocument);
+  const [logoutMutation] = useMutation(LogoutDocument);
   const login = async (email: string, password: string) => {
     setIsLoading(true);
 
@@ -32,7 +31,7 @@ export function useAuth(): UseAuthReturn {
       });
 
       if (data?.login?.user) {
-        setUser(data.login.user);
+        setUser(data.login.user as User);
 
         router.push("/account");
         return { success: true };
