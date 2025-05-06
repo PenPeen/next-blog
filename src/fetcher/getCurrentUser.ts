@@ -23,18 +23,16 @@ export const getCurrentUser = cache(async (request?: NextRequest): Promise<Curre
   return getUserFromCookie(cookieHeader)
 });
 
-const getUserFromCookie = cache(async (cookieHeader: string) => {
+const getUserFromCookie = async (cookieHeader: string) => {
   const { data } = await apolloClient.query({
     query: CurrentUserDocument,
     context: {
       headers: {
         Cookie: cookieHeader,
       },
-      fetchOptions: {
-        next: { revalidate: 1 },
-      },
     },
+    fetchPolicy: 'no-cache',
   });
 
   return data.currentUser
-});
+};
