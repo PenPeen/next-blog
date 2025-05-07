@@ -1,22 +1,13 @@
 import { render, screen } from "@testing-library/react"
 import LogoutButton from "./LogoutButton"
 
-jest.mock('@/hooks/auth/useAuth', () => {
+jest.mock('@/actions/logout', () => {
   return {
-    useAuth: () => ({
-      logout: jest.fn(),
-      isAuthenticated: true,
-      isLoading: false,
-      user: {
-        id: 1,
-        name: 'John Doe',
-      },
-    }),
+    logout: jest.fn(),
   }
 })
 
 describe('LogoutButton', () => {
-
   describe('初期表示', () => {
     it('ログアウトボタンが表示される', () => {
       render(<LogoutButton />)
