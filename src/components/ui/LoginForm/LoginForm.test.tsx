@@ -11,35 +11,11 @@ jest.mock('next/navigation', () => ({
   },
 }));
 
-const mockUseAuth = {
-  login: jest.fn().mockResolvedValue({ success: true }),
-  isLoading: false,
-  user: null,
-  logout: jest.fn(),
-  isAuthenticated: false
-};
-
-jest.mock('@/hooks', () => ({
-  useAuth: () => mockUseAuth
+jest.mock('@/actions/login', () => ({
+  login: jest.fn(),
 }));
 
-jest.mock('react', () => {
-  const originalReact = jest.requireActual('react');
-  return {
-    ...originalReact,
-    useState: jest.fn().mockImplementation(originalReact.useState)
-  };
-});
-
 describe('LoginForm', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    (React.useState as jest.Mock).mockImplementation(
-      jest.requireActual('react').useState
-    );
-    mockUseAuth.isLoading = false;
-  });
-
   describe('初期状態', () => {
     it('フォームの要素が正しく表示されること', () => {
       render(<LoginForm />)
@@ -89,12 +65,27 @@ describe('LoginForm', () => {
       expect(errorElement).toBeVisible();
     })
 
-    it('送信中はボタンのテキストが変更されて非活性になること', async () => {
-      mockUseAuth.isLoading = true;
+    describe('ログイン中', () => {
+      beforeEach(() => {
+        const { login } = jest.requireMock('@/actions/login');
+        (login as jest.Mock).mockReturnValue(new Promise(() => {}))
+      });
 
-      render(<LoginForm />)
-      expect(screen.getByRole('button')).toHaveTextContent('ログイン中...')
-      expect(screen.getByRole('button')).toBeDisabled()
+      it('送信中はボタンのテキストが変更されて非活性になること', async () => {
+        jest.mock('@/actions/login', () => ({
+          login: jest.fn().mockImplementation(() => new Promise(() => {}))
+        }));
+
+        render(<LoginForm />)
+
+        const user = userEvent.setup()
+        await user.type(screen.getByLabelText('メールアドレス'), 'test@example.com')
+        await user.type(screen.getByLabelText('パスワード'), 'password123')
+        await user.click(screen.getByRole('button', { name: 'ログイン' }))
+
+        expect(screen.getByRole('button')).toHaveTextContent('ログイン中...')
+        expect(screen.getByRole('button')).toBeDisabled()
+      })
     })
   })
 })
