@@ -1,11 +1,9 @@
 'use client';
 
-import Button from '../../ui/Button'
-import { useAuth } from '@/hooks/auth/useAuth'
+import Button from '@/components/ui/Button'
+import { logout } from '@/actions/logout';
 
 export default function LogoutButton() {
-  const { logout } = useAuth();
-
   return (
     <Button type="neutral" handleClick={logout}>ログアウト</Button>
   );

@@ -1,14 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useAuth } from "@/hooks";
 import styles from "./LoginForm.module.css";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Link from "next/link";
+import { login } from "@/actions/login";
+
+type LoginState = {
+  success: boolean;
+  error?: string | null;
+  redirectUrl?: string;
+};
 
 const loginSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),
@@ -18,8 +25,9 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { login, isLoading } = useAuth();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -31,16 +39,27 @@ export default function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setErrorMessage(null);
+    setIsLoading(true);
+    setError(null);
 
     try {
-      const result = await login(data.email, data.password);
+      const formData = new FormData();
+      formData.append("email", data.email);
+      formData.append("password", data.password);
 
-      if (!result.success) {
-        setErrorMessage(result.error || "ログインに失敗しました。メールアドレスとパスワードを確認してください。");
+      const result = await login(formData) as LoginState;
+
+      if (result.success) {
+        if (result.redirectUrl) {
+          router.push(result.redirectUrl);
+        }
+      } else {
+        setError(result.error || "ログインに失敗しました");
       }
     } catch {
-      setErrorMessage("ログインに失敗しました。メールアドレスとパスワードを確認してください。");
+      setError("原因不明のエラーが発生しました。再度お試しください。");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -48,10 +67,8 @@ export default function LoginForm() {
     <div className={styles.formContainer}>
       <div className={styles.formWrapper}>
         <Card title="アカウントにログインする">
-          {errorMessage && (
-            <div className={styles.errorAlert}>
-              {errorMessage}
-            </div>
+          {error && (
+            <div className={styles.errorAlert}>{error}</div>
           )}
 
           <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
@@ -85,9 +102,10 @@ export default function LoginForm() {
                   className={`${styles.fieldInput} ${errors.password ? styles.fieldInputError : ""}`}
                   placeholder="例）password123"
                 />
-                <p className={styles.helpText}>6文字以上の文字列</p>
-                {errors.password && (
+                {errors.password ? (
                   <p className={styles.errorMessage}>{errors.password.message}</p>
+                ) : (
+                  <p className={styles.helpText}>6文字以上の文字列</p>
                 )}
               </div>
             </div>

@@ -4,9 +4,9 @@ import React, { useRef, useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import styles from "./UserDropDownMenu.module.css"
-import { useAuth } from "@/hooks"
 import { User } from "@/app/graphql"
 import { usePathname } from "next/navigation"
+import { logout } from "@/actions/logout"
 
 type UserDropDownMenuProps = {
   user: User
@@ -14,7 +14,6 @@ type UserDropDownMenuProps = {
 
 export default function UserDropDownMenu({ user }: UserDropDownMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const { logout } = useAuth();
   const pathname = usePathname();
   const dropdownRef = useRef<HTMLDivElement>(null)
 
@@ -84,7 +83,7 @@ export default function UserDropDownMenu({ user }: UserDropDownMenuProps) {
             }
           </li>
           <li role="menuitem">
-            <button onClick={() => logout()} className={styles.menuItem}>
+            <button onClick={logout} className={styles.menuItem}>
               ログアウト
             </button>
           </li>
