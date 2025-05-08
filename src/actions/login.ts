@@ -3,6 +3,7 @@
 import { apolloClient, LoginDocument } from '@/app/graphql';
 import { cookies } from 'next/headers';
 import { ApolloError } from '@apollo/client';
+import { setFlash } from '@/actions/flash';
 
 type LoginResponse = {
   success: boolean;
@@ -38,6 +39,12 @@ export async function login(formData: FormData): Promise<LoginResponse> {
         secure: true,
         sameSite: 'lax'
       });
+
+      await setFlash({
+        type: 'success',
+        message: 'ログインしました'
+      });
+
       return { success: true, redirectUrl: '/account' };
     } else {
       throw new Error(loginProcessingError);
@@ -50,6 +57,11 @@ export async function login(formData: FormData): Promise<LoginResponse> {
     } else {
       errorMessage = loginProcessingError
     }
+
+    await setFlash({
+      type: 'error',
+      message: errorMessage
+    });
 
     return {
       success: false,
