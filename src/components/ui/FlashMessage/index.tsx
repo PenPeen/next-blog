@@ -1,4 +1,4 @@
-import { getFlash } from '@/actions/getFlash';
+import { getFlash } from '@/actions/flash';
 import FlashMessageClient from './FlashMessageClient';
 
 export default async function FlashMessage() {

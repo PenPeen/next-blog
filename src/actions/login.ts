@@ -3,7 +3,7 @@
 import { apolloClient, LoginDocument } from '@/app/graphql';
 import { cookies } from 'next/headers';
 import { ApolloError } from '@apollo/client';
-import { setFlash } from '@/actions/setFlash';
+import { setFlash } from '@/actions/flash';
 
 type LoginResponse = {
   success: boolean;

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import styles from './styles.module.css';
-import { FlashType } from '@/actions/setFlash';
+import { FlashType } from '@/actions/flash';
 
 type FlashMessageClientProps = {
   type: FlashType;
