@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import './globals.css'
 import { Metadata } from 'next';
 import ApolloProvider from './ApolloProvider';
+import FlashMessage from '@/components/ui/FlashMessage';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +29,7 @@ export default function RootLayout({
     <html lang="ja">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ApolloProvider>
+          <FlashMessage />
           {children}
         </ApolloProvider>
       </body>
