@@ -2,14 +2,8 @@ import { render, screen } from "@testing-library/react"
 import UserDropDownMenu from "."
 import userEvent from "@testing-library/user-event";
 import { usePathname } from "next/navigation";
+import { User } from "@/app/graphql";
 
-const mockUseAuth = {
-  logout: jest.fn(),
-};
-
-jest.mock('@/hooks', () => ({
-  useAuth: () => mockUseAuth
-}));
 
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn().mockReturnValue("/"),
@@ -24,7 +18,7 @@ describe("UserDropDownMenu", () => {
 
   describe("初期レンダリング", () => {
     it("アイコンのみが表示されている", () => {
-      render(<UserDropDownMenu user={user} />)
+      render(<UserDropDownMenu user={user as User} />)
 
       const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
       expect(menuButton).toBeInTheDocument();
@@ -36,7 +30,7 @@ describe("UserDropDownMenu", () => {
 
   describe("メニューボタンをクリックした時", () => {
     it("メニューが表示される", async () => {
-      render(<UserDropDownMenu user={user} />)
+      render(<UserDropDownMenu user={user as User} />)
 
       const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
       const u = userEvent.setup();
@@ -55,7 +49,7 @@ describe("UserDropDownMenu", () => {
       })
 
       it("TOPページへのリンクが表示されている", async () => {
-        render(<UserDropDownMenu user={user} />)
+        render(<UserDropDownMenu user={user as User} />)
 
         const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
         const u = userEvent.setup();
@@ -71,7 +65,7 @@ describe("UserDropDownMenu", () => {
         render(
           <>
             <div data-testid="outside-element">Outside Element</div>
-            <UserDropDownMenu user={user} />
+            <UserDropDownMenu user={user as User} />
           </>
         )
 
