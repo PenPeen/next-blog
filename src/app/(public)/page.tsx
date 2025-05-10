@@ -31,7 +31,7 @@ export default async function Home({ searchParams }: PageProps) {
           <h1 className={styles.searchResults}>「{titleQuery}」の検索結果</h1>
         )}
 
-        {posts === null && titleQuery && (
+        {posts.length === 0 && titleQuery && (
           <p className={styles.noResults}>検索結果が見つかりませんでした。別のキーワードをお試しください。</p>
         )}
 
