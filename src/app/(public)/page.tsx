@@ -3,6 +3,7 @@ import { Pagination } from "@/components/ui/Pagination";
 import { getPosts, searchPosts } from "@/fetcher";
 import Posts from "@/components/ui/Posts";
 import { Post } from '../graphql';
+import FlashMessage from '@/components/ui/FlashMessage';
 
 type PageProps = {
   searchParams: Promise<{
@@ -23,27 +24,30 @@ export default async function Home({ searchParams }: PageProps) {
   const { posts, pagination } = await data.json();
 
   return (
-    <div>
-      {titleQuery && (
-        <h1 className={styles.searchResults}>「{titleQuery}」の検索結果</h1>
-      )}
+    <>
+      <FlashMessage />
+      <div>
+        {titleQuery && (
+          <h1 className={styles.searchResults}>「{titleQuery}」の検索結果</h1>
+        )}
 
-      {posts === null && titleQuery && (
-        <p className={styles.noResults}>検索結果が見つかりませんでした。別のキーワードをお試しください。</p>
-      )}
+        {posts === null && titleQuery && (
+          <p className={styles.noResults}>検索結果が見つかりませんでした。別のキーワードをお試しください。</p>
+        )}
 
-      {posts && (
-        <Posts posts={posts as Post[]} />
-      )}
+        {posts && (
+          <Posts posts={posts as Post[]} />
+        )}
 
-      {pagination && (
-        <Pagination
-          totalCount={pagination.totalCount ?? 0}
-          limitValue={pagination.limitValue ?? 0}
-          totalPages={pagination.totalPages ?? 0}
-          currentPage={pagination.currentPage ?? 0}
-        />
-      )}
-    </div>
+        {pagination && (
+          <Pagination
+            totalCount={pagination.totalCount ?? 0}
+            limitValue={pagination.limitValue ?? 0}
+            totalPages={pagination.totalPages ?? 0}
+            currentPage={pagination.currentPage ?? 0}
+          />
+        )}
+      </div>
+    </>
   );
 }

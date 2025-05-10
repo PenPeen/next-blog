@@ -101,6 +101,7 @@
   background-color: #fee2e2;
   color: #b91c1c;
   font-size: 0.875rem;
+  white-space: pre-wrap;
 }
 
 .submitButton {

@@ -1,13 +1,15 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
+import { register as registerAction } from "@/actions/register";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import styles from "./RegisterForm.module.css";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Link from "next/link";
-import { useRegister } from "@/hooks/auth/useRegister";
 
 const registerSchema = z.object({
   name: z.string().min(1, "名前を入力してください"),
@@ -22,7 +24,9 @@ const registerSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function RegisterForm() {
-  const  { register: registerUser, isLoading, error } = useRegister();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -34,7 +38,22 @@ export default function RegisterForm() {
   });
 
   const onSubmit = async (data: RegisterFormData) => {
-    await registerUser(data.name, data.email, data.password);
+    setIsLoading(true)
+    setError(null);
+
+    try {
+      const result = await registerAction(data);
+
+      if (result.success) {
+        if (result.redirectUrl) {
+          router.push(result.redirectUrl);
+        }
+      } else {
+        setError(result.error || "ユーザー登録に失敗しました");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
