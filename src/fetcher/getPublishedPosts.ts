@@ -1,11 +1,11 @@
 import { apolloClient } from "@/app/graphql";
 import { cache } from "react";
-import { gql } from '@apollo/client';
+import { gql } from "@apollo/client";
 import { POSTS_FRAGMENT } from "@/components/ui/Posts";
 
 export const GET_POSTS_QUERY = gql`
   ${POSTS_FRAGMENT}
-  query GetPosts($page: Int, $perPage: Int) {
+  query FetchPublishedPosts($page: Int, $perPage: Int) {
     posts(page: $page, perPage: $perPage) {
       posts {
         ...postsTopFragment
@@ -23,7 +23,7 @@ export const GET_POSTS_QUERY = gql`
 export const getPosts = cache(async (page = 1, perPage = 15) => {
   const { data } = await apolloClient.query({
     query: GET_POSTS_QUERY,
-    variables: { page, perPage }
+    variables: { page, perPage },
   });
   return { json: () => Promise.resolve(data.posts) };
 });

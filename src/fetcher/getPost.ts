@@ -5,7 +5,7 @@ import { cache } from "react";
 
 export const GET_POST_QUERY = gql`
   ${POST_FRAGMENT}
-  query GetPost($id: ID!) {
+  query FetchPostWithFragment($id: ID!) {
     post(id: $id) {
       ...postFragment
     }
@@ -15,7 +15,7 @@ export const GET_POST_QUERY = gql`
 export const getPost = cache(async (id: string) => {
   const { data } = await apolloClient.query({
     query: GET_POST_QUERY,
-    variables: { id }
+    variables: { id },
   });
   return { json: () => Promise.resolve(data.post) };
 });

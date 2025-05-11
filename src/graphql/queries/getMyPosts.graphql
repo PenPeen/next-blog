@@ -1,0 +1,16 @@
+# import の部分はコードジェネレータに必要です
+# import "../../components/ui/Posts/index.tsx"
+
+query GetMyPosts($page: Int, $perPage: Int) {
+  myPosts(page: $page, perPage: $perPage) {
+    posts {
+      ...postsTopFragment
+    }
+    pagination {
+      totalCount
+      limitValue
+      totalPages
+      currentPage
+    }
+  }
+}
