@@ -1,5 +1,8 @@
-schema: http://${NEXT_PUBLIC_RAILS_API_DOMAIN}/graphql
-documents: './src/**/*.ts'
+schema: "../rails_blog/schema.json"
+documents:
+  - "./src/graphql/queries/*.graphql"
+  - "./src/graphql/mutations/*.graphql"
+  - "./src/components/**/*.tsx"
 generates:
   ./src/app/graphql/generated.ts:
     plugins:
