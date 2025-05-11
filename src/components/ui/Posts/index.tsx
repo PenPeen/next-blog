@@ -2,6 +2,17 @@ import { Post } from "@/app/graphql";
 import Link from "next/link";
 import Card from "@/components/ui/Card";
 import styles from './Posts.module.css';
+import { gql } from '@apollo/client';
+
+export const POSTS_FRAGMENT = gql`
+  fragment postsTopFragment on Post {
+    id
+    title
+    content
+    thumbnailUrl
+  }
+`;
+
 type PostsProps = {
   posts: Post[] | null | undefined;
 }
