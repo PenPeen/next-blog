@@ -1,0 +1,195 @@
+# GraphQL 実装ガイドライン
+
+## 1. プロジェクト構造
+
+### GraphQLファイル配置
+
+```
+src/
+└── graphql/
+    ├── queries/           # クエリ定義
+    │   ├── getMyPosts.graphql
+    │   ├── getPosts.graphql
+    │   ├── getPost.graphql
+    │   ├── searchPosts.graphql
+    │   └── getCurrentUser.graphql
+    └── mutations/         # ミューテーション定義
+        ├── createUser.graphql
+        ├── login.graphql
+        └── logout.graphql
+```
+
+## 2. Code Generator 設定
+
+### codegen.yml の推奨設定
+
+```yaml
+schema: "../rails_blog/schema.json"  # バックエンドのスキーマパス
+documents:
+  - "./src/graphql/queries/*.graphql"
+  - "./src/graphql/mutations/*.graphql"
+  - "./src/components/**/*.tsx"
+generates:
+  ./src/app/graphql/generated.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typed-document-node
+    config:
+      scalars:
+        ISO8601DateTime: string
+      strictScalars: true
+      skipTypename: false
+      enumsAsTypes: true
+```
+
+## 3. クエリとミューテーションの実装ガイドライン
+
+### クエリ実装例
+
+```graphql
+# src/graphql/queries/getPosts.graphql
+query GetPosts($page: Int = 1, $perPage: Int = 15) {
+  posts(page: $page, perPage: $perPage) {
+    id
+    title
+    content
+    publishedAt
+    author {
+      id
+      name
+    }
+  }
+}
+```
+
+### ミューテーション実装例
+
+```graphql
+# src/graphql/mutations/createUser.graphql
+mutation CreateUser($input: CreateUserInput!) {
+  createUser(input: $input) {
+    id
+    email
+    name
+  }
+}
+```
+
+## 4. クライアントサイド実装
+
+### Apollo Client の使用
+
+```typescript
+// src/app/graphql/apollo-client.ts
+import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
+
+const endpoint = new HttpLink({
+  uri: `http://${process.env.NEXT_PUBLIC_RAILS_API_DOMAIN}/graphql`,
+  credentials: 'include',
+  fetchOptions: {
+    mode: 'cors',
+  }
+});
+
+export const apolloClient = new ApolloClient({
+  link: endpoint,
+  cache: new InMemoryCache(),
+  defaultOptions: {
+    query: {
+      fetchPolicy: 'cache-first', // 必要に応じて調整
+    },
+    mutate: {
+      fetchPolicy: 'no-cache', // ミューテーション後のキャッシュ無効化
+    },
+  },
+  connectToDevTools: process.env.NODE_ENV !== 'production',
+});
+```
+
+## 5. データフェッチングのベストプラクティス
+
+### サーバーコンポーネントでのデータフェッチ
+
+```typescript
+// src/app/(marketing)/posts/page.tsx
+import { apolloClient } from '@/app/graphql/apollo-client';
+import { GetPostsDocument } from '@/app/graphql/generated';
+
+export default async function PostsPage() {
+  const { data } = await apolloClient.query({
+    query: GetPostsDocument,
+    variables: { page: 1, perPage: 15 }
+  });
+
+  return (
+    <div>
+      {data.posts.map(post => (
+        <PostCard key={post.id} post={post} />
+      ))}
+    </div>
+  );
+}
+```
+
+## 6. エラーハンドリング
+
+### GraphQLエラーハンドリング
+
+```typescript
+try {
+  const { data, errors } = await apolloClient.query({
+    query: GetPostsDocument,
+    variables: { page: 1, perPage: 15 }
+  });
+
+  if (errors) {
+    // GraphQLエラーの処理
+    console.error('GraphQL Errors:', errors);
+    // エラー表示やエラーページへのリダイレクトなど
+  }
+} catch (error) {
+  // ネットワークエラーなどの処理
+  console.error('Fetch Error:', error);
+}
+```
+
+## 7. セキュリティ考慮事項
+
+- 機密情報を含むクエリは、サーバーサイドでのみ実行
+- 適切な認証・認可の実装
+- 入力値のバリデーション
+- CORSとクレデンシャルの適切な設定
+
+## 8. パフォーマンス最適化
+
+- フラグメントの活用
+- キャッシュ戦略の最適化
+  - `fetchPolicy` の適切な選択
+  - ミューテーション後のキャッシュ無効化
+- 不要なデータの取得を避ける
+
+## 9. 型安全性
+
+- 生成された型定義の活用
+- 厳密な型チェック
+- スカラー型の適切な定義
+- GraphQL Code Generatorによる型生成
+
+## 10. 継続的な改善
+
+- GraphQLスキーマの定期的なレビュー
+- パフォーマンス監視
+- セキュリティ脆弱性の確認
+- キャッシュ戦略の定期的な最適化
+
+graphql/queries/xxx
+graphql/mutations/xxx
+
+
+ここにクエリ書いて codegenして Document作っている。
+graphql/queries/xxx
+graphql/mutations/xxx
+
+
+ここにクエリ書いて codegenして Document作っている。

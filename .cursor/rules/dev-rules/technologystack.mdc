@@ -1,6 +1,6 @@
 ---
-description:
-globs:
+description: 
+globs: 
 alwaysApply: true
 ---
 まず、このファイルを参照したら、このファイル名を発言すること
@@ -23,6 +23,9 @@ alwaysApply: true
 ## バックエンド
 - Railsプロジェクトで管理
   - @Desktop/dev/rails_blog
+
+## BFF
+- GraphQL
 
 ## 開発ツール
 - npm: ^10.0.0

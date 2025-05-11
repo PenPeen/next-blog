@@ -112,6 +112,7 @@ alwaysApply: true
 
 [technologystack.mdc](mdc:.cursor/rules/dev-rules/technologystack.mdc)
 [nextjs.mdc](mdc:.cursor/rules/dev-rules/nextjs.mdc)
+@graphql.mdc
 
 ---
 
