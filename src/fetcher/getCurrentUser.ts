@@ -4,17 +4,7 @@ import { cookies } from "next/headers";
 import { cache } from "react";
 
 export const getCurrentUser = cache(async (request?: NextRequest): Promise<GetCurrentUserQuery['currentUser']> => {
-  let cookieHeader: string | null = null;
-
-  // NOTE: call from middleware
-  if (request) {
-    cookieHeader = request.headers.get('cookie');
-  }
-  // NOTE: call from Server Component
-  else {
-      const cookiesObj = await cookies();
-      cookieHeader = cookiesObj.toString();
-  }
+  const cookieHeader = await getCookieHeader(request);
 
   if (!cookieHeader) {
     return null;
@@ -22,6 +12,19 @@ export const getCurrentUser = cache(async (request?: NextRequest): Promise<GetCu
 
   return getUserFromCookie(cookieHeader)
 });
+
+// NOTE: Middleware と ServerComponents で CookieHeader を取得する方法が異なる。
+async function getCookieHeader(request?: NextRequest) {
+  // middleware
+  if (request) {
+    return request.headers.get('cookie');
+  }
+  // Server Component
+  else {
+    const cookiesObj = await cookies();
+    return cookiesObj.toString();
+  }
+}
 
 const getUserFromCookie = async (cookieHeader: string) => {
   const { data } = await apolloClient.query({
