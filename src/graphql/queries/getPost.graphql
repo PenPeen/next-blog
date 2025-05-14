@@ -3,9 +3,7 @@
 query GetPost($id: ID!) {
   published {
     post(id: $id) {
-      id
-      title
-      content
+      ...postFragment
     }
   }
 }
