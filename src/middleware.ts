@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { getCurrentUser } from './fetcher/getCurrentUser';
+import { getCurrentUser } from '@/fetcher/getCurrentUser';
+import { setFlash } from '@/actions/flash';
 
 const protectedRoutes = ['/account'];
 
@@ -16,6 +17,11 @@ export async function middleware(request: NextRequest) {
     const user = await getCurrentUser(request);
 
     if (!user) {
+      await setFlash({
+        message: `ページにアクセスするにはログインが必要です。`,
+        type: "error"
+      });
+
       return NextResponse.redirect(new URL('/', request.url));
     }
   }
