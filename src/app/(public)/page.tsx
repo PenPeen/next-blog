@@ -2,7 +2,6 @@ import styles from './page.module.css';
 import { Pagination } from "@/components/ui/Pagination";
 import { getPosts, searchPosts } from "@/fetcher";
 import Posts from "@/components/ui/Posts";
-import { Post } from '../graphql';
 import FlashMessage from '@/components/ui/FlashMessage';
 
 type PageProps = {
@@ -31,12 +30,12 @@ export default async function Home({ searchParams }: PageProps) {
           <h1 className={styles.searchResults}>「{titleQuery}」の検索結果</h1>
         )}
 
-        {posts.length === 0 && titleQuery && (
+        {posts && posts.length === 0 && titleQuery && (
           <p className={styles.noResults}>検索結果が見つかりませんでした。別のキーワードをお試しください。</p>
         )}
 
         {posts && (
-          <Posts posts={posts as Post[]} />
+          <Posts posts={posts} />
         )}
 
         {pagination && (

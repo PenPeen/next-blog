@@ -1,7 +1,11 @@
 # import "../../components/ui/PostContent/index.tsx"
 
 query GetPost($id: ID!) {
-  post(id: $id) {
-    ...postFragment
+  published {
+    post(id: $id) {
+      id
+      title
+      content
+    }
   }
 }

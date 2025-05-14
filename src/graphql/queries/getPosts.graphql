@@ -1,15 +1,17 @@
 # import "../../components/ui/Posts/index.tsx"
 
 query GetPosts($page: Int, $perPage: Int) {
-  posts(page: $page, perPage: $perPage) {
-    posts {
-      ...postsTopFragment
-    }
-    pagination {
-      totalCount
-      limitValue
-      totalPages
-      currentPage
+  published {
+    posts(page: $page, perPage: $perPage) {
+      posts {
+        ...postsTopFragment
+      }
+      pagination {
+        totalCount
+        limitValue
+        totalPages
+        currentPage
+      }
     }
   }
 }
