@@ -1,5 +1,5 @@
 import React from 'react'
-import { Post } from '@/app/graphql'
+import { PostFragmentFragment } from '@/app/graphql'
 import styles from './PostContent.module.css'
 import BackButton from '@/components/ui/BackButton'
 import MainTitle from '@/components/ui/MainTitle'
@@ -8,7 +8,7 @@ import Image from 'next/image'
 import { gql } from '@apollo/client'
 
 type PostContentProps = {
-  post: Post
+  post: PostFragmentFragment
 }
 
 export const POST_FRAGMENT = gql`

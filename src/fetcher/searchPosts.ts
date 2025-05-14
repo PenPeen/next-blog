@@ -1,4 +1,4 @@
-import { apolloClient, SearchPostsDocument } from "@/app/graphql";
+import { apolloClient, SearchPostsDocument, SearchPostsQuery } from "@/app/graphql";
 import { cache } from "react";
 
 export const searchPosts = cache(
@@ -7,6 +7,6 @@ export const searchPosts = cache(
       query: SearchPostsDocument,
       variables: { title, page, perPage },
     });
-    return { json: () => Promise.resolve(data.searchPosts) };
+    return { json: () => Promise.resolve<SearchPostsQuery['published']['searchPosts']>(data.published.searchPosts) };
   }
 );

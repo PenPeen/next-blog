@@ -1,4 +1,4 @@
-import { Post } from "@/app/graphql";
+import { PostsTopFragmentFragment } from "@/app/graphql";
 import Link from "next/link";
 import Card from "@/components/ui/Card";
 import styles from './Posts.module.css';
@@ -14,13 +14,13 @@ export const POSTS_FRAGMENT = gql`
 `;
 
 type PostsProps = {
-  posts: Post[] | null | undefined;
+  posts: PostsTopFragmentFragment[] | null | undefined;
 }
 
 export default function Posts({ posts }: PostsProps) {
   return (
     <div className={styles.cardContainer}>
-      {posts?.map((post: Post) => {
+      {posts?.map((post) => {
         return(
           <Link href={`/posts/${post.id}`} key={post.id}>
             <Card
