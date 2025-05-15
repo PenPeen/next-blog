@@ -38,8 +38,8 @@ describe('RegisterForm', () => {
 
       expect(screen.getByLabelText(/名前/)).toBeInTheDocument()
       expect(screen.getByLabelText(/メールアドレス/)).toBeInTheDocument()
-      expect(document.getElementById('password')).toBeInTheDocument()
-      expect(document.getElementById('passwordConfirmation')).toBeInTheDocument()
+      expect(screen.getByLabelText(/^パスワード\*/)).toBeInTheDocument()
+      expect(screen.getByLabelText(/パスワード（確認）/)).toBeInTheDocument()
       expect(screen.getByRole('button', { name: '登録する' })).toBeInTheDocument()
     })
 
@@ -48,8 +48,8 @@ describe('RegisterForm', () => {
 
       expect(screen.getByLabelText(/名前/)).toHaveValue('')
       expect(screen.getByLabelText(/メールアドレス/)).toHaveValue('')
-      expect(document.getElementById('password')).toHaveValue('')
-      expect(document.getElementById('passwordConfirmation')).toHaveValue('')
+      expect(screen.getByLabelText(/^パスワード\*/)).toHaveValue('')
+      expect(screen.getByLabelText(/パスワード（確認）/)).toHaveValue('')
     })
 
     it('エラーメッセージが表示されていないこと', () => {
@@ -89,7 +89,7 @@ describe('RegisterForm', () => {
       render(<RegisterForm />)
       const user = userEvent.setup()
 
-      const passwordInput = document.getElementById('password') as HTMLInputElement
+      const passwordInput = screen.getByLabelText(/^パスワード\*/)
       await user.type(passwordInput, '12345')
       await user.tab()
 
@@ -100,10 +100,10 @@ describe('RegisterForm', () => {
       render(<RegisterForm />)
       const user = userEvent.setup()
 
-      const passwordInput = document.getElementById('password') as HTMLInputElement
+      const passwordInput = screen.getByLabelText(/^パスワード\*/)
       await user.type(passwordInput, 'password123')
 
-      const confirmInput = document.getElementById('passwordConfirmation') as HTMLInputElement
+      const confirmInput = screen.getByLabelText(/パスワード（確認）/)
       await user.type(confirmInput, 'different123')
       await user.tab()
 
@@ -118,17 +118,18 @@ describe('RegisterForm', () => {
 
       await user.type(screen.getByLabelText(/名前/), 'テスト太郎')
       await user.type(screen.getByLabelText(/メールアドレス/), 'test@example.com')
-      await user.type(document.getElementById('password') as HTMLInputElement, 'password123')
-      await user.type(document.getElementById('passwordConfirmation') as HTMLInputElement, 'password123')
-      await user.click(screen.getByLabelText(/利用規約に同意する/))
+      await user.type(screen.getByLabelText(/^パスワード\*/), 'password123')
+      await user.type(screen.getByLabelText(/パスワード（確認）/), 'password123')
 
+      await user.click(screen.getByLabelText(/利用規約に同意する/))
       await user.click(screen.getByRole('button', { name: '登録する' }))
 
       expect(mockRegister).toHaveBeenCalledWith({
         name: 'テスト太郎',
         email: 'test@example.com',
         password: 'password123',
-        passwordConfirmation: 'password123'
+        passwordConfirmation: 'password123',
+        agreement: true
       })
     })
 
@@ -140,8 +141,8 @@ describe('RegisterForm', () => {
 
       await user.type(screen.getByLabelText(/名前/), 'テスト太郎')
       await user.type(screen.getByLabelText(/メールアドレス/), 'test@example.com')
-      await user.type(document.getElementById('password') as HTMLInputElement, 'password123')
-      await user.type(document.getElementById('passwordConfirmation') as HTMLInputElement, 'password123')
+      await user.type(screen.getByLabelText(/^パスワード\*/), 'password123')
+      await user.type(screen.getByLabelText(/パスワード（確認）/), 'password123')
       await user.click(screen.getByLabelText(/利用規約に同意する/))
 
       await user.click(screen.getByRole('button', { name: '登録する' }))
@@ -161,8 +162,8 @@ describe('RegisterForm', () => {
 
       await user.type(screen.getByLabelText(/名前/), 'テスト太郎')
       await user.type(screen.getByLabelText(/メールアドレス/), 'test@example.com')
-      await user.type(document.getElementById('password') as HTMLInputElement, 'password123')
-      await user.type(document.getElementById('passwordConfirmation') as HTMLInputElement, 'password123')
+      await user.type(screen.getByLabelText(/^パスワード\*/), 'password123')
+      await user.type(screen.getByLabelText(/パスワード（確認）/), 'password123')
       await user.click(screen.getByLabelText(/利用規約に同意する/))
 
       await user.click(screen.getByRole('button', { name: '登録する' }))
