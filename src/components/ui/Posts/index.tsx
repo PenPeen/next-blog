@@ -1,11 +1,11 @@
-import { PostsTopFragmentFragment } from "@/app/graphql";
+import { PostCardFragment } from "@/app/graphql";
 import Link from "next/link";
 import Card from "@/components/ui/Card";
 import styles from './Posts.module.css';
 import { gql } from '@apollo/client';
 
 export const POSTS_FRAGMENT = gql`
-  fragment postsTopFragment on Post {
+  fragment PostCard on Post {
     id
     title
     content
@@ -14,7 +14,7 @@ export const POSTS_FRAGMENT = gql`
 `;
 
 type PostsProps = {
-  posts: PostsTopFragmentFragment[] | null | undefined;
+  posts: PostCardFragment[] | null | undefined;
 }
 
 export default function Posts({ posts }: PostsProps) {
