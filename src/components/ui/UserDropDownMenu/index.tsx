@@ -83,6 +83,11 @@ export default function UserDropDownMenu({ user }: UserDropDownMenuProps) {
             }
           </li>
           <li role="menuitem">
+            <Link href="/account/profile" className={styles.menuItem}>
+              プロフィール
+            </Link>
+          </li>
+          <li role="menuitem">
             <button onClick={logout} className={styles.menuItem}>
               ログアウト
             </button>
