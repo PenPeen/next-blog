@@ -5,7 +5,7 @@ import { Post } from '@/app/graphql';
 import { gql } from '@apollo/client';
 
 export const MY_POST_FRAGMENT = gql`
-  fragment myPostsFragment on Post {
+  fragment MyPost on Post {
     id
     title
     published

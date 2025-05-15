@@ -6,7 +6,7 @@ export const GET_POST = gql`
     ${POST_FRAGMENT}
     published {
       post(id: $id) {
-        ...postFragment
+        ...Post
       }
     }
   }

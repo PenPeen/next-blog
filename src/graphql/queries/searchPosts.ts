@@ -7,7 +7,7 @@ export const SEARCH_POSTS = gql`
     published {
       searchPosts(title: $title, page: $page, perPage: $perPage) {
         posts {
-          ...postsFragment
+          ...PostCard
         }
         pagination {
           totalCount

@@ -6,7 +6,7 @@ export const GET_MY_POSTS = gql`
     ${MY_POST_FRAGMENT}
     myPosts(page: $page, perPage: $perPage) {
       posts {
-        ...myPostFragment
+        ...MyPost
       }
       pagination {
         totalCount

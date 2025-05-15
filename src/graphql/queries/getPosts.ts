@@ -7,7 +7,7 @@ export const GET_POSTS = gql`
     published {
       posts(page: $page, perPage: $perPage) {
         posts {
-          ...postsFragment
+          ...PostCard
         }
         pagination {
           totalCount
