@@ -1,7 +1,0 @@
-query GetCurrentUser {
-  currentUser {
-    id
-    name
-    email
-  }
-}

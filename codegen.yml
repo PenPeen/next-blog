@@ -1,7 +1,7 @@
 schema: "../rails_blog/schema.json"
 documents:
-  - "./src/graphql/queries/*.graphql"
-  - "./src/graphql/mutations/*.graphql"
+  - "./src/graphql/queries/*.ts"
+  - "./src/graphql/mutations/*.ts"
   - "./src/components/**/*.tsx"
 generates:
   ./src/app/graphql/generated.ts:
