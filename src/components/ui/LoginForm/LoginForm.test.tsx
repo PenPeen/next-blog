@@ -24,7 +24,7 @@ describe('LoginForm', () => {
     it('フォームの要素が正しく表示されること', () => {
       render(<LoginForm />)
 
-      expect(screen.getByLabelText(/メールアドレス/)).toBeInTheDocument()
+      expect(screen.getByRole('textbox', { name: /メールアドレス/ })).toBeInTheDocument()
       expect(screen.getByLabelText(/パスワード/)).toBeInTheDocument()
       expect(screen.getByRole('button', { name: 'ログイン' })).toBeInTheDocument()
     })
@@ -32,7 +32,7 @@ describe('LoginForm', () => {
     it('フォームの初期値が空であること', () => {
       render(<LoginForm />)
 
-      expect(screen.getByLabelText(/メールアドレス/)).toHaveValue('')
+      expect(screen.getByRole('textbox', { name: /メールアドレス/ })).toHaveValue('')
       expect(screen.getByLabelText(/パスワード/)).toHaveValue('')
     })
 
@@ -48,7 +48,7 @@ describe('LoginForm', () => {
       render(<LoginForm />)
       const user = userEvent.setup()
 
-      const emailInput = screen.getByLabelText(/メールアドレス/)
+      const emailInput = screen.getByRole('textbox', { name: /メールアドレス/ })
       await user.type(emailInput, 'invalid-email')
       await user.tab()
 
@@ -59,7 +59,7 @@ describe('LoginForm', () => {
       render(<LoginForm />)
       const user = userEvent.setup()
 
-      const passwordInput = screen.getByLabelText(/パスワード/)
+      const passwordInput = screen.getByLabelText(/^パスワード\*/)
       await user.type(passwordInput, '12345')
       await user.tab()
 
@@ -73,8 +73,8 @@ describe('LoginForm', () => {
         render(<LoginForm />)
 
         const user = userEvent.setup()
-        await user.type(screen.getByLabelText(/メールアドレス/), 'test@example.com')
-        await user.type(screen.getByLabelText(/パスワード/), 'password123')
+        await user.type(screen.getByRole('textbox', { name: /メールアドレス/ }), 'test@example.com')
+        await user.type(screen.getByLabelText(/^パスワード\*/), 'password123')
         await user.click(screen.getByRole('button', { name: 'ログイン' }))
 
         expect(screen.getByRole('button')).toHaveTextContent('ログイン中...')
@@ -99,8 +99,8 @@ describe('LoginForm', () => {
       render(<LoginForm />)
       const user = userEvent.setup()
 
-      await user.type(screen.getByLabelText(/メールアドレス/), 'test@example.com')
-      await user.type(screen.getByLabelText(/パスワード/), 'password123')
+      await user.type(screen.getByRole('textbox', { name: /メールアドレス/ }), 'test@example.com')
+      await user.type(screen.getByLabelText(/^パスワード\*/), 'password123')
       await user.click(screen.getByRole('button', { name: 'ログイン' }))
 
       expect(pushMock).toHaveBeenCalledWith('/dashboard')
@@ -115,8 +115,8 @@ describe('LoginForm', () => {
       render(<LoginForm />)
       const user = userEvent.setup()
 
-      await user.type(screen.getByLabelText(/メールアドレス/), 'test@example.com')
-      await user.type(screen.getByLabelText(/パスワード/), 'password123')
+      await user.type(screen.getByRole('textbox', { name: /メールアドレス/ }), 'test@example.com')
+      await user.type(screen.getByLabelText(/^パスワード\*/), 'password123')
       await user.click(screen.getByRole('button', { name: 'ログイン' }))
 
       expect(await screen.findByText('メールアドレスまたはパスワードが間違っています')).toBeInTheDocument()
@@ -128,8 +128,8 @@ describe('LoginForm', () => {
       render(<LoginForm />)
       const user = userEvent.setup()
 
-      await user.type(screen.getByLabelText(/メールアドレス/), 'test@example.com')
-      await user.type(screen.getByLabelText(/パスワード/), 'password123')
+      await user.type(screen.getByRole('textbox', { name: /メールアドレス/ }), 'test@example.com')
+      await user.type(screen.getByLabelText(/^パスワード\*/), 'password123')
       await user.click(screen.getByRole('button', { name: 'ログイン' }))
 
       expect(await screen.findByText('原因不明のエラーが発生しました。再度お試しください。')).toBeInTheDocument()
