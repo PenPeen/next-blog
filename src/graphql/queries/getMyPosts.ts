@@ -1,11 +1,12 @@
+import { MY_POST_FRAGMENT } from '@/components/ui/MyPostItem';
 import { gql } from '@apollo/client';
-import '@/components/ui/Posts/index';
 
 export const GET_MY_POSTS = gql`
   query GetMyPosts($page: Int, $perPage: Int) {
+    ${MY_POST_FRAGMENT}
     myPosts(page: $page, perPage: $perPage) {
       posts {
-        ...postsTopFragment
+        ...myPostFragment
       }
       pagination {
         totalCount
