@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { register as registerAction } from "@/actions/register";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,6 +10,8 @@ import styles from "./RegisterForm.module.css";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Link from "next/link";
+import FormInput from "@/components/ui/FormInput";
+import FormCheckBox from "@/components/ui/FormCheckBox";
 
 const registerSchema = z.object({
   name: z.string().min(1, "名前を入力してください"),
@@ -28,11 +30,7 @@ export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormData>({
+  const methods = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     mode: "onBlur"
   });
@@ -66,95 +64,70 @@ export default function RegisterForm() {
             </div>
           )}
 
-          <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
-            <div className={styles.formFields}>
-              <div className={styles.formField}>
-                <label htmlFor="name" className={styles.fieldLabel}>
-                  名前
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  autoComplete="name"
-                  {...register("name")}
-                  className={`${styles.fieldInput} ${errors.name ? styles.fieldInputError : ""}`}
+          <FormProvider {...methods}>
+            <form className={styles.form} onSubmit={methods.handleSubmit(onSubmit)}>
+              <div className={styles.formFields}>
+                <FormInput
+                  name="name"
+                  label="名前"
                   placeholder="例）山田太郎"
+                  required
+                  autoComplete="name"
                 />
-                {errors.name && (
-                  <p className={styles.errorMessage}>{errors.name.message}</p>
-                )}
-              </div>
 
-              <div className={styles.formField}>
-                <label htmlFor="email" className={styles.fieldLabel}>
-                  メールアドレス
-                </label>
-                <input
-                  id="email"
+                <FormInput
+                  name="email"
+                  label="メールアドレス"
                   type="email"
-                  autoComplete="email"
-                  {...register("email")}
-                  className={`${styles.fieldInput} ${errors.email ? styles.fieldInputError : ""}`}
                   placeholder="例）example@example.com"
+                  required
+                  autoComplete="email"
                 />
-                {errors.email && (
-                  <p className={styles.errorMessage}>{errors.email.message}</p>
-                )}
-              </div>
 
-              <div className={styles.formField}>
-                <label htmlFor="password" className={styles.fieldLabel}>
-                  パスワード
-                </label>
-                <input
-                  id="password"
+                <FormInput
+                  name="password"
+                  label="パスワード"
                   type="password"
-                  autoComplete="new-password"
-                  {...register("password")}
-                  className={`${styles.fieldInput} ${errors.password ? styles.fieldInputError : ""}`}
                   placeholder="例）password123"
+                  required
+                  helpText="6文字以上の文字列"
+                  autoComplete="new-password"
                 />
-                <p className={styles.helpText}>6文字以上の文字列</p>
-                {errors.password && (
-                  <p className={styles.errorMessage}>{errors.password.message}</p>
-                )}
-              </div>
 
-              <div className={styles.formField}>
-                <label htmlFor="passwordConfirmation" className={styles.fieldLabel}>
-                  パスワード（確認）
-                </label>
-                <input
-                  id="passwordConfirmation"
+                <FormInput
+                  name="passwordConfirmation"
+                  label="パスワード（確認）"
                   type="password"
-                  autoComplete="new-password"
-                  {...register("passwordConfirmation")}
-                  className={`${styles.fieldInput} ${errors.passwordConfirmation ? styles.fieldInputError : ""}`}
                   placeholder="例）password123"
+                  required
+                  autoComplete="new-password"
                 />
-                {errors.passwordConfirmation && (
-                  <p className={styles.errorMessage}>{errors.passwordConfirmation.message}</p>
-                )}
               </div>
-            </div>
 
-            <div>
-              <Button
-                type="primary"
-                size="large"
-                buttonType="submit"
-                isSolid
-                isFull
-                isDisabled={isLoading}
-              >
-                {isLoading ? "登録中..." : "登録する"}
-              </Button>
-            </div>
+              <FormCheckBox
+                name="agreement"
+                label="利用規約に同意する"
+                required
+              />
 
-            <div className={styles.registerLink}>
-              <p>アカウントをお持ちの方は <Link href="/signin">こちらからログイン</Link></p>
-            </div>
-          </form>
+              <div>
+                <Button
+                  type="primary"
+                  size="large"
+                  buttonType="submit"
+                  isSolid
+                  isFull
+                  isDisabled={isLoading}
+                >
+                  {isLoading ? "登録中..." : "登録する"}
+                </Button>
+              </div>
+
+              <div className={styles.registerLink}>
+                <p>アカウントをお持ちの方は <Link href="/signin">こちらからログイン</Link></p>
+              </div>
+            </form>
+          </FormProvider>
         </Card>
       </div>
     </div>

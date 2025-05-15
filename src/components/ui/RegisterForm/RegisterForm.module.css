@@ -46,54 +46,6 @@
   flex-direction: column;
 }
 
-.formField {
-  margin-bottom: 1rem;
-}
-
-.fieldLabel {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-bottom: 0.25rem;
-}
-
-.fieldInput {
-  display: block;
-  width: 100%;
-  padding: 0.5rem;
-  border-radius: 0.375rem;
-  border: 1px solid #d1d5db;
-  background-color: #fff;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-.fieldInput:focus {
-  outline: none;
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
-}
-
-.fieldInputError {
-  border-color: #dc2626;
-}
-
-.fieldInputError:focus {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
-}
-
-.errorMessage {
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  color: #dc2626;
-}
-
-.helpText {
-  margin-top: 0.25rem;
-  font-size: 0.75rem;
-  color: #8e8e93;
-}
-
 .errorAlert {
   margin-bottom: 1rem;
   padding: 0.75rem;
