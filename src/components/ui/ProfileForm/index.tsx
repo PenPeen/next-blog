@@ -9,6 +9,8 @@ import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import FormInput from "@/components/ui/FormInput";
 import ProfileFileInput from "../ProfileFileInput";
+import { updateProfile } from "@/actions/updateProfile";
+import { useRouter } from "next/navigation";
 
 const profileSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),
@@ -27,23 +29,22 @@ const profileSchema = z.object({
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 type ProfileFormProps = {
-  defaultValues?: {
-    email: string;
-    name: string;
-    profileImageUrl?: string;
-  };
+  email: string;
+  name: string;
+  profileImageUrl?: string;
 };
 
-export default function ProfileForm({ defaultValues }: ProfileFormProps) {
+export default function ProfileForm({ email, name, profileImageUrl }: ProfileFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     mode: "onBlur",
     defaultValues: {
-      email: defaultValues?.email || "",
-      name: defaultValues?.name || "",
+      email: email || "",
+      name: name || "",
     },
   });
 
@@ -52,11 +53,17 @@ export default function ProfileForm({ defaultValues }: ProfileFormProps) {
     setError(null);
 
     try {
-      // TODO: プロフィール更新APIを呼び出す
-      console.log("プロフィール更新成功", data);
-    } catch (err) {
+      const result = await updateProfile({
+        name: data.name,
+        profileImage: data.profileImage
+      });
+
+      if (result.success) {
+        router.refresh();
+      }
+    } catch (error) {
       setError("プロフィールの更新に失敗しました");
-      console.error(err);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -79,7 +86,7 @@ export default function ProfileForm({ defaultValues }: ProfileFormProps) {
                   name="profileImage"
                   label="プロフィール画像"
                   helpText="JPG, PNG, GIF (最大2MB)"
-                  previewUrl={defaultValues?.profileImageUrl}
+                  previewUrl={profileImageUrl}
                 />
 
                 <FormInput
@@ -99,7 +106,7 @@ export default function ProfileForm({ defaultValues }: ProfileFormProps) {
                   type="primary"
                   isSolid
                 >
-                  更新する
+                  {isLoading ? "更新中..." : "更新する"}
                 </Button>
               </div>
             </form>
