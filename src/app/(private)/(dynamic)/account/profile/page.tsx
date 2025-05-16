@@ -8,12 +8,9 @@ export default async function ProfilePage() {
   return (
     <div className="flex justify-center">
       <ProfileForm
-        defaultValues={{
-          email: user.email,
-          name: user.name,
-          // TODO: プロフィール画像を表示する
-          // profileImageUrl: user.profileImageUrl,
-        }}
+        email={user.email}
+        name={user.name}
+        profileImageUrl={user.userImage?.profile || undefined}
       />
     </div>
   );
