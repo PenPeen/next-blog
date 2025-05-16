@@ -6,6 +6,9 @@ export const GET_CURRENT_USER = gql`
       id
       name
       email
+      userImage {
+        profile
+      }
     }
   }
 `;
