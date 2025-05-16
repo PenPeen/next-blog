@@ -44,7 +44,7 @@ export default function UserDropDownMenu({ user }: UserDropDownMenuProps) {
         aria-haspopup="true"
       >
         <Image
-          src="/user.gif"
+          src={user.userImage?.profile || "/user.gif"}
           alt="ユーザーメニュー"
           width={32}
           height={32}
@@ -57,7 +57,7 @@ export default function UserDropDownMenu({ user }: UserDropDownMenuProps) {
           <li className={styles.userInfoContainer} role="menuitem">
             <div className={styles.userAvatar}>
               <Image
-                src="/user.gif"
+                src={user.userImage?.profile || "/user.gif"}
                 alt={user.name}
                 width={40}
                 height={40}
