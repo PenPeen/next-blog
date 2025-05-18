@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 
 const profileSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),
-  name: z.string().min(1, "名前を入力してください"),
+  name: z.string().min(1, "名前を入力してください").max(10, "名前は10文字以内で入力してください。"),
   profileImage: z.any().optional().refine(
     (files) => {
       if (!files) return true;
@@ -41,10 +41,10 @@ export default function ProfileForm({ email, name, profileImageUrl }: ProfileFor
 
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
-    mode: "onBlur",
+    mode: "onChange",
     defaultValues: {
-      email: email || "",
-      name: name || "",
+      email: email,
+      name: name,
     },
   });
 
@@ -61,9 +61,6 @@ export default function ProfileForm({ email, name, profileImageUrl }: ProfileFor
       if (result.success) {
         router.refresh();
       }
-    } catch (error) {
-      setError("プロフィールの更新に失敗しました");
-      console.error(error);
     } finally {
       setIsLoading(false);
     }
