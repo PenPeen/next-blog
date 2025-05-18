@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";;
 import { z } from "zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,12 +11,6 @@ import Link from "next/link";
 import FormInput from "@/components/ui/FormInput";
 import { login } from "@/actions/login";
 
-type LoginState = {
-  success: boolean;
-  error?: string | null;
-  redirectUrl?: string;
-};
-
 const loginSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),
   password: z.string().min(6, "パスワードは6文字以上で入力してください"),
@@ -26,9 +19,7 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const methods = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -37,24 +28,13 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
-    setError(null);
 
     try {
       const formData = new FormData();
       formData.append("email", data.email);
       formData.append("password", data.password);
 
-      const result = await login(formData) as LoginState;
-
-      if (result.success) {
-        if (result.redirectUrl) {
-          router.push(result.redirectUrl);
-        }
-      } else {
-        setError(result.error || "ログインに失敗しました");
-      }
-    } catch {
-      setError("原因不明のエラーが発生しました。再度お試しください。");
+      await login(formData);
     } finally {
       setIsLoading(false);
     }
@@ -64,10 +44,6 @@ export default function LoginForm() {
     <div className={styles.formContainer}>
       <div className={styles.formWrapper}>
         <Card title="アカウントにログインする">
-          {error && (
-            <div className={styles.errorAlert}>{error}</div>
-          )}
-
           <FormProvider {...methods}>
             <form className={styles.form} onSubmit={methods.handleSubmit(onSubmit)}>
               <div className={styles.formFields}>

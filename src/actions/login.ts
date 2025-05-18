@@ -2,25 +2,17 @@
 
 import { apolloClient, LoginDocument } from '@/app/graphql';
 import { cookies } from 'next/headers';
-import { ApolloError } from '@apollo/client';
 import { setFlash } from '@/actions/flash';
+import { redirect } from 'next/navigation';
 
-type LoginResponse = {
-  success: boolean;
-  redirectUrl?: string;
-  error?: string;
-}
-
-const loginProcessingError = 'ログイン処理中にエラーが発生しました。再度お試しください。'
-
-export async function login(formData: FormData): Promise<LoginResponse> {
+export async function login(formData: FormData) {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 
-  try {
-    const cookieHeader = await cookies();
-    const cookie = cookieHeader.toString();
+  const cookieHeader = await cookies();
+  const cookie = cookieHeader.toString();
 
+  try{
     const { data } = await apolloClient.mutate({
       mutation: LoginDocument,
       variables: { email, password },
@@ -44,28 +36,15 @@ export async function login(formData: FormData): Promise<LoginResponse> {
         type: 'success',
         message: 'ログインしました'
       });
-
-      return { success: true, redirectUrl: '/account' };
-    } else {
-      throw new Error(loginProcessingError);
     }
-
-  } catch (error) {
-    let errorMessage;
-    if (error instanceof ApolloError) {
-      errorMessage = error.message;
-    } else {
-      errorMessage = loginProcessingError
-    }
-
+  } catch(error: unknown) {
     await setFlash({
       type: 'error',
-      message: errorMessage
+      message: error instanceof Error ? error.message : 'ログインに失敗しました'
     });
 
-    return {
-      success: false,
-      error: errorMessage
-    };
+    redirect('/signin');
   }
+
+  redirect('/account');
 }
