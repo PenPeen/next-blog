@@ -3,12 +3,12 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import RegisterForm from '.'
 
-const mockPush = jest.fn();
-jest.mock('next/navigation', () => ({
-  useRouter: () => ({
-    push: mockPush,
-  }),
-}))
+jest.mock('next/navigation', () => {
+  const actualNavigation = jest.requireActual('next/navigation');
+  return {
+    ...actualNavigation,
+  };
+});
 
 interface RegisterFormData {
   name: string;
@@ -20,16 +20,11 @@ interface RegisterFormData {
 const mockRegister = jest.fn();
 jest.mock('@/actions/register', () => ({
   register: (data: RegisterFormData) => mockRegister(data),
-}))
+}));
 
 describe('RegisterForm', () => {
   beforeEach(() => {
-    mockPush.mockReset();
-    mockRegister.mockReset();
-    mockRegister.mockResolvedValue({
-      success: true,
-      redirectUrl: '/dashboard'
-    });
+    jest.clearAllMocks();
   });
 
   describe('初期状態', () => {
@@ -152,10 +147,7 @@ describe('RegisterForm', () => {
     })
 
     it('登録に失敗した場合、エラーメッセージが表示されること', async () => {
-      mockRegister.mockResolvedValue({
-        success: false,
-        error: 'メールアドレスは既に使用されています'
-      })
+      mockRegister.mockRejectedValue(new Error('メールアドレスは既に使用されています'));
 
       render(<RegisterForm />)
       const user = userEvent.setup()
@@ -169,6 +161,25 @@ describe('RegisterForm', () => {
       await user.click(screen.getByRole('button', { name: '登録する' }))
 
       expect(await screen.findByText('メールアドレスは既に使用されています')).toBeInTheDocument()
+    })
+
+    it('NEXT_REDIRECTエラーの場合はエラーメッセージが表示されないこと', async () => {
+      const redirectError = new Error('NEXT_REDIRECT');
+      mockRegister.mockRejectedValue(redirectError);
+
+      render(<RegisterForm />)
+      const user = userEvent.setup()
+
+      await user.type(screen.getByLabelText(/名前/), 'テスト太郎')
+      await user.type(screen.getByLabelText(/メールアドレス/), 'test@example.com')
+      await user.type(screen.getByLabelText(/^パスワード\*/), 'password123')
+      await user.type(screen.getByLabelText(/パスワード（確認）/), 'password123')
+      await user.click(screen.getByLabelText(/利用規約に同意する/))
+
+      await user.click(screen.getByRole('button', { name: '登録する' }))
+
+      expect(await screen.findByRole('button', { name: '登録する' })).toBeInTheDocument()
+      expect(screen.queryByText('NEXT_REDIRECT')).not.toBeInTheDocument()
     })
   })
 })
