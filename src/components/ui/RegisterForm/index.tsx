@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm, FormProvider } from "react-hook-form";
 import { register as registerAction } from "@/actions/register";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,7 +26,6 @@ const registerSchema = z.object({
 type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function RegisterForm() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -37,18 +35,15 @@ export default function RegisterForm() {
   });
 
   const onSubmit = async (data: RegisterFormData) => {
-    setIsLoading(true)
+    setIsLoading(true);
     setError(null);
 
     try {
-      const result = await registerAction(data);
-
-      if (result.success) {
-        if (result.redirectUrl) {
-          router.push(result.redirectUrl);
-        }
-      } else {
-        setError(result.error || "ユーザー登録に失敗しました");
+      await registerAction(data);
+    } catch(error: unknown) {
+      // NEXT_REDIRECTエラーはリダイレクト処理なので除外
+      if (error instanceof Error && !error.message.includes('NEXT_REDIRECT')) {
+        setError(error.message);
       }
     } finally {
       setIsLoading(false);
