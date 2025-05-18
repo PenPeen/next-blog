@@ -20,6 +20,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const methods = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -28,6 +29,7 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
+    setError(null);
 
     try {
       const formData = new FormData();
@@ -35,6 +37,11 @@ export default function LoginForm() {
       formData.append("password", data.password);
 
       await login(formData);
+    } catch(error: unknown) {
+      // NEXT_REDIRECTエラーはリダイレクト処理なので除外
+      if (error instanceof Error && !error.message.includes('NEXT_REDIRECT')) {
+        setError(error.message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -44,6 +51,10 @@ export default function LoginForm() {
     <div className={styles.formContainer}>
       <div className={styles.formWrapper}>
         <Card title="アカウントにログインする">
+          {error && (
+            <div className={styles.errorAlert}>{error}</div>
+          )}
+
           <FormProvider {...methods}>
             <form className={styles.form} onSubmit={methods.handleSubmit(onSubmit)}>
               <div className={styles.formFields}>

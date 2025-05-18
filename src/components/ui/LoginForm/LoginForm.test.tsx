@@ -82,4 +82,32 @@ describe('LoginForm', () => {
       })
     })
   })
+
+  describe('ログイン結果処理', () => {
+    it('ログインが失敗した場合、エラーメッセージが表示されること', async () => {
+      mockLogin.mockRejectedValue(new Error('メールアドレスまたはパスワードが間違っています'));
+
+      render(<LoginForm />)
+      const user = userEvent.setup()
+
+      await user.type(screen.getByRole('textbox', { name: /メールアドレス/ }), 'test@example.com')
+      await user.type(screen.getByLabelText(/^パスワード\*/), 'password123')
+      await user.click(screen.getByRole('button', { name: 'ログイン' }))
+
+      expect(await screen.findByText('メールアドレスまたはパスワードが間違っています')).toBeInTheDocument()
+    })
+
+    it('APIコールが例外を投げた場合、一般エラーメッセージが表示されること', async () => {
+      mockLogin.mockRejectedValue(new Error('原因不明のエラーが発生しました。再度お試しください。'));
+
+      render(<LoginForm />)
+      const user = userEvent.setup()
+
+      await user.type(screen.getByRole('textbox', { name: /メールアドレス/ }), 'test@example.com')
+      await user.type(screen.getByLabelText(/^パスワード\*/), 'password123')
+      await user.click(screen.getByRole('button', { name: 'ログイン' }))
+
+      expect(await screen.findByText('原因不明のエラーが発生しました。再度お試しください。')).toBeInTheDocument()
+    })
+  })
 })

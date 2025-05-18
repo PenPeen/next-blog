@@ -12,38 +12,29 @@ export async function login(formData: FormData) {
   const cookieHeader = await cookies();
   const cookie = cookieHeader.toString();
 
-  try{
-    const { data } = await apolloClient.mutate({
-      mutation: LoginDocument,
-      variables: { email, password },
-      context: {
-        headers: {
-          Cookie: cookie,
-        },
+  const { data } = await apolloClient.mutate({
+    mutation: LoginDocument,
+    variables: { email, password },
+    context: {
+      headers: {
+        Cookie: cookie,
       },
+    },
+  });
+
+  if (data?.login?.token) {
+    const cookieStore = await cookies();
+    cookieStore.set('ss_sid', data?.login?.token || '', {
+      expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax'
     });
 
-    if (data?.login?.token) {
-      const cookieStore = await cookies();
-      cookieStore.set('ss_sid', data?.login?.token || '', {
-        expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-        httpOnly: true,
-        secure: true,
-        sameSite: 'lax'
-      });
-
-      await setFlash({
-        type: 'success',
-        message: 'ログインしました'
-      });
-    }
-  } catch(error: unknown) {
     await setFlash({
-      type: 'error',
-      message: error instanceof Error ? error.message : 'ログインに失敗しました'
+      type: 'success',
+      message: 'ログインしました'
     });
-
-    redirect('/signin');
   }
 
   redirect('/account');
