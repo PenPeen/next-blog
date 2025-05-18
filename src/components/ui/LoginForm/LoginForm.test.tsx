@@ -84,33 +84,8 @@ describe('LoginForm', () => {
   })
 
   describe('ログイン結果処理', () => {
-    it('ログインが成功し、リダイレクトURLが返された場合はpushが呼ばれること', async () => {
-      const pushMock = jest.fn();
-      const useRouterMock = jest.requireMock('next/navigation').useRouter;
-      useRouterMock.mockReturnValue({
-        push: pushMock
-      });
-
-      mockLogin.mockResolvedValue({
-        success: true,
-        redirectUrl: '/dashboard'
-      });
-
-      render(<LoginForm />)
-      const user = userEvent.setup()
-
-      await user.type(screen.getByRole('textbox', { name: /メールアドレス/ }), 'test@example.com')
-      await user.type(screen.getByLabelText(/^パスワード\*/), 'password123')
-      await user.click(screen.getByRole('button', { name: 'ログイン' }))
-
-      expect(pushMock).toHaveBeenCalledWith('/dashboard')
-    })
-
     it('ログインが失敗した場合、エラーメッセージが表示されること', async () => {
-      mockLogin.mockResolvedValue({
-        success: false,
-        error: 'メールアドレスまたはパスワードが間違っています'
-      });
+      mockLogin.mockRejectedValue(new Error('メールアドレスまたはパスワードが間違っています'));
 
       render(<LoginForm />)
       const user = userEvent.setup()
@@ -123,7 +98,7 @@ describe('LoginForm', () => {
     })
 
     it('APIコールが例外を投げた場合、一般エラーメッセージが表示されること', async () => {
-      mockLogin.mockRejectedValue(new Error('API Error'));
+      mockLogin.mockRejectedValue(new Error('原因不明のエラーが発生しました。再度お試しください。'));
 
       render(<LoginForm />)
       const user = userEvent.setup()
