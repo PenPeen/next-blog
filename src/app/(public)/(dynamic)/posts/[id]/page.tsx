@@ -6,10 +6,25 @@ type Params = {
   params: Promise<{ id: string }>
 }
 
-export default async function page({ params }: Params) {
-  const { id } = await params;
+async function fetchPost(id: string) {
   const data = await getPost(id);
   const post = await data.json();
+  return post;
+}
+
+export async function generateMetadata({ params }: Params) {
+  const { id } = await params;
+  const post = await fetchPost(id);
+
+  return {
+    title: `${post.title}`,
+    description: "Post of PenBlog App",
+  };
+}
+
+export default async function page({ params }: Params) {
+  const { id } = await params;
+  const post = await fetchPost(id);
 
   if(!post) {
     notFound();
