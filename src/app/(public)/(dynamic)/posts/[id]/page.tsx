@@ -7,9 +7,12 @@ type Params = {
 }
 
 async function fetchPost(id: string) {
-  const data = await getPost(id);
-  const post = await data.json();
-  return post;
+  try {
+    const data = await getPost(id);
+    return await data.json();
+  } catch {
+    notFound();
+  }
 }
 
 export async function generateMetadata({ params }: Params) {
