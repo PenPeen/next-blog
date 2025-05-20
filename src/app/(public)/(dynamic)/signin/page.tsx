@@ -1,5 +1,3 @@
-export const dynamic = 'force-static'
-
 import LoginForm from '@/components/ui/LoginForm';
 import { Metadata } from 'next';
 

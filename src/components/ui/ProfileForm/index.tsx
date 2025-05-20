@@ -53,14 +53,10 @@ export default function ProfileForm({ email, name, profileImageUrl }: ProfileFor
     setError(null);
 
     try {
-      const result = await updateProfile({
+      await updateProfile({
         name: data.name,
         profileImage: data.profileImage
       });
-
-      if (result.success) {
-        router.refresh();
-      }
     } finally {
       setIsLoading(false);
     }

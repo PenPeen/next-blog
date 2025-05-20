@@ -9,6 +9,10 @@ export const LOGIN = gql`
         email
         name
       }
+      errors {
+        message
+        path
+      }
     }
   }
 `;

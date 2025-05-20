@@ -5,6 +5,10 @@ export const CONFIRM_REGISTRATION_MUTATION = gql`
     confirmRegistration(input: { token: $token }) {
       success
       token
+      errors {
+        message
+        path
+      }
     }
   }
 `;

@@ -27,7 +27,6 @@ type RegisterFormData = z.infer<typeof registerSchema>;
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const methods = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -36,15 +35,9 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
-    setError(null);
 
     try {
       await registerAction(data);
-    } catch(error: unknown) {
-      // NEXT_REDIRECTエラーはリダイレクト処理なので除外
-      if (error instanceof Error && !error.message.includes('NEXT_REDIRECT')) {
-        setError(error.message);
-      }
     } finally {
       setIsLoading(false);
     }
@@ -54,12 +47,6 @@ export default function RegisterForm() {
     <div className={styles.formContainer}>
       <div className={styles.formWrapper}>
         <Card title="新規登録">
-          {error && (
-            <div className={styles.errorAlert}>
-              {error}
-            </div>
-          )}
-
           <FormProvider {...methods}>
             <form className={styles.form} onSubmit={methods.handleSubmit(onSubmit)}>
               <div className={styles.formFields}>

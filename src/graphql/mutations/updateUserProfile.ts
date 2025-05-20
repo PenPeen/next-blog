@@ -11,6 +11,10 @@ export const UPDATE_USER_PROFILE = gql`
           profile
         }
       }
+      errors {
+        message
+        path
+      }
     }
   }
 `;

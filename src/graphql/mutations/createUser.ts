@@ -10,6 +10,10 @@ export const CREATE_USER = gql`
       }
       token
       message
+      errors {
+        message
+        path
+      }
     }
   }
 `;

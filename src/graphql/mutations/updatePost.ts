@@ -9,6 +9,10 @@ export const UPDATE_POST = gql`
         content
         published
       }
+      errors {
+        message
+        path
+      }
     }
   }
 `;

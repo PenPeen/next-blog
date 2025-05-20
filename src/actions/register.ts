@@ -18,10 +18,18 @@ export const register = async (formData: FormData) => {
     }
   });
 
-  await setFlash({
-    message: `${data!.createUser!.user!.email}宛に確認メールを送信しました。`,
-    type: "success"
-  });
+  if (data?.createUser?.errors) {
+    await setFlash({
+      type: 'error',
+      message: data.createUser.errors.map(error => error.message).join('\n')
+    });
+    return redirect('/register');
 
-  redirect('/');
+  } else {
+    await setFlash({
+      message: `${data!.createUser!.user!.email}宛に確認メールを送信しました。`,
+      type: "success"
+    });
+    return redirect('/');
+  }
 };

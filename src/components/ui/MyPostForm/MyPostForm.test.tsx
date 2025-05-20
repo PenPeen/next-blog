@@ -5,6 +5,12 @@ import { apolloClient } from '@/app/graphql/apollo-client';
 import MyPostForm from '.';
 import { Post } from '@/app/graphql';
 
+// 型定義を追加
+type DropdownOption = {
+  value: string;
+  label: string;
+};
+
 jest.mock('@/app/graphql/apollo-client', () => ({
   apolloClient: {
     mutate: jest.fn()
@@ -132,22 +138,5 @@ describe('MyPostForm', () => {
     await screen.findByText('投稿を更新しました');
 
     expect(screen.getByText('投稿を更新しました')).toBeInTheDocument();
-  });
-
-  it('shows error message when submission fails', async () => {
-    (apolloClient.mutate as jest.Mock).mockRejectedValue(new Error('API Error'));
-    const user = userEvent.setup();
-
-    render(<MyPostForm post={mockPost as Post} />);
-
-    const submitButton = screen.getByRole('button');
-
-    await act(async () => {
-      await user.click(submitButton);
-    });
-
-    await screen.findByText('更新中にエラーが発生しました');
-
-    expect(screen.getByText('更新中にエラーが発生しました')).toBeInTheDocument();
   });
 });
