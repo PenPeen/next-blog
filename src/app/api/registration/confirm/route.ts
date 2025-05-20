@@ -1,37 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { setFlash } from '@/actions/flash';
 import { apolloClient } from '@/app/graphql/apollo-client';
-import { CONFIRM_REGISTRATION_MUTATION } from '@/app/graphql/operations/user/confirmRegistration';
 import { cookies } from 'next/headers';
-import { ApolloError } from '@apollo/client';
+import { ConfirmRegistrationDocument } from '@/app/graphql';
 
 export async function GET(request: NextRequest) {
-  const token = request.nextUrl.searchParams.get('token');
+  const token = request.nextUrl.searchParams.get('token') || '';
 
   try {
     const result = await apolloClient.mutate({
-      mutation: CONFIRM_REGISTRATION_MUTATION,
-      variables: { token }
+      mutation: ConfirmRegistrationDocument,
+      variables: { token: token }
     });
 
- const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+    if (result.data?.confirmRegistration?.errors) {
+      await setFlash({
+        type: 'error',
+        message: result.data.confirmRegistration.errors.map(error => error.message).join('\n')
+      });
+      return NextResponse.redirect(new URL('/', request.url));
 
-const cookieStore = await cookies();
-cookieStore.set('ss_sid', result.data.confirmRegistration.token, {
-  expires: new Date(Date.now() + ONE_YEAR_MS),
-  httpOnly: true,
-  secure: true,
-  sameSite: 'lax'
-});
+    } else {
+      const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
-    await setFlash({
-      type: 'success',
-      message: '会員登録が完了しました。'
-    });
+      const cookieStore = await cookies();
+      cookieStore.set('ss_sid', result.data?.confirmRegistration?.token || '', {
+        expires: new Date(Date.now() + ONE_YEAR_MS),
+        httpOnly: true,
+        secure: true,
+        sameSite: 'lax'
+      });
+
+      await setFlash({
+        type: 'success',
+        message: '会員登録が完了しました。'
+      });
+    }
   } catch (err) {
     await setFlash({
       type: 'error',
-      message: (err as ApolloError).message
+      message: (err as Error).message
     });
     return NextResponse.redirect(new URL('/', request.url));
   }

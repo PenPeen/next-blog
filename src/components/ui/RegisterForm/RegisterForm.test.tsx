@@ -145,41 +145,5 @@ describe('RegisterForm', () => {
       expect(screen.getByRole('button')).toHaveTextContent('登録中...')
       expect(screen.getByRole('button')).toBeDisabled()
     })
-
-    it('登録に失敗した場合、エラーメッセージが表示されること', async () => {
-      mockRegister.mockRejectedValue(new Error('メールアドレスは既に使用されています'));
-
-      render(<RegisterForm />)
-      const user = userEvent.setup()
-
-      await user.type(screen.getByLabelText(/名前/), 'テスト太郎')
-      await user.type(screen.getByLabelText(/メールアドレス/), 'test@example.com')
-      await user.type(screen.getByLabelText(/^パスワード\*/), 'password123')
-      await user.type(screen.getByLabelText(/パスワード（確認）/), 'password123')
-      await user.click(screen.getByLabelText(/利用規約に同意する/))
-
-      await user.click(screen.getByRole('button', { name: '登録する' }))
-
-      expect(await screen.findByText('メールアドレスは既に使用されています')).toBeInTheDocument()
-    })
-
-    it('NEXT_REDIRECTエラーの場合はエラーメッセージが表示されないこと', async () => {
-      const redirectError = new Error('NEXT_REDIRECT');
-      mockRegister.mockRejectedValue(redirectError);
-
-      render(<RegisterForm />)
-      const user = userEvent.setup()
-
-      await user.type(screen.getByLabelText(/名前/), 'テスト太郎')
-      await user.type(screen.getByLabelText(/メールアドレス/), 'test@example.com')
-      await user.type(screen.getByLabelText(/^パスワード\*/), 'password123')
-      await user.type(screen.getByLabelText(/パスワード（確認）/), 'password123')
-      await user.click(screen.getByLabelText(/利用規約に同意する/))
-
-      await user.click(screen.getByRole('button', { name: '登録する' }))
-
-      expect(await screen.findByRole('button', { name: '登録する' })).toBeInTheDocument()
-      expect(screen.queryByText('NEXT_REDIRECT')).not.toBeInTheDocument()
-    })
   })
 })

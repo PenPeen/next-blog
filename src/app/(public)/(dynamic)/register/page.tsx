@@ -1,5 +1,3 @@
-export const dynamic = 'force-static'
-
 import RegisterForm from "@/components/ui/RegisterForm";
 import { Metadata } from "next";
 

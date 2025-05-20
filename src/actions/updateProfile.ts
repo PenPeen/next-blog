@@ -1,9 +1,9 @@
 'use server';
 
-import { apolloClient } from '@/app/graphql';
+import { apolloClient, UpdateUserProfileDocument } from '@/app/graphql';
 import { cookies } from 'next/headers';
-import { UPDATE_USER_PROFILE } from '@/graphql/mutations/updateUserProfile';
 import { setFlash } from './flash';
+import { redirect } from 'next/navigation';
 
 type ProfileFormData = {
   name: string;
@@ -24,7 +24,7 @@ export async function updateProfile(data: ProfileFormData) {
     const cookieHeader = cookiesObj.toString();
 
     const { data: responseData } = await apolloClient.mutate({
-      mutation: UPDATE_USER_PROFILE,
+      mutation: UpdateUserProfileDocument,
       context: {
         headers: {
           Cookie: cookieHeader,
@@ -40,19 +40,25 @@ export async function updateProfile(data: ProfileFormData) {
       }
     });
 
-    setFlash({
-      message: responseData.updateUserProfile.message,
-      type: 'success',
-    });
-
-    return { success: true };
+    if (responseData?.updateUserProfile?.errors) {
+      await setFlash({
+        message: responseData.updateUserProfile.errors.map(error => error.message).join('\n'),
+        type: 'error',
+      });
+    } else {
+      await setFlash({
+        message: 'プロフィールを更新しました',
+        type: 'success',
+      });
+    }
   } catch(error: unknown) {
     if (error instanceof Error) {
-      setFlash({
+      await setFlash({
         message: error.message,
         type: 'error',
       });
     }
-    return { success: false };
   }
+
+  return redirect('/account/profile');
 }

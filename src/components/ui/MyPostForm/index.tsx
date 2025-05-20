@@ -5,8 +5,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import styles from './MyPostForm.module.css';
-import { MyPostQuery } from '@/app/graphql';
-import { UPDATE_POST } from '@/graphql/mutations/updatePost';
+import { MyPostQuery, UpdatePostDocument } from '@/app/graphql';
 import { apolloClient } from '@/app/graphql/apollo-client';
 import FormInput from '@/components/ui/FormInput';
 import FormDropdown from '@/components/ui/FormDropdown';
@@ -42,6 +41,7 @@ const statusOptions = [
 export default function MyPostForm({ post }: MyPostFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const methods = useForm<PostFormData>({
     resolver: zodResolver(postSchema),
@@ -59,7 +59,7 @@ export default function MyPostForm({ post }: MyPostFormProps) {
 
     try {
       const { data: responseData } = await apolloClient.mutate({
-        mutation: UPDATE_POST,
+        mutation: UpdatePostDocument,
         variables: {
           input: {
             postInput: {
@@ -72,12 +72,15 @@ export default function MyPostForm({ post }: MyPostFormProps) {
         }
       });
 
-      if (responseData?.updatePost?.post) {
-        setMessage('投稿を更新しました');
+      if (responseData?.updatePost?.errors) {
+        setErrorMessage(responseData.updatePost.errors.map(error => error.message).join('\n'));
+      } else {
+        if (responseData?.updatePost?.post) {
+          setMessage('投稿を更新しました');
+        }
       }
-    } catch (error) {
-      console.error('Error updating post:', error);
-      setMessage('更新中にエラーが発生しました');
+    } catch {
+      setErrorMessage('更新中にエラーが発生しました。しばらく経ってから再度試してください。');
     } finally {
       setIsSubmitting(false);
     }
@@ -126,6 +129,7 @@ export default function MyPostForm({ post }: MyPostFormProps) {
           </div>
 
           {message && <div className={styles.message}>{message}</div>}
+          {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
 
           <div className={styles.actions}>
             <Button

@@ -22,7 +22,14 @@ export async function login(formData: FormData) {
     },
   });
 
-  if (data?.login?.token) {
+  if (data?.login?.errors) {
+    await setFlash({
+      type: 'error',
+      message: data.login.errors.map(error => error.message).join('\n')
+    });
+
+    return redirect('/signin');
+  } else {
     const cookieStore = await cookies();
     cookieStore.set('ss_sid', data?.login?.token || '', {
       expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
@@ -35,7 +42,7 @@ export async function login(formData: FormData) {
       type: 'success',
       message: 'ログインしました'
     });
-  }
 
-  redirect('/account');
+    return redirect('/account');
+  }
 }
