@@ -1,7 +1,7 @@
 import { apolloClient } from "@/app/graphql/apollo-client";
 import { cache } from "react";
 import { cookies } from "next/headers";
-import { MyPostDocument } from "@/app/graphql";
+import { MyPostDocument, MyPostQuery } from "@/app/graphql";
 
 export const getMyPost = cache(async (id: string) => {
   const cookiesObj = await cookies();
@@ -16,5 +16,5 @@ export const getMyPost = cache(async (id: string) => {
       },
     },
   });
-  return { json: () => Promise.resolve(data.myPost) };
+  return { json: () => Promise.resolve<MyPostQuery['myPost']>(data.myPost) };
 });
