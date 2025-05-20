@@ -10,7 +10,6 @@ import Card from "@/components/ui/Card";
 import FormInput from "@/components/ui/FormInput";
 import ProfileFileInput from "../ProfileFileInput";
 import { updateProfile } from "@/actions/updateProfile";
-import { useRouter } from "next/navigation";
 
 const profileSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),
@@ -37,7 +36,6 @@ type ProfileFormProps = {
 export default function ProfileForm({ email, name, profileImageUrl }: ProfileFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
