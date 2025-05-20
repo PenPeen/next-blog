@@ -47,6 +47,7 @@ export default function FormDropdown({
       <select
         id={name}
         {...register(name)}
+        aria-invalid={!!errorMessage}
         className={`${styles.select} ${sizeClass} ${errorMessage ? styles.errorInput : ''}`}
       >
         <option value="">{placeholder}</option>
