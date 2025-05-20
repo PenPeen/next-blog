@@ -8,7 +8,7 @@ type DropdownOption = {
   label: string;
 };
 
-export type DropdownSize = 'small' | 'medium' | 'large';
+type DropdownSize = 'small' | 'medium' | 'large';
 
 interface FormDropdownProps {
   name: string;
@@ -32,9 +32,7 @@ export default function FormDropdown({
     register,
     formState: { errors },
   } = useFormContext()
-
   const errorMessage = errors[name]?.message as string | undefined
-
   const sizeClass = styles[`size${size.charAt(0).toUpperCase() + size.slice(1)}`];
 
   return (

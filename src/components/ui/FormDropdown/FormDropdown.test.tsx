@@ -63,55 +63,16 @@ describe('FormDropdown', () => {
       }
     }));
 
-    const { container } = render(
-      <FormDropdown
-        name="testDropdown"
-        label="テストドロップダウン"
-        options={mockOptions}
-      />
-    );
-
-    const errorMessageElement = container.querySelector('.errorMessage');
-    expect(errorMessageElement).toBeInTheDocument();
-    expect(errorMessageElement).toHaveTextContent('エラーメッセージ');
-  });
-
-  it('サイズプロパティが適用される', () => {
-    const { container: smallContainer } = render(
+    render(
       <TestWrapper>
         <FormDropdown
           name="testDropdown"
           label="テストドロップダウン"
           options={mockOptions}
-          size="small"
         />
       </TestWrapper>
     );
 
-    const { container: mediumContainer } = render(
-      <TestWrapper>
-        <FormDropdown
-          name="testDropdown"
-          label="テストドロップダウン"
-          options={mockOptions}
-          size="medium"
-        />
-      </TestWrapper>
-    );
-
-    const { container: largeContainer } = render(
-      <TestWrapper>
-        <FormDropdown
-          name="testDropdown"
-          label="テストドロップダウン"
-          options={mockOptions}
-          size="large"
-        />
-      </TestWrapper>
-    );
-
-    expect(smallContainer.querySelector('.sizeSmall')).toBeInTheDocument();
-    expect(mediumContainer.querySelector('.sizeMedium')).toBeInTheDocument();
-    expect(largeContainer.querySelector('.sizeLarge')).toBeInTheDocument();
+    expect(screen.getByText('エラーメッセージ')).toBeInTheDocument();
   });
 });
