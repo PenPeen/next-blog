@@ -14,13 +14,15 @@ export async function GET(request: NextRequest) {
       variables: { token }
     });
 
-    const cookieStore = await cookies();
-    cookieStore.set('ss_sid', result.data.confirmRegistration.token, {
-      expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax'
-    });
+ const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+
+const cookieStore = await cookies();
+cookieStore.set('ss_sid', result.data.confirmRegistration.token, {
+  expires: new Date(Date.now() + ONE_YEAR_MS),
+  httpOnly: true,
+  secure: true,
+  sameSite: 'lax'
+});
 
     await setFlash({
       type: 'success',
