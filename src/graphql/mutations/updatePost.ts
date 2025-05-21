@@ -8,6 +8,7 @@ export const UPDATE_POST = gql`
         title
         content
         published
+        thumbnailUrl
       }
       errors {
         message
