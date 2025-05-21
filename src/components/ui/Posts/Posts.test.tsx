@@ -11,9 +11,10 @@ jest.mock("next/link", () => ({
 
 jest.mock("@/components/ui/Card", () => ({
   __esModule: true,
-  default: ({ title, description }: { title: string, description: string }) => {
+  default: ({ title, description, img }: { title: string, description: string, img?: string }) => {
     return (
       <div data-testid="card">
+        {img && <img src={img} alt="thumbnail" data-testid="thumbnail" />}
         <h3>{title}</h3>
         <p>{description}</p>
       </div>
@@ -80,5 +81,33 @@ describe('Posts', () => {
 
     const cards = screen.queryAllByTestId('card')
     expect(cards).toHaveLength(0)
+  })
+
+  it('should handle undefined posts', () => {
+    render(<Posts posts={undefined} />)
+
+    const cards = screen.queryAllByTestId('card')
+    expect(cards).toHaveLength(0)
+  })
+
+  it('should handle null posts', () => {
+    render(<Posts posts={null} />)
+
+    const cards = screen.queryAllByTestId('card')
+    expect(cards).toHaveLength(0)
+  })
+
+  it('should use default thumbnail when thumbnailUrl is null', () => {
+    const postsWithoutThumbnail = [
+      {
+        ...mockPosts[0],
+        thumbnailUrl: null
+      }
+    ]
+
+    render(<Posts posts={postsWithoutThumbnail} />)
+
+    const thumbnails = screen.getAllByTestId('thumbnail')
+    expect(thumbnails[0]).toHaveAttribute('src', '/default-thumbnail.png')
   })
 })

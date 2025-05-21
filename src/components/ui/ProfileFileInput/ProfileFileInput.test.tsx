@@ -46,6 +46,28 @@ describe('ProfileFileInput', () => {
     expect(img.getAttribute('src')).toContain('test-image.jpg');
   });
 
+  it('プレビューURLがない場合はデフォルト画像が表示されること', () => {
+    render(
+      <TestWrapper>
+        <ProfileFileInput name="avatar" label="プロフィール画像" />
+      </TestWrapper>
+    );
+
+    const img = screen.getByAltText('プロフィール画像');
+    expect(img).toBeVisible();
+    expect(img.getAttribute('src')).toContain('user.gif');
+  });
+
+  it('required が true の場合、必須マークが表示されること', () => {
+    render(
+      <TestWrapper>
+        <ProfileFileInput name="avatar" label="プロフィール画像" required={true} />
+      </TestWrapper>
+    );
+
+    expect(screen.getByText('*')).toBeInTheDocument();
+  });
+
   it('エラー状態のときエラーメッセージが表示されること', () => {
     const { useFormContext } = jest.requireMock('react-hook-form');
     useFormContext.mockReturnValue({
@@ -106,6 +128,106 @@ describe('ProfileFileInput', () => {
 
     await userEvent.upload(input, file);
     expect(mockOnChange).toHaveBeenCalled();
+  });
+
+  it('画像以外のファイルが選択された場合はプレビューが更新されないこと', async () => {
+    // FileReaderのモック設定
+    const originalFileReader = window.FileReader;
+    const mockFileReader = {
+      readAsDataURL: jest.fn(),
+      onload: null,
+      result: null,
+    };
+    const mockFileReaderCtor = jest.fn(() => mockFileReader);
+    window.FileReader = mockFileReaderCtor as unknown as typeof FileReader;
+
+    render(
+      <TestWrapper>
+        <ProfileFileInput name="avatar" label="プロフィール画像" />
+      </TestWrapper>
+    );
+
+    // テキストファイルを選択
+    const textFile = new File(['dummy content'], 'test.txt', { type: 'text/plain' });
+    const input = screen.getByLabelText('プロフィール画像');
+
+    // ファイルをアップロード
+    Object.defineProperty(input, 'files', {
+      value: [textFile]
+    });
+    const event = new Event('change', { bubbles: true });
+    input.dispatchEvent(event);
+
+    // FileReaderのreadAsDataURLが呼ばれていないことを確認
+    expect(mockFileReader.readAsDataURL).not.toHaveBeenCalled();
+
+    // 元の実装に戻す
+    window.FileReader = originalFileReader;
+  });
+
+  it('registerOnChangeが存在しない場合でも画像選択が正しく機能すること', async () => {
+    // registerOnChangeを持たないモック
+    const { useFormContext } = jest.requireMock('react-hook-form');
+    useFormContext.mockReturnValue({
+      register: jest.fn(() => ({
+        onBlur: jest.fn(),
+        ref: jest.fn(),
+        name: 'test'
+        // onChangeはここでは設定しない
+      })),
+      formState: { errors: {} }
+    });
+
+    render(
+      <TestWrapper>
+        <ProfileFileInput name="avatar" label="プロフィール画像" />
+      </TestWrapper>
+    );
+
+    const file = new File(['dummy content'], 'test.png', { type: 'image/png' });
+    const input = screen.getByLabelText('プロフィール画像');
+
+    // FileReader のモック
+    const originalReadAsDataURL = FileReader.prototype.readAsDataURL;
+    const mockReadAsDataURL = jest.fn();
+    FileReader.prototype.readAsDataURL = mockReadAsDataURL;
+
+    // テスト
+    Object.defineProperty(input, 'files', {
+      value: [file]
+    });
+
+    const event = new Event('change', { bubbles: true });
+    // エラーなく実行されることを確認
+    expect(() => {
+      input.dispatchEvent(event);
+    }).not.toThrow();
+
+    expect(mockReadAsDataURL).toHaveBeenCalledWith(file);
+
+    // 元の実装に戻す
+    FileReader.prototype.readAsDataURL = originalReadAsDataURL;
+  });
+
+  it('プレビューURLが変更された場合、プレビュー画像が更新されること', () => {
+    const { rerender } = render(
+      <TestWrapper>
+        <ProfileFileInput name="avatar" label="プロフィール画像" previewUrl="/initial-image.jpg" />
+      </TestWrapper>
+    );
+
+    const initialImg = screen.getByAltText('プロフィール画像');
+    expect(initialImg.getAttribute('src')).toContain('initial-image.jpg');
+
+    // previewUrlを変更して再レンダリング
+    rerender(
+      <TestWrapper>
+        <ProfileFileInput name="avatar" label="プロフィール画像" previewUrl="/updated-image.jpg" />
+      </TestWrapper>
+    );
+
+    const updatedImg = screen.getByAltText('プロフィール画像');
+    expect(updatedImg.getAttribute('src')).toContain('updated-image.jpg');
   });
 
   it('画像でないファイルが選択された場合でもonChangeイベントは発火すること', async () => {
@@ -177,5 +299,35 @@ describe('ProfileFileInput', () => {
     await userEvent.upload(input, []);
     const img = screen.getByAltText('プロフィール画像');
     expect(img.getAttribute('src')).toContain('user.gif');
+  });
+
+  it('ファイル選択がキャンセルされ、プレビューURLが設定されている場合はプレビューURLが保持されること', async () => {
+    render(
+      <TestWrapper>
+        <ProfileFileInput name="avatar" label="プロフィール画像" previewUrl="/test-image.jpg" />
+      </TestWrapper>
+    );
+
+    const input = screen.getByLabelText('プロフィール画像');
+    Object.defineProperty(input, 'files', {
+      value: []
+    });
+
+    const event = new Event('change', { bubbles: true });
+    input.dispatchEvent(event);
+
+    const img = screen.getByAltText('プロフィール画像');
+    expect(img.getAttribute('src')).toContain('test-image.jpg');
+  });
+
+  it('acceptプロパティが正しく設定されること', () => {
+    render(
+      <TestWrapper>
+        <ProfileFileInput name="avatar" label="プロフィール画像" accept=".jpg,.png" />
+      </TestWrapper>
+    );
+
+    const input = screen.getByLabelText('プロフィール画像');
+    expect(input).toHaveAttribute('accept', '.jpg,.png');
   });
 });
