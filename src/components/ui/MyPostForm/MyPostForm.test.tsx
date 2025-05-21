@@ -4,11 +4,18 @@ import userEvent from "@testing-library/user-event";
 import MyPostForm from '.';
 import { Post } from '@/app/graphql/generated';
 import { makeClient } from '@/app/ApolloWrapper';
+import { useRouter } from 'next/navigation';
 
 type DropdownOption = {
   value: string;
   label: string;
 };
+
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn().mockReturnValue({
+    refresh: jest.fn()
+  })
+}));
 
 jest.mock('@/app/ApolloWrapper', () => ({
   makeClient: jest.fn().mockReturnValue({
@@ -123,7 +130,7 @@ describe('MyPostForm', () => {
     }));
   });
 
-  it('shows success message after successful submission', async () => {
+  it('shows success message after successful submission and refreshes the page', async () => {
     const user = userEvent.setup();
     render(<MyPostForm post={mockPost as Post} />);
 
@@ -134,7 +141,8 @@ describe('MyPostForm', () => {
     });
 
     await screen.findByText('投稿を更新しました');
+    expect(screen .getByText('投稿を更新しました')).toBeInTheDocument();
 
-    expect(screen.getByText('投稿を更新しました')).toBeInTheDocument();
+    expect(useRouter().refresh).toHaveBeenCalled();
   });
 });
