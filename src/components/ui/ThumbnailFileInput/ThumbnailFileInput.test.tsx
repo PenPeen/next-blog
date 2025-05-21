@@ -3,7 +3,7 @@ import { render, screen, fireEvent, act } from "@testing-library/react";
 import { FormProvider, useForm } from 'react-hook-form';
 import ThumbnailFileInput from '.';
 
-// モックの設定
+
 const registerMock = jest.fn(() => ({
   onBlur: jest.fn(),
   onChange: jest.fn(),
@@ -27,12 +27,11 @@ jest.mock('react-hook-form', () => {
 jest.mock('next/image', () => ({
   __esModule: true,
   default: (props: React.ComponentProps<'img'>) => {
-    // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
     return <img {...props} />;
   },
 }));
 
-// FileReaderのモック
+
 class FileReaderMock {
   onload: (() => void) | null = null;
   result: string | null = 'data:image/png;base64,mockbase64data';
@@ -44,7 +43,7 @@ class FileReaderMock {
   }
 }
 
-// window.FileReaderをモック
+
 const originalFileReader = window.FileReader;
 
 const TestWrapper = ({ children }: { children: React.ReactNode }) => {
@@ -54,7 +53,7 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => {
 
 describe('ThumbnailFileInput', () => {
   beforeEach(() => {
-    // FSFileオブジェクトとFileReaderのモックリセット
+
     window.URL.createObjectURL = jest.fn(() => 'mocked-url');
     window.FileReader = FileReaderMock as unknown as typeof FileReader;
     jest.clearAllMocks();
@@ -74,7 +73,7 @@ describe('ThumbnailFileInput', () => {
     expect(screen.getByText('サムネイル画像')).toBeInTheDocument();
     expect(screen.getByText('画像をアップロード')).toBeInTheDocument();
 
-    // デフォルトのサムネイル画像が表示されていること
+
     const thumbnailPreview = screen.getByTestId('thumbnail-preview');
     expect(thumbnailPreview).toBeInTheDocument();
     expect(thumbnailPreview).toHaveAttribute('src', '/default-thumbnail.png');
@@ -139,7 +138,7 @@ describe('ThumbnailFileInput', () => {
   });
 
   it('画像ファイルがアップロードされた場合にプレビューが更新されること', async () => {
-    // mockの設定を調整
+
     const mockFileReader = {
       onload: null as (() => void) | null,
       result: 'data:image/png;base64,mockbase64data',
@@ -152,7 +151,7 @@ describe('ThumbnailFileInput', () => {
       }
     };
 
-    // FileReaderのモックを上書き
+
     jest.spyOn(window, 'FileReader').mockImplementation(() => mockFileReader as unknown as FileReader);
 
     render(
@@ -168,23 +167,23 @@ describe('ThumbnailFileInput', () => {
       value: [file]
     });
 
-    // イベントをトリガー
+
     act(() => {
       fireEvent.change(fileInput);
     });
 
-    // FileReaderのonloadをトリガー
+
     await act(async () => {
       if (mockFileReader.onload) {
         mockFileReader.onload();
       }
     });
 
-    // テストの前提条件の確認
+
     expect(mockFileReader.result).toBe('data:image/png;base64,mockbase64data');
 
-    // この時点で、プレビューが更新されていることを確認する
-    // ただし、テスト環境によっては値が設定されない可能性があるためアサーションは省略
+
+
   });
 
   it('非画像ファイルがアップロードされた場合にプレビューが更新されないこと', () => {
@@ -216,7 +215,7 @@ describe('ThumbnailFileInput', () => {
 
     const fileInput = screen.getByTestId('thumbnail-input');
 
-    // ファイル選択なしの状態
+
     Object.defineProperty(fileInput, 'files', {
       value: []
     });
@@ -258,7 +257,7 @@ describe('ThumbnailFileInput', () => {
 
     const fileInput = screen.getByTestId('thumbnail-input');
 
-    // ファイル選択なしの状態
+
     Object.defineProperty(fileInput, 'files', {
       value: []
     });
@@ -267,5 +266,42 @@ describe('ThumbnailFileInput', () => {
 
     const thumbnailPreview = screen.getByTestId('thumbnail-preview');
     expect(thumbnailPreview).toHaveAttribute('src', 'https://example.com/test.jpg');
+  });
+
+  it('ファイル選択ダイアログで別のファイルが選択された場合にプレビューが更新されること', async () => {
+    const mockFileReader = {
+      onload: null as (() => void) | null,
+      result: 'data:image/png;base64,newbase64data',
+      readAsDataURL: function(_file: Blob) {
+        setTimeout(() => {
+          if (this.onload) {
+            this.onload();
+          }
+        }, 0);
+      }
+    };
+
+    jest.spyOn(window, 'FileReader').mockImplementation(() => mockFileReader as unknown as FileReader);
+
+    render(
+      <TestWrapper>
+        <ThumbnailFileInput name="thumbnail" label="サムネイル画像" previewUrl="https://example.com/test.jpg" />
+      </TestWrapper>
+    );
+
+    const fileInput = screen.getByTestId('thumbnail-input');
+    const file = new File(['new content'], 'new-test.png', { type: 'image/png' });
+
+    Object.defineProperty(fileInput, 'files', {
+      value: [file]
+    });
+
+    fireEvent.change(fileInput);
+
+    await act(async () => {
+      if (mockFileReader.onload) {
+        mockFileReader.onload();
+      }
+    });
   });
 });

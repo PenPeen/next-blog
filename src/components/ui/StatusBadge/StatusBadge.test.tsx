@@ -32,7 +32,6 @@ describe('StatusBadge', () => {
 
   describe('getStatusText関数', () => {
     it('全てのステータスタイプに対応して正しいテキストを表示すること', () => {
-      // すべてのケースがテストされていることを確認
       const { rerender } = render(<StatusBadge status="published" />);
       expect(screen.getByText('公開中')).toBeInTheDocument();
 
@@ -41,13 +40,11 @@ describe('StatusBadge', () => {
     });
 
     it('ステータスに対応するテキストが常に文字列であること', () => {
-      // publishedの場合
       const { rerender } = render(<StatusBadge status="published" />);
       const publishedText = screen.getByText('公開中').textContent;
       expect(typeof publishedText).toBe('string');
       expect(publishedText).toBe('公開中');
 
-      // draftの場合
       rerender(<StatusBadge status="draft" />);
       const draftText = screen.getByText('下書き').textContent;
       expect(typeof draftText).toBe('string');
