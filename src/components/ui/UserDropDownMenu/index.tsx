@@ -71,7 +71,7 @@ export default function UserDropDownMenu({ user }: UserDropDownMenuProps) {
           </li>
           <li role="menuitem">
             {
-              pathname.indexOf("/account") === 0 ? (
+              pathname === "/account" ? (
                 <Link href="/" className={styles.menuItem}>
                   TOPページ
                 </Link>
