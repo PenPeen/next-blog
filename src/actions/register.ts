@@ -1,8 +1,9 @@
 'use server'
 
-import { apolloClient, CreateUserDocument } from '@/app/graphql';
+import { CreateUserDocument } from '@/app/graphql';
 import { setFlash } from './flash';
 import { redirect } from 'next/navigation';
+import { getClient } from '@/app/apollo-client';
 
 type FormData = {
   name: string;
@@ -11,7 +12,7 @@ type FormData = {
 }
 
 export const register = async (formData: FormData) => {
-  const { data } = await apolloClient.mutate({
+  const { data } = await getClient().mutate({
     mutation: CreateUserDocument,
     variables: {
       userInput: { name: formData.name, email: formData.email, password: formData.password }

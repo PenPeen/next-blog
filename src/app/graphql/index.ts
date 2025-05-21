@@ -1,2 +1,2 @@
 export * from './generated';
-export { apolloClient } from './apollo-client';
+export { getClient } from '@/app/apollo-client';

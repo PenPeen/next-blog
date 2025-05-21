@@ -5,12 +5,12 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import styles from './MyPostForm.module.css';
-import { MyPostQuery, UpdatePostDocument } from '@/app/graphql';
-import { apolloClient } from '@/app/graphql/apollo-client';
 import FormInput from '@/components/ui/FormInput';
 import FormDropdown from '@/components/ui/FormDropdown';
 import Button from '@/components/ui/Button';
 import { gql } from '@apollo/client';
+import { makeClient } from '@/app/ApolloWrapper';
+import { UpdatePostDocument, MyPostQuery } from '@/app/graphql/generated';
 
 export const MY_POST_FORM_FRAGMENT = gql`
   fragment MY_POST_FORM_FRAGMENT on Post {
@@ -58,7 +58,8 @@ export default function MyPostForm({ post }: MyPostFormProps) {
     setMessage('');
 
     try {
-      const { data: responseData } = await apolloClient.mutate({
+      const client = makeClient();
+      const { data: responseData } = await client.mutate({
         mutation: UpdatePostDocument,
         variables: {
           input: {
@@ -73,7 +74,7 @@ export default function MyPostForm({ post }: MyPostFormProps) {
       });
 
       if (responseData?.updatePost?.errors) {
-        setErrorMessage(responseData.updatePost.errors.map(error => error.message).join('\n'));
+        setErrorMessage(responseData.updatePost.errors.map((error: { message: string }) => error.message).join('\n'));
       } else {
         if (responseData?.updatePost?.post) {
           setMessage('投稿を更新しました');
