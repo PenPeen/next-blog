@@ -1,86 +1,157 @@
 import { render, screen } from "@testing-library/react"
 import UserDropDownMenu from "."
-import userEvent from "@testing-library/user-event";
-import { usePathname } from "next/navigation";
-import { User } from "@/app/graphql";
+import userEvent from "@testing-library/user-event"
+import { usePathname } from "next/navigation"
+import { User } from "@/app/graphql"
+import { logout } from "@/actions/logout"
 
+jest.mock('@/actions/logout', () => ({
+  logout: jest.fn()
+}))
 
 jest.mock('next/navigation', () => ({
-  usePathname: jest.fn().mockReturnValue("/"),
-}));
+  usePathname: jest.fn()
+}))
+
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
+    return <img {...props} alt={props.alt} />
+  }
+}))
 
 describe("UserDropDownMenu", () => {
-  const user = {
+  const mockUser = {
     id: "1",
-    name: "test",
+    name: "テストユーザー",
     email: "test@example.com",
-  }
+    userImage: {
+      profile: "/test-image.jpg"
+    },
+    createdAt: "2023-01-01T00:00:00Z",
+    updatedAt: "2023-01-01T00:00:00Z"
+  } as User
 
-  describe("初期レンダリング", () => {
-    it("アイコンのみが表示されている", () => {
-      render(<UserDropDownMenu user={user as User} />)
+  test("初期状態ではメニューは閉じている", () => {
+    render(<UserDropDownMenu user={mockUser} />)
 
-      const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
-      expect(menuButton).toBeInTheDocument();
+    const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
+    expect(menuButton).toBeInTheDocument()
 
-      const logoutButton = screen.queryByText("ログアウト")
-      expect(logoutButton).not.toBeInTheDocument();
-    })
+    const logoutButton = screen.queryByRole("button", { name: "ログアウト" })
+    expect(logoutButton).not.toBeInTheDocument()
   })
 
-  describe("メニューボタンをクリックした時", () => {
-    it("メニューが表示される", async () => {
-      render(<UserDropDownMenu user={user as User} />)
+  test("ボタンをクリックするとメニューが開き、ユーザー情報が表示される", async () => {
+    render(<UserDropDownMenu user={mockUser} />)
 
-      const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
-      const u = userEvent.setup();
-      await u.click(menuButton)
+    const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
+    const user = userEvent.setup()
+    await user.click(menuButton)
 
-      const myPageButton = screen.getByText("マイページ")
-      expect(myPageButton).toBeInTheDocument();
+    const logoutButton = screen.getByRole("button", { name: "ログアウト" })
+    expect(logoutButton).toBeInTheDocument()
 
-      const logoutButton = screen.getByText("ログアウト")
-      expect(logoutButton).toBeInTheDocument();
-    })
+    expect(screen.getByText("テストユーザー")).toBeInTheDocument()
+    expect(screen.getByText("test@example.com")).toBeInTheDocument()
+  })
 
-    describe("/account 配下のページにいる場合", () => {
-      beforeEach(() => {
-        (usePathname as jest.Mock).mockReturnValue("/account");
-      })
+  test("/account 以外のパス ではマイページリンクが表示される", async () => {
+    (usePathname as jest.Mock).mockReturnValue("/")
 
-      it("TOPページへのリンクが表示されている", async () => {
-        render(<UserDropDownMenu user={user as User} />)
+    render(<UserDropDownMenu user={mockUser} />)
 
-        const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
-        const u = userEvent.setup();
-        await u.click(menuButton)
+    const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
+    const user = userEvent.setup()
+    await user.click(menuButton)
 
-        const logoutButton = screen.getByText("TOPページ")
-        expect(logoutButton).toBeInTheDocument();
-      })
-    })
+    const myPageLink = screen.getByRole("link", { name: "マイページ" })
+    expect(myPageLink).toBeInTheDocument()
+    expect(myPageLink).toHaveAttribute('href', '/account')
 
-    describe("メニュー表示後、メニュー以外の場所をクリックした時", () => {
-      it("メニューが閉じる", async () => {
-        render(
-          <>
-            <div data-testid="outside-element">Outside Element</div>
-            <UserDropDownMenu user={user as User} />
-          </>
-        )
+    expect(screen.queryByRole("link", { name: "TOPページ" })).not.toBeInTheDocument()
+  })
 
-        const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
-        const u = userEvent.setup();
-        await u.click(menuButton)
+  test("/account パスではTOPページリンクが表示される", async () => {
+    (usePathname as jest.Mock).mockReturnValue("/account")
 
-        const logoutButton = screen.getByText("ログアウト")
-        expect(logoutButton).toBeInTheDocument();
+    render(<UserDropDownMenu user={mockUser} />)
 
-        const outsideElement = screen.getByTestId("outside-element")
-        await u.click(outsideElement)
+    const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
+    const user = userEvent.setup()
+    await user.click(menuButton)
 
-        expect(screen.queryByText("ログアウト")).not.toBeInTheDocument();
-      })
-    })
+    const topPageLink = screen.getByRole("link", { name: "TOPページ" })
+    expect(topPageLink).toBeInTheDocument()
+    expect(topPageLink).toHaveAttribute('href', '/')
+
+    expect(screen.queryByRole("link", { name: "マイページ" })).not.toBeInTheDocument()
+  })
+
+  test("プロフィールリンクが常に表示される", async () => {
+    render(<UserDropDownMenu user={mockUser} />)
+
+    const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
+    const user = userEvent.setup()
+    await user.click(menuButton)
+
+    const profileLink = screen.getByRole("link", { name: "プロフィール" })
+    expect(profileLink).toBeInTheDocument()
+    expect(profileLink).toHaveAttribute('href', '/account/profile')
+  })
+
+  test("ログアウトボタンをクリックするとlogout関数が呼ばれる", async () => {
+    render(<UserDropDownMenu user={mockUser} />)
+
+    const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
+    const user = userEvent.setup()
+    await user.click(menuButton)
+
+    const logoutButton = screen.getByRole("button", { name: "ログアウト" })
+    await user.click(logoutButton)
+
+    expect(logout).toHaveBeenCalledTimes(1)
+  })
+
+  test("メニュー外をクリックするとメニューが閉じる", async () => {
+    render(
+      <>
+        <div data-testid="outside">Outside element</div>
+        <UserDropDownMenu user={mockUser} />
+      </>
+    )
+
+    const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
+    const user = userEvent.setup()
+    await user.click(menuButton)
+
+    expect(screen.getByRole("button", { name: "ログアウト" })).toBeInTheDocument()
+
+    const outsideElement = screen.getByTestId("outside")
+    await user.click(outsideElement)
+
+    expect(screen.queryByRole("button", { name: "ログアウト" })).not.toBeInTheDocument()
+  })
+
+  test("ユーザー画像がない場合はデフォルト画像が表示される", async () => {
+    const userWithoutImage = {
+      id: "2",
+      name: "ノーイメージユーザー",
+      email: "no-image@example.com",
+      createdAt: "2023-01-01T00:00:00Z",
+      updatedAt: "2023-01-01T00:00:00Z"
+    } as User
+
+    render(<UserDropDownMenu user={userWithoutImage} />)
+
+    const userIcon = screen.getByAltText("ユーザーメニュー")
+    expect(userIcon).toHaveAttribute("src", "/user.gif")
+
+    const menuButton = screen.getByRole("button", { name: "ユーザーメニュー" })
+    const user = userEvent.setup()
+    await user.click(menuButton)
+
+    const userAvatar = screen.getByAltText("ノーイメージユーザー")
+    expect(userAvatar).toHaveAttribute("src", "/user.gif")
   })
 })
