@@ -1,9 +1,10 @@
 'use server';
 
-import { apolloClient, LoginDocument } from '@/app/graphql';
+import { LoginDocument } from '@/app/graphql';
 import { cookies } from 'next/headers';
 import { setFlash } from '@/actions/flash';
 import { redirect } from 'next/navigation';
+import { getClient } from '@/app/apollo-client';
 
 export async function login(formData: FormData) {
   const email = formData.get('email') as string;
@@ -12,7 +13,7 @@ export async function login(formData: FormData) {
   const cookieHeader = await cookies();
   const cookie = cookieHeader.toString();
 
-  const { data } = await apolloClient.mutate({
+  const { data } = await getClient().mutate({
     mutation: LoginDocument,
     variables: { email, password },
     context: {

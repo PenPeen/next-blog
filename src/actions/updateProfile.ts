@@ -1,9 +1,10 @@
 'use server';
 
-import { apolloClient, UpdateUserProfileDocument } from '@/app/graphql';
+import { UpdateUserProfileDocument } from '@/app/graphql';
 import { cookies } from 'next/headers';
 import { setFlash } from './flash';
 import { redirect } from 'next/navigation';
+import { getClient } from '@/app/apollo-client';
 
 type ProfileFormData = {
   name: string;
@@ -23,7 +24,7 @@ export async function updateProfile(data: ProfileFormData) {
     const cookiesObj = await cookies();
     const cookieHeader = cookiesObj.toString();
 
-    const { data: responseData } = await apolloClient.mutate({
+    const { data: responseData } = await getClient().mutate({
       mutation: UpdateUserProfileDocument,
       context: {
         headers: {

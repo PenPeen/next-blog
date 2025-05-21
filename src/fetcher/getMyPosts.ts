@@ -1,5 +1,5 @@
-import { GetMyPostsDocument } from '@/app/graphql';
-import { apolloClient } from '@/app/graphql/apollo-client';
+import { GetMyPostsDocument } from '@/app/graphql/generated';
+import { query } from '@/app/apollo-client';
 import { cookies } from "next/headers";
 import { cache } from 'react';
 
@@ -7,7 +7,7 @@ export const getMyPosts = cache(async (page = 1, perPage = 15) => {
   const cookiesObj = await cookies();
   const cookieHeader = cookiesObj.toString();
 
-  const { data } = await apolloClient.query({
+  const { data } = await query({
     query: GetMyPostsDocument,
     variables: { page, perPage },
     context: {

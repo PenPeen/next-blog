@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { setFlash } from '@/actions/flash';
-import { apolloClient } from '@/app/graphql/apollo-client';
+import { getClient } from '@/app/apollo-client';
 import { cookies } from 'next/headers';
-import { ConfirmRegistrationDocument } from '@/app/graphql';
+import { ConfirmRegistrationDocument } from '@/app/graphql/generated';
 
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token') || '';
 
   try {
-    const result = await apolloClient.mutate({
+    const result = await getClient().mutate({
       mutation: ConfirmRegistrationDocument,
       variables: { token: token }
     });

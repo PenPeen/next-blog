@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { apolloClient } from '@/app/graphql/apollo-client';
+import { getClient } from '../../../app/apollo-client';
 import MyPostForm from '.';
 import { Post } from '@/app/graphql';
 
@@ -12,9 +12,9 @@ type DropdownOption = {
 };
 
 jest.mock('@/app/graphql/apollo-client', () => ({
-  apolloClient: {
+  getClient: jest.fn().mockReturnValue({
     mutate: jest.fn()
-  }
+  })
 }));
 
 jest.mock('@/components/ui/StatusBadge', () => ({
@@ -74,7 +74,7 @@ const mockPost: Partial<Post> = {
 describe('MyPostForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (apolloClient.mutate as jest.Mock).mockResolvedValue({
+    (getClient().mutate as jest.Mock).mockResolvedValue({
       data: {
         updatePost: {
           post: {
@@ -111,7 +111,7 @@ describe('MyPostForm', () => {
 
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    expect(apolloClient.mutate).toHaveBeenCalledWith(expect.objectContaining({
+    expect(getClient().mutate).toHaveBeenCalledWith(expect.objectContaining({
       variables: {
         input: {
           postInput: {

@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { GET } from './route';
-import { apolloClient } from '@/app/graphql/apollo-client';
+import { getClient } from '../../../apollo-client';
 import { cookies } from 'next/headers';
 import { setFlash } from '@/actions/flash';
 
@@ -33,9 +33,9 @@ jest.mock('next/server', () => {
 
 // モックの設定
 jest.mock('@/app/graphql/apollo-client', () => ({
-  apolloClient: {
+  getClient: jest.fn().mockReturnValue({
     mutate: jest.fn()
-  }
+  })
 }));
 
 jest.mock('next/headers', () => ({
@@ -55,8 +55,7 @@ describe('Registration Confirmation API', () => {
   });
 
   it('正常に会員登録確認が完了し、アカウントページにリダイレクトされる', async () => {
-    // モックの戻り値を設定
-    (apolloClient.mutate as jest.Mock).mockResolvedValue({
+    (getClient().mutate as jest.Mock).mockResolvedValue({
       data: {
         confirmRegistration: {
           success: true,
@@ -89,7 +88,7 @@ describe('Registration Confirmation API', () => {
     const response = await GET(mockRequest);
 
     // アサーション
-    expect(apolloClient.mutate).toHaveBeenCalledWith({
+    expect(getClient().mutate).toHaveBeenCalledWith({
       mutation: expect.anything(),
       variables: { token: 'valid-token' }
     });
@@ -115,7 +114,7 @@ describe('Registration Confirmation API', () => {
 
   it('トークンが無効な場合、エラーフラッシュが設定され、トップページにリダイレクトされる', async () => {
     // モックがエラーをスローするように設定
-    (apolloClient.mutate as jest.Mock).mockRejectedValue({
+    (getClient().mutate as jest.Mock).mockRejectedValue({
       message: 'トークンが無効です'
     });
 
@@ -130,7 +129,7 @@ describe('Registration Confirmation API', () => {
     const response = await GET(mockRequest);
 
     // アサーション
-    expect(apolloClient.mutate).toHaveBeenCalledWith({
+    expect(getClient().mutate).toHaveBeenCalledWith({
       mutation: expect.anything(),
       variables: { token: 'invalid-token' }
     });
