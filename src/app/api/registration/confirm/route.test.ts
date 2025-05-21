@@ -142,4 +142,69 @@ describe('Registration Confirmation API', () => {
     expect(response.status).toBe(307); // 一時的なリダイレクト
     expect(response.headers.get('location')).toBe('https://example.com/');
   });
+
+  it('確認処理でのAPIエラー応答を適切に処理し、トップページにリダイレクトされる', async () => {
+    // エラーメッセージを含む応答をシミュレート
+    (getClient().mutate as jest.Mock).mockResolvedValue({
+      data: {
+        confirmRegistration: {
+          errors: [
+            { message: 'トークンの有効期限が切れています' },
+            { message: '別のエラー' }
+          ]
+        }
+      }
+    });
+
+    const mockRequest = new NextRequest('https://example.com/api/registration/confirm?token=expired-token') as jest.Mocked<NextRequest>;
+    (mockRequest.nextUrl.searchParams.get as jest.Mock).mockImplementation((param: string) => {
+      if (param === 'token') return 'expired-token';
+      return null;
+    });
+
+    // エラーログをモック
+    const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+
+    // 関数を実行
+    const response = await GET(mockRequest);
+
+    // アサーション
+    expect(getClient().mutate).toHaveBeenCalledWith({
+      mutation: expect.anything(),
+      variables: { token: 'expired-token' }
+    });
+
+    // エラーがログに記録されていることを確認
+    expect(consoleLogSpy).toHaveBeenCalledWith(expect.arrayContaining([
+      expect.objectContaining({ message: 'トークンの有効期限が切れています' }),
+      expect.objectContaining({ message: '別のエラー' })
+    ]));
+
+    // エラーフラッシュが設定されていることを確認
+    expect(setFlash).toHaveBeenCalledWith({
+      type: 'error',
+      message: 'トークンの有効期限が切れています\n別のエラー'
+    });
+
+    expect(response).toBeDefined();
+    expect(response.status).toBe(307); // 一時的なリダイレクト
+    expect(response.headers.get('location')).toBe('https://example.com/');
+  });
+
+  it('トークンが空の場合も適切に処理される', async () => {
+    const mockRequest = new NextRequest('https://example.com/api/registration/confirm') as jest.Mocked<NextRequest>;
+    (mockRequest.nextUrl.searchParams.get as jest.Mock).mockImplementation((param: string) => {
+      if (param === 'token') return '';
+      return null;
+    });
+
+    // 関数を実行
+    await GET(mockRequest);
+
+    // アサーション
+    expect(getClient().mutate).toHaveBeenCalledWith({
+      mutation: expect.anything(),
+      variables: { token: '' }
+    });
+  });
 });
