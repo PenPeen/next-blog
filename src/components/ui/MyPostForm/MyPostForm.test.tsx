@@ -1,18 +1,17 @@
 import React from 'react';
 import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { getClient } from '../../../app/apollo-client';
 import MyPostForm from '.';
-import { Post } from '@/app/graphql';
+import { Post } from '@/app/graphql/generated';
+import { makeClient } from '@/app/ApolloWrapper';
 
-// 型定義を追加
 type DropdownOption = {
   value: string;
   label: string;
 };
 
-jest.mock('@/app/graphql/apollo-client', () => ({
-  getClient: jest.fn().mockReturnValue({
+jest.mock('@/app/ApolloWrapper', () => ({
+  makeClient: jest.fn().mockReturnValue({
     mutate: jest.fn()
   })
 }));
@@ -73,8 +72,7 @@ const mockPost: Partial<Post> = {
 
 describe('MyPostForm', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    (getClient().mutate as jest.Mock).mockResolvedValue({
+    (makeClient().mutate as jest.Mock).mockResolvedValue({
       data: {
         updatePost: {
           post: {
@@ -111,13 +109,13 @@ describe('MyPostForm', () => {
 
     await new Promise(resolve => setTimeout(resolve, 0));
 
-    expect(getClient().mutate).toHaveBeenCalledWith(expect.objectContaining({
+    expect(makeClient().mutate).toHaveBeenCalledWith(expect.objectContaining({
       variables: {
         input: {
           postInput: {
             id: '123',
             title: 'Test Title',
-            content: 'Test Content Updated Content', // ユーザーが追加したテキストを含む
+            content: 'Test Content Updated Content',
             published: false
           }
         }

@@ -31,8 +31,7 @@ jest.mock('next/server', () => {
   };
 });
 
-// モックの設定
-jest.mock('@/app/graphql/apollo-client', () => ({
+jest.mock('@/app/apollo-client', () => ({
   getClient: jest.fn().mockReturnValue({
     mutate: jest.fn()
   })
