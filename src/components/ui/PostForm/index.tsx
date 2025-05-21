@@ -1,40 +1,25 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import styles from './MyPostForm.module.css';
+import styles from './PostForm.module.css';
 import FormInput from '@/components/ui/FormInput';
 import FormDropdown from '@/components/ui/FormDropdown';
 import Button from '@/components/ui/Button';
-import { gql } from '@apollo/client';
-import { makeClient } from '@/app/ApolloWrapper';
-import { UpdatePostDocument } from '@/app/graphql/generated';
-import { useRouter } from 'next/navigation';
 import ThumbnailFileInput from '@/components/ui/ThumbnailFileInput';
+import { gql } from '@apollo/client';
 
-export const MY_POST_FORM_FRAGMENT = gql`
-  fragment MY_POST_FORM_FRAGMENT on Post {
+export const POST_FORM_FRAGMENT = gql`
+  fragment POST_FORM_FRAGMENT on Post {
     id
     title
     content
     published
     thumbnailUrl
   }
-`
-
-type PostType = {
-  id: string;
-  title: string;
-  content: string;
-  published?: boolean | null;
-  thumbnailUrl?: string | null;
-}
-
-type MyPostFormProps = {
-  post: PostType;
-}
+`;
 
 const postSchema = z.object({
   title: z.string().min(1, "タイトルは必須です"),
@@ -51,80 +36,40 @@ const postSchema = z.object({
   )
 });
 
-type PostFormData = z.infer<typeof postSchema>;
+export type PostFormData = z.infer<typeof postSchema>;
 
 const statusOptions = [
   { value: 'draft', label: '下書き' },
   { value: 'published', label: '公開' }
 ];
 
-export default function MyPostForm({ post }: MyPostFormProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const router = useRouter();
+type PostFormProps = {
+  defaultValues: {
+    title: string;
+    content: string;
+    status: string;
+    thumbnailUrl?: string | null;
+  };
+  onSubmit: (data: PostFormData) => Promise<void>;
+  submitButtonText: string;
+  isSubmitting: boolean;
+  message?: string;
+  errorMessage?: string;
+};
 
+export default function PostForm({
+  defaultValues,
+  onSubmit,
+  submitButtonText,
+  isSubmitting,
+  message,
+  errorMessage
+}: PostFormProps) {
   const methods = useForm<PostFormData>({
     resolver: zodResolver(postSchema),
-    defaultValues: {
-      title: post.title,
-      content: post.content,
-      status: post.published ? 'published' : 'draft',
-    },
+    defaultValues,
     mode: "onBlur"
   });
-
-  const onSubmit = async (data: PostFormData) => {
-    setIsSubmitting(true);
-    setMessage('');
-    setErrorMessage('');
-
-    try {
-      const client = makeClient();
-
-      let thumbnail = undefined;
-      if (data.thumbnail && data.thumbnail.length > 0) {
-        const file = data.thumbnail[0];
-        const reader = new FileReader();
-        thumbnail = await new Promise<string>((resolve) => {
-          reader.onloadend = () => {
-            const base64 = reader.result as string;
-            resolve(base64);
-          };
-          reader.readAsDataURL(file);
-        });
-      }
-
-      const { data: responseData } = await client.mutate({
-        mutation: UpdatePostDocument,
-        variables: {
-          input: {
-            postInput: {
-              id: post.id,
-              title: data.title,
-              content: data.content,
-              published: data.status === 'published',
-              thumbnail
-            }
-          }
-        }
-      });
-
-      if (responseData?.updatePost?.errors) {
-        setErrorMessage(responseData.updatePost.errors.map((error: { message: string }) => error.message).join('\n'));
-      } else {
-        if (responseData?.updatePost?.post) {
-          setMessage('投稿を更新しました');
-          router.refresh();
-        }
-      }
-    } catch (error) {
-      console.error('更新エラー:', error);
-      setErrorMessage('更新中にエラーが発生しました。しばらく経ってから再度試してください。');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <div className={styles.container}>
@@ -152,7 +97,7 @@ export default function MyPostForm({ post }: MyPostFormProps) {
               name="thumbnail"
               label="サムネイル画像"
               helpText="JPG, PNG, GIF (最大2MB)"
-              previewUrl={post.thumbnailUrl || undefined}
+              previewUrl={defaultValues.thumbnailUrl || undefined}
             />
           </div>
 
@@ -188,7 +133,7 @@ export default function MyPostForm({ post }: MyPostFormProps) {
               isRadius
               isDisabled={isSubmitting}
             >
-              {isSubmitting ? '更新中...' : '更新する'}
+              {submitButtonText}
             </Button>
           </div>
         </form>

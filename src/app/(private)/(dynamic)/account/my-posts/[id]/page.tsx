@@ -1,4 +1,4 @@
-import MyPostForm from '@/components/ui/MyPostForm';
+import EditPostForm from '@/components/ui/EditPostForm';
 import { getMyPost } from '@/fetcher';
 import { notFound } from 'next/navigation';
 import MainTitle from '@/components/ui/MainTitle';
@@ -24,7 +24,7 @@ export default async function MyPostPage({ params }: Params) {
       <BackButton>← 投稿一覧に戻る</BackButton>
       <MainTitle>投稿の編集</MainTitle>
       <Card variant="post">
-        <MyPostForm post={post} />
+        <EditPostForm post={post} />
       </Card>
     </div>
   );
