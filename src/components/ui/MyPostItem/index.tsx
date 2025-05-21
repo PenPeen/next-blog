@@ -17,7 +17,7 @@ export function MyPostItem({ post }: { post: Post }) {
   return (
     <div className={styles.postItem}>
       <div className={styles.titleContainer}>
-        <Link href={`/my-posts/${post.id}`} className={styles.titleLink}>{post.title}</Link>
+        <Link href={`/account/my-posts/${post.id}`} className={styles.titleLink}>{post.title}</Link>
       </div>
       <div className={styles.statusContainer}>
         <StatusBadge status={post.published ? 'published' : 'draft'} />
