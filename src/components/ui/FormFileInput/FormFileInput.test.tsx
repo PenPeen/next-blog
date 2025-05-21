@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { FormProvider, useForm } from 'react-hook-form';
 import FormFileInput from '.';
 
-// モックの設定
+
 const registerMock = jest.fn(() => ({
   onBlur: jest.fn(),
   onChange: jest.fn(),
@@ -11,12 +11,12 @@ const registerMock = jest.fn(() => ({
   name: 'test'
 }));
 
-// registerOnChangeなしのモック
+
 const registerMockWithoutOnChange = jest.fn(() => ({
   onBlur: jest.fn(),
   ref: jest.fn(),
   name: 'test',
-  // TypeScriptエラーを避けるためundefinedとして定義
+
   onChange: undefined
 }));
 
@@ -36,7 +36,6 @@ jest.mock('react-hook-form', () => {
 jest.mock('next/image', () => ({
   __esModule: true,
   default: (props: React.ComponentProps<'img'>) => {
-    // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
     return <img {...props} />;
   },
 }));
@@ -48,7 +47,7 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => {
 
 describe('FormFileInput', () => {
   beforeEach(() => {
-    // FSFileオブジェクトのモックリセット
+
     global.URL.createObjectURL = jest.fn(() => 'mocked-url');
     jest.clearAllMocks();
   });
@@ -171,7 +170,7 @@ describe('FormFileInput', () => {
   });
 
   it('registerOnChangeが存在しない場合でも正しく動作すること', () => {
-    // registerにonChangeが含まれないようにモックを変更
+
     const { useFormContext } = jest.requireMock('react-hook-form');
     useFormContext.mockReturnValue({
       register: registerMockWithoutOnChange,
@@ -193,12 +192,12 @@ describe('FormFileInput', () => {
       value: [file]
     });
 
-    // エラーなく変更イベントが処理されることを確認
+
     expect(() => {
       fireEvent.change(fileInput);
     }).not.toThrow();
 
-    // ファイル名が表示されることを確認
+
     expect(screen.getByText('test.png')).toBeInTheDocument();
   });
 
@@ -227,7 +226,7 @@ describe('FormFileInput', () => {
     const fileInput = screen.getByLabelText('プロフィール画像');
     const clickSpy = jest.spyOn(fileInput, 'click');
 
-    // dropzoneエリアをクリック
+
     fireEvent.click(screen.getByText('クリックしてアップロード'));
 
     expect(clickSpy).toHaveBeenCalled();
@@ -243,11 +242,11 @@ describe('FormFileInput', () => {
     const fileInput = screen.getByLabelText('プロフィール画像');
 
     fireEvent.focus(fileInput);
-    // フォーカス状態のクラスが追加されていることを確認（実装によるが、一般的なパターン）
+
     expect(fileInput.closest('.fileInputWrapper')).toHaveClass('fileInputWrapperFocused');
 
     fireEvent.blur(fileInput);
-    // フォーカス状態のクラスが削除されていることを確認
+
     expect(fileInput.closest('.fileInputWrapper')).not.toHaveClass('fileInputWrapperFocused');
   });
 
@@ -277,7 +276,7 @@ describe('FormFileInput', () => {
 
     render(<FormFileInput name="avatar" label="プロフィール画像" variant="dropzone" />);
 
-    // エラークラスが適用されていることを確認
+
     expect(screen.getByText('クリックしてアップロード').closest('.dropzone')).toHaveClass('dropzoneError');
   });
 
@@ -291,7 +290,7 @@ describe('FormFileInput', () => {
     const fileInput = screen.getByLabelText('プロフィール画像');
 
     fireEvent.focus(fileInput);
-    // フォーカス状態のクラスが追加されていることを確認
+
     expect(fileInput.closest('.dropzone')).toHaveClass('dropzoneFocused');
   });
 });

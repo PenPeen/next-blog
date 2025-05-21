@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { Pagination } from ".";
 
-// URLSearchParamsとpathname、searchParamsのモック
 const mockPathname = '/posts';
 let mockSearchParams = new URLSearchParams('');
 
