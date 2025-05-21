@@ -11,6 +11,7 @@ import Button from '@/components/ui/Button';
 import { gql } from '@apollo/client';
 import { makeClient } from '@/app/ApolloWrapper';
 import { UpdatePostDocument, MyPostQuery } from '@/app/graphql/generated';
+import { useRouter } from 'next/navigation';
 
 export const MY_POST_FORM_FRAGMENT = gql`
   fragment MY_POST_FORM_FRAGMENT on Post {
@@ -42,6 +43,7 @@ export default function MyPostForm({ post }: MyPostFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const router = useRouter();
 
   const methods = useForm<PostFormData>({
     resolver: zodResolver(postSchema),
@@ -78,6 +80,7 @@ export default function MyPostForm({ post }: MyPostFormProps) {
       } else {
         if (responseData?.updatePost?.post) {
           setMessage('投稿を更新しました');
+          router.refresh();
         }
       }
     } catch {
