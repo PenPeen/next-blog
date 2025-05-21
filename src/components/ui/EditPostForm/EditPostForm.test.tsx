@@ -5,7 +5,6 @@ import MyPostForm from './index';
 import { makeClient } from '@/app/ApolloWrapper';
 import userEvent from '@testing-library/user-event';
 
-// next/navigationのモック
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn().mockReturnValue({
     push: jest.fn(),
@@ -13,12 +12,9 @@ jest.mock('next/navigation', () => ({
   }),
 }));
 
-// makeClientのモック
 jest.mock('@/app/ApolloWrapper', () => ({
   makeClient: jest.fn(),
 }));
-
-// FileReaderのモック
 class FileReaderMock {
   onloadend: (() => void) | null = null;
   result: string | null = null;
@@ -50,7 +46,6 @@ describe('MyPostForm', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     console.error = jest.fn();
-    // makeClientのモック実装
     (makeClient as jest.Mock).mockReturnValue({
       mutate: jest.fn().mockResolvedValue({
         data: {
@@ -67,7 +62,6 @@ describe('MyPostForm', () => {
       }),
     });
 
-    // FileReaderのモック
     global.FileReader = FileReaderMock as unknown as typeof FileReader;
   });
 
@@ -83,7 +77,6 @@ describe('MyPostForm', () => {
     expect(titleInput).toHaveValue('テスト投稿');
     expect(screen.getByTestId('content-textarea')).toHaveValue('テスト内容');
 
-    // デフォルト画像が表示されているか
     const thumbnailPreview = screen.getByTestId('thumbnail-preview');
     expect(thumbnailPreview).toBeInTheDocument();
     expect(thumbnailPreview).toHaveAttribute('src', '/_next/image?url=%2Fdefault-thumbnail.png&w=640&q=75');
@@ -97,7 +90,6 @@ describe('MyPostForm', () => {
 
     render(<MyPostForm post={postWithThumbnail} />);
 
-    // 既存のサムネイル画像が表示されているか
     const thumbnailPreview = screen.getByTestId('thumbnail-preview');
     expect(thumbnailPreview).toBeInTheDocument();
     expect(thumbnailPreview).toHaveAttribute('src', '/_next/image?url=https%3A%2F%2Fexample.com%2Fimage.jpg&w=640&q=75');
@@ -124,7 +116,6 @@ describe('MyPostForm', () => {
   it('handles status dropdown change', () => {
     render(<MyPostForm {...defaultProps} />);
 
-    // 選択肢を変更
     const statusSelect = screen.getByRole('combobox', { name: /公開状態/i });
     fireEvent.change(statusSelect, { target: { value: 'draft' } });
 
@@ -134,17 +125,14 @@ describe('MyPostForm', () => {
   it('validates form fields', async () => {
     render(<MyPostForm {...defaultProps} />);
 
-    // タイトルを空にする
     const titleInput = screen.getByPlaceholderText('タイトルを入力');
     fireEvent.change(titleInput, { target: { value: '' } });
     fireEvent.blur(titleInput);
 
-    // 内容を空にする
     const contentInput = screen.getByTestId('content-textarea');
     fireEvent.change(contentInput, { target: { value: '' } });
     fireEvent.blur(contentInput);
 
-    // エラーメッセージが表示されるか確認
     await waitFor(() => {
       expect(screen.getByText('タイトルは必須です')).toBeInTheDocument();
       expect(screen.getByText('内容は必須です')).toBeInTheDocument();
@@ -172,22 +160,18 @@ describe('MyPostForm', () => {
 
     render(<MyPostForm {...defaultProps} />);
 
-    // フォームを更新
     fireEvent.change(screen.getByPlaceholderText('タイトルを入力'), { target: { value: '更新されたタイトル' } });
     fireEvent.change(screen.getByTestId('content-textarea'), { target: { value: '更新された内容' } });
     fireEvent.change(screen.getByRole('combobox', { name: /公開状態/i }), { target: { value: 'draft' } });
 
-    // フォームを送信
     await act(async () => {
       fireEvent.submit(screen.getByRole('button', { name: '更新する' }));
     });
 
-    // 成功メッセージが表示されるか確認
     await waitFor(() => {
       expect(screen.getByText('投稿を更新しました')).toBeInTheDocument();
     });
 
-    // mutateが呼ばれたか確認
     expect(mutationMock).toHaveBeenCalledWith(expect.objectContaining({
       variables: {
         input: {
@@ -226,12 +210,10 @@ describe('MyPostForm', () => {
 
     render(<MyPostForm {...defaultProps} />);
 
-    // フォームを送信
     await act(async () => {
       fireEvent.submit(screen.getByRole('button', { name: '更新する' }));
     });
 
-    // エラーメッセージが表示されるか確認
     await waitFor(() => {
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
@@ -240,27 +222,22 @@ describe('MyPostForm', () => {
   it('handles exception during submission', async () => {
     const mockError = new Error('Network error');
 
-    // mutateが例外をスローするようにモック
     (makeClient as jest.Mock).mockReturnValue({
       mutate: jest.fn().mockRejectedValue(mockError),
     });
 
     render(<MyPostForm {...defaultProps} />);
 
-    // フォームを送信
     await act(async () => {
       fireEvent.submit(screen.getByRole('button', { name: '更新する' }));
     });
 
-    // コンソールエラーが呼ばれたかを確認
     expect(console.error).toHaveBeenCalledWith('更新エラー:', mockError);
 
-    // エラーメッセージが表示されるか確認
     await waitFor(() => {
       expect(screen.getByText('更新中にエラーが発生しました。しばらく経ってから再度試してください。')).toBeInTheDocument();
     });
 
-    // ボタンが再び活性化されていることを確認（finallyブロックが実行された）
     await waitFor(() => {
       expect(screen.getByRole('button', { name: '更新する' })).not.toBeDisabled();
     });
@@ -277,7 +254,6 @@ describe('MyPostForm', () => {
         userEvent.upload(thumbnailInput, file);
       });
 
-      // プレビューイメージが表示されることを確認（data-testidを使用）
       await waitFor(() => {
         const previewImage = screen.getByTestId('thumbnail-preview');
         expect(previewImage).toBeInTheDocument();
@@ -286,7 +262,6 @@ describe('MyPostForm', () => {
     });
 
     it('サムネイルが正しくSubmitされること', async () => {
-      // GraphQLクライアントのモック
       const mockExecuteMutation = jest.fn().mockResolvedValue({
         data: {
           updatePost: {
@@ -307,35 +282,27 @@ describe('MyPostForm', () => {
 
       render(<MyPostForm {...defaultProps} />);
 
-      // タイトルを更新
       await userEvent.type(screen.getByLabelText(/タイトル/), ' Updated');
 
-      // サムネイルをアップロード
       const file = new File(['mock content'], 'mock-thumbnail.png', { type: 'image/png' });
       const thumbnailInput = screen.getByLabelText(/サムネイル/);
 
       await act(async () => {
         userEvent.upload(thumbnailInput, file);
-        // FileReaderのモックが読み込み完了イベントをトリガー
         const fileReaderInstance = new FileReader();
-        // @ts-expect-error - FileReaderのモックインスタンスのonloadendプロパティにアクセスするため
         fileReaderInstance.onloadend?.();
       });
 
-      // 公開ステータスに変更
       await userEvent.click(screen.getByLabelText(/公開/));
 
-      // フォームを送信
       await act(async () => {
         await userEvent.click(screen.getByRole('button', { name: '更新する' }));
       });
 
-      // APIが呼び出されたことを確認
       await waitFor(() => {
         expect(mockExecuteMutation).toHaveBeenCalled();
       }, { timeout: 3000 });
 
-      // 成功メッセージが表示されることをモック（実際は表示されないためテストをパスさせる）
       expect(mockExecuteMutation).toHaveBeenCalled();
     });
   });
