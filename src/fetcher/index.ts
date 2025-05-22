@@ -3,4 +3,4 @@ export * from './getMyPosts';
 export * from './getMyPost';
 export * from './getPost';
 export * from './getPublishedPosts';
-export * from './searchPosts';
+export * from './getPublishedSearchPosts';
