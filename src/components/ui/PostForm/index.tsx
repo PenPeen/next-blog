@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,6 +10,7 @@ import FormDropdown from '@/components/ui/FormDropdown';
 import Button from '@/components/ui/Button';
 import ThumbnailFileInput from '@/components/ui/ThumbnailFileInput';
 import { gql } from '@apollo/client';
+import Loading from '@/app/loading';
 
 export const POST_FORM_FRAGMENT = gql`
   fragment POST_FORM_FRAGMENT on Post {
@@ -65,11 +66,24 @@ export default function PostForm({
   message,
   errorMessage
 }: PostFormProps) {
+  const [isInitialized, setIsInitialized] = useState(false);
+
   const methods = useForm<PostFormData>({
     resolver: zodResolver(postSchema),
     defaultValues,
     mode: "onBlur"
   });
+
+  useEffect(() => {
+    if (defaultValues) {
+      methods.reset(defaultValues);
+      setIsInitialized(true);
+    }
+  }, [defaultValues, methods]);
+
+  if (!isInitialized) {
+    return <Loading />;
+  }
 
   return (
     <div className={styles.container}>
