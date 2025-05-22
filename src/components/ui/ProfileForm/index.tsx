@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +10,7 @@ import Card from "@/components/ui/Card";
 import FormInput from "@/components/ui/FormInput";
 import ProfileFileInput from "../ProfileFileInput";
 import { updateProfile } from "@/actions/updateProfile";
+import Loading from "@/app/loading";
 
 const profileSchema = z.object({
   email: z.string().email("有効なメールアドレスを入力してください"),
@@ -36,6 +37,7 @@ type ProfileFormProps = {
 export default function ProfileForm({ email, name, profileImageUrl }: ProfileFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -45,6 +47,17 @@ export default function ProfileForm({ email, name, profileImageUrl }: ProfileFor
       name: name,
     },
   });
+
+  useEffect(() => {
+    if (email && name) {
+      methods.reset({ email, name });
+      setIsInitialized(true);
+    }
+  }, [email, name, methods]);
+
+  if (!isInitialized) {
+    return <Loading />;
+  }
 
   const onSubmit = async (data: ProfileFormData) => {
     setIsLoading(true);
