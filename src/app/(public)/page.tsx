@@ -1,6 +1,6 @@
 import styles from './page.module.css';
 import { Pagination } from "@/components/ui/Pagination";
-import { getPosts, searchPosts } from "@/fetcher";
+import { getPublishedPosts, getPublishedSearchPosts } from "@/fetcher";
 import Posts from "@/components/ui/Posts";
 import FlashMessage from '@/components/ui/FlashMessage';
 
@@ -17,8 +17,8 @@ export default async function Home({ searchParams }: PageProps) {
   const perPage = 15;
   const titleQuery = queryParams.title || '';
   const data = titleQuery
-    ? await searchPosts(titleQuery, currentPage, perPage )
-    : await getPosts(currentPage, perPage);
+    ? await getPublishedSearchPosts(titleQuery, currentPage, perPage )
+    : await getPublishedPosts(currentPage, perPage);
 
   const { posts, pagination } = await data.json();
 
