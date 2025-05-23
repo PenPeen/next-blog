@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import styles from './SearchBox.module.css';
 
@@ -11,11 +11,11 @@ export default function SearchBox() {
 
   const [search, setSearch] = useState(searchParams.get('title') || '');
   const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if(pathname !== '/'){
-      setSearch('');
-      setDebouncedSearch('');
+      inputRef.current!.value = '';
     }
   }, [pathname]);
 
@@ -30,11 +30,10 @@ export default function SearchBox() {
   useEffect(() => {
     if (debouncedSearch.trim()) {
       router.push(`/?title=${debouncedSearch.trim()}`);
+    } else if (debouncedSearch === '') {
+      router.push('/');
     }
-    // FIXME: TOPページで検索ボックスが空になった場合に / に遷移したい（以下は期待通り動作しない）
-    // } else if (debouncedSearch === '' && pathname === '/') {
-    //   router.push('/');
-    // }
+
   }, [debouncedSearch, router]);
 
   return (
@@ -46,6 +45,7 @@ export default function SearchBox() {
           className={styles.searchInput}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          ref={inputRef}
         />
         <div className={styles.searchIcon}>
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
