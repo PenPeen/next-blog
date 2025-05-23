@@ -68,8 +68,6 @@ export default function ProfileForm({ email, name, profileImageUrl }: ProfileFor
         name: data.name,
         profileImage: data.profileImage
       });
-    } catch (e) {
-      setError(e instanceof Error ? e.message : '更新に失敗しました');
     } finally {
       setIsLoading(false);
     }
