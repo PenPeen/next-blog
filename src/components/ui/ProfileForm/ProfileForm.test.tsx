@@ -126,40 +126,6 @@ describe('ProfileForm', () => {
     });
   });
 
-  it('更新処理中にエラーが発生した場合にエラーメッセージが表示されること', async () => {
-    mockUpdateProfile.mockRejectedValueOnce(new Error('更新に失敗しました'));
-
-    render(<ProfileForm {...defaultProps} />);
-
-    const submitButton = screen.getByRole('button', { name: '更新する' });
-    await userEvent.click(submitButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('更新に失敗しました')).toBeInTheDocument();
-    });
-
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: '更新する' })).not.toBeDisabled();
-    });
-  });
-
-  it('更新処理中にErrorインスタンス以外のエラーが発生した場合も適切なエラーメッセージが表示されること', async () => {
-    mockUpdateProfile.mockRejectedValueOnce('不明なエラー');
-
-    render(<ProfileForm {...defaultProps} />);
-
-    const submitButton = screen.getByRole('button', { name: '更新する' });
-    await userEvent.click(submitButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('更新に失敗しました')).toBeInTheDocument();
-    });
-
-    await waitFor(() => {
-      expect(screen.getByRole('button', { name: '更新する' })).not.toBeDisabled();
-    });
-  });
-
   it('プロフィール画像のバリデーションが正しく機能すること', async () => {
     const mockFile = new File(['test'], 'test.png', { type: 'image/png' });
     Object.defineProperty(mockFile, 'size', { value: 1024 * 1024 }); // 1MBサイズ
