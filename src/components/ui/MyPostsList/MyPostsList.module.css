@@ -5,6 +5,13 @@
   padding: 2rem 1rem;
 }
 
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .postList {
   list-style-type: none;
   padding: 0;
