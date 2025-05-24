@@ -7,12 +7,12 @@ import BackButton from '@/components/ui/BackButton';
 import styles from './page.module.css';
 
 type Params = {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export default async function MyPostPage({ params }: Params) {
-  const parameters = await params;
-  const data = await getMyPost(parameters.id);
+  const { id } = await params;
+  const data = await getMyPost(id);
   const post = await data.json();
 
   if (!post) {
