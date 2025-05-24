@@ -10,7 +10,7 @@ import FormDropdown from '@/components/ui/FormDropdown';
 import Button from '@/components/ui/Button';
 import ThumbnailFileInput from '@/components/ui/ThumbnailFileInput';
 import { gql } from '@apollo/client';
-import Loading from '@/app/loading';
+import PostFormSkeleton from '@/components/ui/PostFormSkeleton';
 
 export const POST_FORM_FRAGMENT = gql`
   fragment POST_FORM_FRAGMENT on Post {
@@ -82,7 +82,7 @@ export default function PostForm({
   }, [defaultValues, methods]);
 
   if (!isInitialized) {
-    return <Loading />;
+    return <PostFormSkeleton />;
   }
 
   return (
