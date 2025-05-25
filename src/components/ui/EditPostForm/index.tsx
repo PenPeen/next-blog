@@ -5,6 +5,8 @@ import { makeClient } from '@/app/ApolloWrapper';
 import { UpdatePostDocument } from '@/app/graphql/generated';
 import { useRouter } from 'next/navigation';
 import PostForm, { PostFormData } from '@/components/ui/PostForm';
+import DeletePostForm from '@/components/ui/DeletePostForm';
+import styles from './EditPostForm.module.css';
 
 type PostType = {
   id: string;
@@ -77,18 +79,24 @@ export default function EditPostForm({ post }: EditPostFormProps) {
   };
 
   return (
-    <PostForm
-      defaultValues={{
-        title: post.title,
-        content: post.content,
-        status: post.published ? 'published' : 'draft',
-        thumbnailUrl: post.thumbnailUrl
-      }}
-      onSubmit={handleSubmit}
-      submitButtonText={isSubmitting ? '更新中...' : '更新する'}
-      isSubmitting={isSubmitting}
-      message={message}
-      errorMessage={errorMessage}
-    />
+    <div className={styles.container}>
+      <PostForm
+        defaultValues={{
+          title: post.title,
+          content: post.content,
+          status: post.published ? 'published' : 'draft',
+          thumbnailUrl: post.thumbnailUrl
+        }}
+        onSubmit={handleSubmit}
+        submitButtonText={isSubmitting ? '更新中...' : '更新する'}
+        isSubmitting={isSubmitting}
+        message={message}
+        errorMessage={errorMessage}
+      />
+
+      <div className={styles.dangerZone}>
+        <DeletePostForm post={post} />
+      </div>
+    </div>
   );
 }
