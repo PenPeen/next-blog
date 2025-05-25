@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import PostForm, { PostFormData } from '@/components/ui/PostForm';
 import { makeClient } from '@/app/ApolloWrapper';
-import { CREATE_POST } from '@/graphql/mutations/createPost';
+import { setFlash } from '@/actions/flash';
+import { CreatePostDocument } from '@/app/graphql/generated';
 
 export default function CreatePostForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,7 +41,7 @@ export default function CreatePostForm() {
 
       const client = makeClient();
       const { data: responseData } = await client.mutate({
-        mutation: CREATE_POST,
+        mutation: CreatePostDocument,
         variables: {
           input: {
             postInput: {
@@ -57,7 +58,10 @@ export default function CreatePostForm() {
         setErrorMessage(responseData.createPost.errors.map((error: { message: string }) => error.message).join('\n'));
       } else {
         if (responseData?.createPost?.post) {
-          setMessage('記事を作成しました');
+          await setFlash({
+            message: '記事を作成しました',
+            type: 'success'
+          });
           router.push(`/account/my-posts/${responseData.createPost.post.id}`);
         }
       }
