@@ -169,7 +169,6 @@ export type Post = {
   title: Scalars['String']['output'];
   updatedAt: Scalars['ISO8601DateTime']['output'];
   user: User;
-  userId: Scalars['Int']['output'];
 };
 
 /** Attributes for creating a post */
