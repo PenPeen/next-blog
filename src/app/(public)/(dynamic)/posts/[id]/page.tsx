@@ -16,15 +16,12 @@ export async function generateMetadata({ params }: Params) {
   const post = await fetchPost(id);
 
   if (!post) {
-    return {
-      title: 'Post Not Found',
-      description: "Post not found",
-    };
+    return {};
   }
 
   return {
     title: `${post.title}`,
-    description: "Post of PenBlog App",
+    description: post.content.slice(0, 100),
   };
 }
 
