@@ -10,6 +10,20 @@ type Params = {
   params: Promise<{ id: string }>
 }
 
+export const generateMetadata = async ({ params }: Params) => {
+  const { id } = await params;
+  const data = await getMyPost(id);
+  const post = await data.json();
+  if (!post) {
+    return {}
+  }
+
+  return {
+    title: post.title,
+    description: post.content.slice(0, 100),
+  }
+}
+
 export default async function MyPostPage({ params }: Params) {
   const { id } = await params;
   const data = await getMyPost(id);

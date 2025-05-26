@@ -3,12 +3,18 @@ import { Pagination } from "@/components/ui/Pagination";
 import { getPublishedPosts, getPublishedSearchPosts } from "@/fetcher";
 import Posts from "@/components/ui/Posts";
 import FlashMessage from '@/components/ui/FlashMessage';
+import { Metadata } from 'next';
 
 type PageProps = {
   searchParams: Promise<{
     page?: string;
     title?: string;
   }>;
+};
+
+export const metadata: Metadata = {
+  title: 'Posts',
+  description: '最新の投稿記事一覧。様々なトピックに関する情報を見つけることができます。',
 };
 
 export default async function Home({ searchParams }: PageProps) {
