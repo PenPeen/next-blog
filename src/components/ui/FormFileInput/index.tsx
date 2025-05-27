@@ -1,17 +1,17 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, InputHTMLAttributes } from "react";
 import styles from "./FormFileInput.module.css";
 
-export interface FormFileInputProps {
+export type FormFileInputProps = {
   name: string;
   label: string;
   required?: boolean;
   helpText?: string;
   accept?: string;
   variant?: "default" | "dropzone";
-}
+} & InputHTMLAttributes<HTMLInputElement>;
 
 export default function FormFileInput({
   name,
@@ -20,6 +20,7 @@ export default function FormFileInput({
   helpText,
   accept = "image/*",
   variant = "default",
+  ...rest
 }: FormFileInputProps) {
   const {
     register,
@@ -125,6 +126,7 @@ export default function FormFileInput({
           }}
           onChange={handleChange}
           {...registerRest}
+          {...rest}
         />
       </div>
 

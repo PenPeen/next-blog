@@ -1,18 +1,15 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { useState } from "react";
+import { useState, InputHTMLAttributes } from "react";
 import styles from "./FormInput.module.css";
 
-export interface FormInputProps {
-  name: string;
+export type FormInputProps = {
   label: string;
   placeholder?: string;
-  type?: "text" | "email" | "password" | "number";
-  required?: boolean;
   helpText?: string;
-  autoComplete?: string;
-}
+  required?: boolean;
+} & InputHTMLAttributes<HTMLInputElement>;
 
 export default function FormInput({
   name,
@@ -22,6 +19,7 @@ export default function FormInput({
   required = false,
   helpText,
   autoComplete,
+  ...rest
 }: FormInputProps) {
   const {
     register,
@@ -52,6 +50,7 @@ export default function FormInput({
           registerOnBlur(e);
         }}
         {...registerRest}
+        {...rest}
       />
       {helpText && <p className={styles.helpText}>{helpText}</p>}
       {errorMessage && (
