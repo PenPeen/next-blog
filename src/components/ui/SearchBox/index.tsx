@@ -9,7 +9,7 @@ export default function SearchBox() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [search, setSearch] = useState(searchParams.get('title') || '');
+  const [search, setSearch] = useState(searchParams.get('title'));
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -28,9 +28,9 @@ export default function SearchBox() {
   }, [search]);
 
   useEffect(() => {
-    if (debouncedSearch.trim()) {
+    if (debouncedSearch && debouncedSearch.trim()) {
       router.push(`/?title=${debouncedSearch.trim()}`);
-    } else if (debouncedSearch === '') {
+    } else if (debouncedSearch !== null) {
       router.push('/');
     }
 
@@ -43,7 +43,7 @@ export default function SearchBox() {
           type="text"
           placeholder="記事を検索..."
           className={styles.searchInput}
-          value={search}
+          value={search || ''}
           onChange={(e) => setSearch(e.target.value)}
           ref={inputRef}
         />
