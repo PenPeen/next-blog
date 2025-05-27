@@ -4,26 +4,13 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { register as registerAction } from "@/actions/register";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import styles from "./RegisterForm.module.css";
 import Button from "@/components/ui/Button";
 import Card from "@/components/ui/Card";
 import Link from "next/link";
 import FormInput from "@/components/ui/FormInput";
 import FormCheckBox from "@/components/ui/FormCheckBox";
-
-const registerSchema = z.object({
-  name: z.string().min(1, "名前を入力してください"),
-  email: z.string().email("有効なメールアドレスを入力してください"),
-  password: z.string().min(6, "パスワードは6文字以上で入力してください"),
-  passwordConfirmation: z.string().min(6, "パスワード（確認）を入力してください"),
-  agreement: z.boolean().refine(value => value === true, { message: "利用規約に同意する必要があります" })
-}).refine((data) => data.password === data.passwordConfirmation, {
-  message: "パスワードが一致しません",
-  path: ["passwordConfirmation"],
-});
-
-type RegisterFormData = z.infer<typeof registerSchema>;
+import { RegisterFormData, registerSchema } from "@/lib/schema/register";
 
 export default function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";;
-import { z } from "zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import styles from "./LoginForm.module.css";
@@ -10,13 +9,7 @@ import Card from "@/components/ui/Card";
 import Link from "next/link";
 import FormInput from "@/components/ui/FormInput";
 import { login } from "@/actions/login";
-
-const loginSchema = z.object({
-  email: z.string().email("有効なメールアドレスを入力してください"),
-  password: z.string().min(6, "パスワードは6文字以上で入力してください"),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
+import { LoginFormData, loginSchema } from "@/lib/schema/login";
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
