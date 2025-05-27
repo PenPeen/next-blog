@@ -1,16 +1,16 @@
 "use client";
 
 import { useFormContext } from "react-hook-form";
-import { useState } from "react";
+import { InputHTMLAttributes, useState } from "react";
 import styles from "./FormCheckBox.module.css";
 
-export interface FormCheckBoxProps {
+export type FormCheckBoxProps = {
   name: string;
   label: string;
   required?: boolean;
   helpText?: string;
   defaultChecked?: boolean;
-}
+} & InputHTMLAttributes<HTMLInputElement>;
 
 export default function FormCheckBox({
   name,
@@ -18,6 +18,7 @@ export default function FormCheckBox({
   required = false,
   helpText,
   defaultChecked = false,
+  ...rest
 }: FormCheckBoxProps) {
   const {
     register,
@@ -44,6 +45,7 @@ export default function FormCheckBox({
             registerOnBlur(e);
           }}
           {...registerRest}
+          {...rest}
         />
         <label htmlFor={name} className={styles.checkboxLabel}>
           {label}
