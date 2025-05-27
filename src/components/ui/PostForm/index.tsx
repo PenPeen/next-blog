@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import styles from './PostForm.module.css';
 import FormInput from '@/components/ui/FormInput';
 import FormDropdown from '@/components/ui/FormDropdown';
@@ -11,6 +10,7 @@ import Button from '@/components/ui/Button';
 import ThumbnailFileInput from '@/components/ui/ThumbnailFileInput';
 import { gql } from '@apollo/client';
 import PostFormSkeleton from '@/components/ui/PostFormSkeleton';
+import { PostFormData, postSchema } from '@/lib/schema/post';
 
 export const POST_FORM_FRAGMENT = gql`
   fragment POST_FORM_FRAGMENT on Post {
@@ -21,23 +21,6 @@ export const POST_FORM_FRAGMENT = gql`
     thumbnailUrl
   }
 `;
-
-const postSchema = z.object({
-  title: z.string().min(1, "タイトルは必須です"),
-  content: z.string().min(1, "内容は必須です"),
-  status: z.string().min(1, "公開状態は必須です"),
-  thumbnail: z.any().optional().refine(
-    (files) => {
-      if (!files) return true;
-      if (files.length === 0) return true;
-      if (files.length === 1 && files[0].size <= 2 * 1024 * 1024) return true;
-      return false;
-    },
-    { message: "画像サイズは2MB以下にしてください" }
-  )
-});
-
-export type PostFormData = z.infer<typeof postSchema>;
 
 const statusOptions = [
   { value: 'draft', label: '下書き' },

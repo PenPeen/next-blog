@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { z } from "zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import styles from "./ProfileForm.module.css";
@@ -11,22 +10,7 @@ import FormInput from "@/components/ui/FormInput";
 import ProfileFileInput from "../ProfileFileInput";
 import { updateProfile } from "@/actions/updateProfile";
 import Loading from "@/app/loading";
-
-const profileSchema = z.object({
-  email: z.string().email("有効なメールアドレスを入力してください"),
-  name: z.string().min(1, "名前を入力してください").max(10, "名前は10文字以内で入力してください。"),
-  profileImage: z.any().optional().refine(
-    (files) => {
-      if (!files) return true;
-      if (files.length === 0) return true;
-      if (files.length === 1 && files[0].size <= 2 * 1024 * 1024) return true;
-      return false;
-    },
-    { message: "画像サイズは2MB以下にしてください" }
-  )
-});
-
-type ProfileFormData = z.infer<typeof profileSchema>;
+import { ProfileFormData, profileSchema } from "@/lib/schema/profile";
 
 type ProfileFormProps = {
   email: string;
