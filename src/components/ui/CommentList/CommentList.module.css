@@ -1,0 +1,21 @@
+.commentList {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.commentsTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+.noComments {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  text-align: center;
+  color: #666;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+}

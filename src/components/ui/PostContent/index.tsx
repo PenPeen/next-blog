@@ -4,8 +4,10 @@ import styles from './PostContent.module.css'
 import BackButton from '@/components/ui/BackButton'
 import MainTitle from '@/components/ui/MainTitle'
 import FormattedDate from '@/components/ui/DateFormatter'
+import CommentList from '@/components/ui/CommentList'
 import Image from 'next/image'
 import { gql } from '@apollo/client'
+import { COMMENT_FRAGMENT } from '@/components/ui/Comment'
 
 type PostContentProps = {
   post: PostFragment
@@ -17,7 +19,11 @@ export const POST_FRAGMENT = gql`
     content
     thumbnailUrl
     createdAt
+    comments {
+      ...CommentItem
+    }
   }
+  ${COMMENT_FRAGMENT}
 `
 
 export default function PostContent({ post }: PostContentProps) {
@@ -47,6 +53,8 @@ export default function PostContent({ post }: PostContentProps) {
       <div className={styles.content}>
         {post.content}
       </div>
+
+      <CommentList comments={post.comments} />
     </article>
   )
 }

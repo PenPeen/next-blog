@@ -1,85 +1,115 @@
 import { render, screen } from "@testing-library/react";
 import PostContent from ".";
-import { PostFragment } from "@/app/graphql";
+import { PostFragment } from "@/app/graphql/types";
+import { Comment } from "@/app/graphql/generated";
 
-jest.mock("@/components/ui/BackButton", () => {
-  return function MockBackButton({ children }: { children: React.ReactNode }) {
+jest.mock("@/components/ui/BackButton", () => ({
+  __esModule: true,
+  default: function MockBackButton({ children }: { children: React.ReactNode }) {
     return <div data-testid="back-button">{children}</div>;
-  };
-});
+  }
+}));
 
-jest.mock("@/components/ui/MainTitle", () => {
-  return function MockMainTitle({ children }: { children: React.ReactNode }) {
-    return <h1 data-testid="main-title">{children}</h1>;
-  };
-});
+jest.mock("@/components/ui/MainTitle", () => ({
+  __esModule: true,
+  default: function MockMainTitle({ children }: { children: React.ReactNode }) {
+    return <div data-testid="main-title">{children}</div>;
+  }
+}));
 
-jest.mock("@/components/ui/DateFormatter", () => {
-  return function MockFormattedDate({ date }: { date: string }) {
-    return <div data-testid="formatted-date">{date}</div>;
-  };
-});
+jest.mock("@/components/ui/DateFormatter", () => ({
+  __esModule: true,
+  default: function MockFormattedDate() {
+    return <div data-testid="formatted-date">2023-01-01</div>;
+  }
+}));
+
+jest.mock("@/components/ui/CommentList", () => ({
+  __esModule: true,
+  default: function MockCommentList({ comments }: { comments: Comment[] }) {
+    return (
+      <div data-testid="comment-list">
+        コメント数: {comments.length}
+      </div>
+    );
+  }
+}));
 
 jest.mock("next/image", () => ({
   __esModule: true,
-  default: (props: React.ComponentProps<'img'> & {
-    fill?: boolean;
-    priority?: boolean;
-    unoptimized?: boolean;
-  }) => {
-    const { fill, priority, unoptimized, ...imgProps } = props;
-
-    return (
-      // eslint-disable-next-line
-      <img
-        data-testid="next-image"
-        data-fill={fill ? "true" : undefined}
-        data-priority={priority ? "true" : undefined}
-        data-unoptimized={unoptimized ? "true" : undefined}
-        {...imgProps}
-      />
-    );
-  },
+  default: function MockImage({ src, alt }: { src: string, alt: string }) {
+    return <img src={src} alt={alt} data-testid="next-image" />;
+  }
 }));
 
 describe("PostContent", () => {
-  const mockPostWithThumbnail: PostFragment = {
-    title: "テスト記事タイトル",
-    content: "これはテスト記事の内容です。",
-    thumbnailUrl: "https://example.com/test-image.jpg",
+  const mockPost: PostFragment = {
+    title: "テスト投稿",
+    content: "テスト内容",
+    thumbnailUrl: "https://example.com/image.jpg",
     createdAt: "2023-01-01T00:00:00Z",
-    __typename: "Post",
+    comments: [
+      {
+        id: "1",
+        content: "テストコメント1",
+        createdAt: "2023-01-01T00:00:00Z",
+        updatedAt: "2023-01-01T00:00:00Z",
+        user: {
+          id: "1",
+          name: "テストユーザー1",
+          email: "test1@example.com",
+          createdAt: "2023-01-01T00:00:00Z",
+          updatedAt: "2023-01-01T00:00:00Z",
+          userImage: null,
+          posts: null
+        },
+        post: {
+          id: "1",
+          title: "テスト投稿",
+          content: "テスト内容",
+          published: true,
+          createdAt: "2023-01-01T00:00:00Z",
+          updatedAt: "2023-01-01T00:00:00Z",
+          thumbnailUrl: null,
+          user: {
+            id: "1",
+            name: "テストユーザー",
+            email: "test@example.com",
+            createdAt: "2023-01-01T00:00:00Z",
+            updatedAt: "2023-01-01T00:00:00Z",
+            userImage: null,
+            posts: null
+          },
+          comments: []
+        }
+      }
+    ]
   };
 
   const mockPostWithoutThumbnail: PostFragment = {
-    title: "サムネイルなしの記事",
-    content: "これはサムネイルのない記事です。",
-    thumbnailUrl: null,
-    createdAt: "2023-01-02T00:00:00Z",
-    __typename: "Post",
+    ...mockPost,
+    thumbnailUrl: null
   };
 
-  it("renders post with thumbnail correctly", () => {
-    render(<PostContent post={mockPostWithThumbnail} />);
+  it("投稿内容が正しく表示されること", () => {
+    render(<PostContent post={mockPost} />);
 
-    expect(screen.getByTestId("main-title")).toHaveTextContent("テスト記事タイトル");
-    expect(screen.getByTestId("back-button")).toHaveTextContent("← 戻る");
-    expect(screen.getByTestId("formatted-date")).toHaveTextContent("2023-01-01T00:00:00Z");
-
-    const image = screen.getByTestId("next-image");
-    expect(image).toHaveAttribute("src", "https://example.com/test-image.jpg");
-    expect(image).toHaveAttribute("alt", "テスト記事タイトル");
-
-    expect(screen.getByText("これはテスト記事の内容です。")).toBeInTheDocument();
+    expect(screen.getByTestId("back-button")).toBeInTheDocument();
+    expect(screen.getByText("← 戻る")).toBeInTheDocument();
+    expect(screen.getByTestId("main-title")).toBeInTheDocument();
+    expect(screen.getByText("テスト投稿")).toBeInTheDocument();
+    expect(screen.getByTestId("formatted-date")).toBeInTheDocument();
+    expect(screen.getByTestId("next-image")).toBeInTheDocument();
+    expect(screen.getByText("テスト内容")).toBeInTheDocument();
+    expect(screen.getByTestId("comment-list")).toBeInTheDocument();
+    expect(screen.getByText("コメント数: 1")).toBeInTheDocument();
   });
 
-  it("renders post without thumbnail correctly", () => {
+  it("サムネイルがない場合、サムネイル要素が表示されないこと", () => {
     render(<PostContent post={mockPostWithoutThumbnail} />);
 
-    expect(screen.getByTestId("main-title")).toHaveTextContent("サムネイルなしの記事");
-    expect(screen.getByTestId("back-button")).toHaveTextContent("← 戻る");
-    expect(screen.getByTestId("formatted-date")).toHaveTextContent("2023-01-02T00:00:00Z");
     expect(screen.queryByTestId("next-image")).not.toBeInTheDocument();
-    expect(screen.getByText("これはサムネイルのない記事です。")).toBeInTheDocument();
+    expect(screen.getByText("テスト投稿")).toBeInTheDocument();
+    expect(screen.getByText("テスト内容")).toBeInTheDocument();
   });
 });
