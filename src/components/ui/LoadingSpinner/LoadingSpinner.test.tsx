@@ -1,10 +1,10 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import { Loading } from './index';
+import { LoadingSpinner } from './index';
 
 describe('Loading', () => {
   it('renders the loading component', () => {
-    const { container } = render(<Loading />);
+    const { container } = render(<LoadingSpinner />);
 
     expect(container).toBeInTheDocument();
 

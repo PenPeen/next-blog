@@ -1,7 +1,7 @@
 import React from 'react';
-import styles from './Loading.module.css';
+import styles from './LoadingSpinner.module.css';
 
-export function Loading() {
+export function LoadingSpinner() {
   return (
     <div className={styles.loadingContainer}>
       <div className={styles.spinner}></div>
@@ -9,4 +9,4 @@ export function Loading() {
   );
 }
 
-export default Loading;
+export default LoadingSpinner;
