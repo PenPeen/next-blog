@@ -1,0 +1,31 @@
+.commentItem {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background-color: #f8f9fa;
+}
+
+.commentHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.commentContent {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #333;
+  word-break: break-word;
+}
