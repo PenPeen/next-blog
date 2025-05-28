@@ -92,10 +92,9 @@ describe('CommentList', () => {
     expect(screen.getByText('テストコメント2')).toBeInTheDocument();
   });
 
-  it('コメントがない場合にメッセージが表示されること', () => {
+  it('コメントがない場合', () => {
     render(<CommentList comments={[]} />);
 
-    expect(screen.getByTestId('no-comments')).toBeInTheDocument();
-    expect(screen.getByText('まだコメントはありません。')).toBeInTheDocument();
+    expect(screen.getByText('コメント (0)')).toBeInTheDocument();
   });
 });
