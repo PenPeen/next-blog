@@ -1,20 +1,23 @@
 import React from 'react'
-import { PostFragment } from '@/app/graphql'
+import { PostFragment, User } from '@/app/graphql/generated'
 import styles from './PostContent.module.css'
 import BackButton from '@/components/ui/BackButton'
 import MainTitle from '@/components/ui/MainTitle'
 import FormattedDate from '@/components/ui/DateFormatter'
 import CommentList from '@/components/ui/CommentList'
+import CommentForm from '@/components/ui/CommentForm'
 import Image from 'next/image'
 import { gql } from '@apollo/client'
 import { COMMENT_FRAGMENT } from '@/components/ui/Comment'
+import { getCurrentUser } from '@/fetcher'
 
 type PostContentProps = {
-  post: PostFragment
+  post: PostFragment & { id: string }
 }
 
 export const POST_FRAGMENT = gql`
   fragment Post on Post {
+    id
     title
     content
     thumbnailUrl
@@ -26,7 +29,9 @@ export const POST_FRAGMENT = gql`
   ${COMMENT_FRAGMENT}
 `
 
-export default function PostContent({ post }: PostContentProps) {
+export default async function PostContent({ post }: PostContentProps) {
+  const currentUser = await getCurrentUser() as User | null;
+
   return (
     <article className={styles.container}>
       <div className={styles.header}>
@@ -55,6 +60,7 @@ export default function PostContent({ post }: PostContentProps) {
       </div>
 
       <CommentList comments={post.comments} />
+      <CommentForm postId={post.id} currentUser={currentUser} />
     </article>
   )
 }

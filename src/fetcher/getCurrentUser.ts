@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { cache } from "react";
 import { query } from "@/app/apollo-client";
 
+export type CurrentUserType = GetCurrentUserQuery['currentUser'];
+
 export const getCurrentUser = cache(async (request?: NextRequest): Promise<GetCurrentUserQuery['currentUser']> => {
   const cookieHeader = await getCookieHeader(request);
 
