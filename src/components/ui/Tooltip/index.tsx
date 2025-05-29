@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, ReactNode } from 'react';
+import { useState, ReactNode } from 'react';
 import styles from './Tooltip.module.css';
 
 export type TooltipPosition = 'top' | 'right' | 'bottom' | 'left';
