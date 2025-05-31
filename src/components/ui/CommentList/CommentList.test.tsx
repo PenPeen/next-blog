@@ -2,6 +2,7 @@ import { render, screen, act, waitFor } from "@testing-library/react";
 import CommentList from ".";
 import { CommentItemFragment } from "@/app/graphql/generated";
 import React from 'react';
+import { setFlash } from "@/actions/flash";
 
 const mockFetchMore = jest.fn();
 jest.mock('@apollo/client', () => ({
@@ -10,10 +11,14 @@ jest.mock('@apollo/client', () => ({
   })
 }));
 
-jest.mock('@/components/ui/Comment', () => ({
-  __esModule: true,
-  default: ({ comment }: { comment: CommentItemFragment }) =>
-    <div data-testid={`comment-${comment.id}`}>{comment.content}</div>
+jest.mock('@/components/ui/Comment', () => {
+  return function Comment ({ comment }: { comment: CommentItemFragment }) {
+    return <div data-testid={`comment-${comment.id}`}>{comment.content}</div>
+  }
+});
+
+jest.mock('@/actions/flash', () => ({
+  setFlash: jest.fn()
 }));
 
 class MockIntersectionObserver implements IntersectionObserver {
@@ -137,14 +142,10 @@ describe("CommentList", () => {
 
       mockFetchMore.mockImplementation(() => new Promise(() => {}));
 
-
       render(<CommentList comments={[createMockComment("1")]} postId="post1" endCursor="abc" />);
-
-
       act(() => {
         mockObserver.triggerIntersection(true);
       });
-
 
       await waitFor(() => {
         expect(screen.getByText("コメントを読み込み中...")).toBeInTheDocument();
@@ -179,9 +180,6 @@ describe("CommentList", () => {
     });
 
     it("エラー発生時の処理が正しく行われる", async () => {
-      const originalConsoleError = console.error;
-      console.error = jest.fn();
-
       mockFetchMore.mockRejectedValue(new Error("Error fetching comments"));
 
       render(<CommentList comments={[createMockComment("1")]} postId="post1" endCursor="abc" />);
@@ -191,13 +189,13 @@ describe("CommentList", () => {
       });
 
       await waitFor(() => {
-        expect(console.error).toHaveBeenCalledWith(
-          'コメントの取得に失敗しました',
-          expect.any(Error)
+        expect(setFlash).toHaveBeenCalledWith(
+          {
+            type: 'error',
+            message: 'コメントの取得に失敗しました'
+          }
         );
       });
-
-      console.error = originalConsoleError;
     });
 
     it("hasNextPageがfalseの場合、追加読み込みが行われない", async () => {

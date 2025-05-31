@@ -5,6 +5,7 @@ import styles from './CommentList.module.css';
 import { CommentItemFragment, PostCommentsCursorDocument, PostCommentsCursorQuery } from '@/app/graphql/generated';
 import Comment from '@/components/ui/Comment';
 import { useQuery } from '@apollo/client';
+import { setFlash } from '@/actions/flash';
 
 type CommentListProps = {
   comments: CommentItemFragment[];
@@ -26,10 +27,9 @@ export default function CommentList({ comments, postId, endCursor }: CommentList
   });
 
   const loadMoreComments = useCallback(async () => {
-      if (isLoading || !hasNextPage) return;
+    if (isLoading || !hasNextPage) return;
 
     setIsLoading(true);
-
     try {
       const result = await fetchMore({
         variables: {
@@ -46,8 +46,11 @@ export default function CommentList({ comments, postId, endCursor }: CommentList
       setCurrentCursor(pageInfo.endCursor || '');
       setHasNextPage(pageInfo.hasNextPage);
 
-    } catch (error) {
-      console.error('コメントの取得に失敗しました', error);
+    } catch {
+      setFlash({
+        type: 'error',
+        message: 'コメントの取得に失敗しました'
+      });
     } finally {
       setIsLoading(false);
     }

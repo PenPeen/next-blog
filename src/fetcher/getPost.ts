@@ -5,7 +5,7 @@ import { cache } from "react";
 export const getPost = cache(async (id: string) => {
   const { data } = await query({
     query: GetPostDocument,
-    variables: { id },
+    variables: { id, first: 20 },
     context: {
       fetchOptions: {
         cache: "force-cache",
