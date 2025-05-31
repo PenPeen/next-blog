@@ -1,0 +1,267 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: /Users/ikegamihiroshitou/Desktop/dev/next-blog/package.json, /Users/ikegamihiroshitou/Desktop/dev/next-blog/src/components/ui/Comment/Comment.test.tsx, /Users/ikegamihiroshitou/Desktop/dev/next-blog/src/components/ui/Comment/index.tsx
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+/
+  Users/
+    ikegamihiroshitou/
+      Desktop/
+        dev/
+          next-blog/
+            src/
+              components/
+                ui/
+                  Comment/
+                    Comment.test.tsx
+                    index.tsx
+            package.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="/Users/ikegamihiroshitou/Desktop/dev/next-blog/src/components/ui/Comment/Comment.test.tsx">
+import { render, screen } from "@testing-library/react";
+import Comment from ".";
+import { Comment as CommentType } from "@/app/graphql/generated";
+
+// DOMPurifyのモック
+jest.mock('dompurify', () => ({
+  __esModule: true,
+  default: {
+    sanitize: jest.fn(content => {
+      // 実際のDOMPurifyの動作をシミュレート
+      return content
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/<[^>]*>/g, '');
+    })
+  }
+}));
+
+jest.mock('@/components/ui/DateFormatter', () => ({
+  __esModule: true,
+  default: function MockFormattedDate() {
+    return <div data-testid="formatted-date">2023-01-01</div>;
+  }
+}));
+
+describe('Comment', () => {
+  const mockComment: CommentType = {
+    id: '1',
+    content: 'テストコメント',
+    createdAt: '2023-01-01T00:00:00Z',
+    updatedAt: '2023-01-01T00:00:00Z',
+    user: {
+      id: '1',
+      name: 'テストユーザー',
+      email: 'test@example.com',
+      createdAt: '2023-01-01T00:00:00Z',
+      updatedAt: '2023-01-01T00:00:00Z',
+      userImage: null,
+      posts: null
+    },
+    post: {
+      id: '1',
+      title: 'テスト投稿',
+      content: 'テスト内容',
+      published: true,
+      createdAt: '2023-01-01T00:00:00Z',
+      updatedAt: '2023-01-01T00:00:00Z',
+      thumbnailUrl: null,
+      user: {
+        id: '1',
+        name: 'テストユーザー',
+        email: 'test@example.com',
+        createdAt: '2023-01-01T00:00:00Z',
+        updatedAt: '2023-01-01T00:00:00Z',
+        userImage: null,
+        posts: null
+      },
+      comments: []
+    }
+  };
+
+  it('コメントが正しく表示されること', () => {
+    render(<Comment comment={mockComment} />);
+
+    expect(screen.getByTestId('comment-item')).toBeInTheDocument();
+    expect(screen.getByText('テストコメント')).toBeInTheDocument();
+    expect(screen.getByText('テストユーザー')).toBeInTheDocument();
+    expect(screen.getByTestId('formatted-date')).toBeInTheDocument();
+  });
+
+  it('HTMLタグを含むコメントが安全にサニタイズされること', () => {
+    const commentWithHtml: CommentType = {
+      ...mockComment,
+      content: '<script>alert("XSS");</script><b>太字テキスト</b><a href="javascript:alert(1)">リンク</a>'
+    };
+
+    render(<Comment comment={commentWithHtml} />);
+
+    // HTMLタグが表示されず、テキストのみが表示されること
+    expect(screen.getByText('太字テキストリンク')).toBeInTheDocument();
+
+    // 元の危険なHTMLが画面に存在しないことを確認
+    const commentContent = screen.getByTestId('comment-item').textContent;
+    expect(commentContent).not.toContain('<script>');
+    expect(commentContent).not.toContain('<b>');
+    expect(commentContent).not.toContain('<a href=');
+  });
+});
+</file>
+
+<file path="/Users/ikegamihiroshitou/Desktop/dev/next-blog/src/components/ui/Comment/index.tsx">
+'use client';
+
+import React from 'react'
+import styles from './Comment.module.css'
+import { CommentItemFragment } from '@/app/graphql/generated'
+import FormattedDate from '@/components/ui/DateFormatter'
+import { gql } from '@apollo/client'
+import DOMPurify from 'dompurify'
+
+type CommentProps = {
+  comment: CommentItemFragment
+}
+
+export const COMMENT_FRAGMENT = gql`
+  fragment CommentItem on Comment {
+    id
+    content
+    createdAt
+    user {
+      name
+      userImage {
+        profile
+      }
+    }
+  }
+`
+
+export default function Comment({ comment }: CommentProps) {
+  // コンテンツをサニタイズして安全なテキストに変換
+  const sanitizedContent = DOMPurify.sanitize(comment.content, {
+    ALLOWED_TAGS: [], // HTMLタグを全て削除
+    ALLOWED_ATTR: [] // 属性も全て削除
+  });
+
+  return (
+    <div className={styles.commentItem} data-testid="comment-item">
+      <div className={styles.commentHeader}>
+        <div className={styles.userInfo}>
+          <span className={styles.userName}>{comment.user.name}</span>
+        </div>
+        <FormattedDate date={comment.createdAt} />
+      </div>
+      <div className={styles.commentContent}>
+        {sanitizedContent}
+      </div>
+    </div>
+  )
+}
+</file>
+
+<file path="/Users/ikegamihiroshitou/Desktop/dev/next-blog/package.json">
+{
+  "name": "next-blog",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "codegen": "dotenv -- graphql-codegen --config codegen.yml"
+  },
+  "dependencies": {
+    "@apollo/client": "^3.13.8",
+    "@apollo/client-integration-nextjs": "^0.12.2",
+    "@apollo/server": "^4.12.0",
+    "@as-integrations/next": "^3.2.0",
+    "@graphql-codegen/typescript-document-nodes": "^4.0.16",
+    "@hookform/resolvers": "^5.0.1",
+    "@types/dompurify": "^3.0.5",
+    "dompurify": "^3.2.6",
+    "next": "15.2.5",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.56.1",
+    "uuid": "^11.1.0",
+    "zod": "^3.24.3"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^1.2.9",
+    "@eslint/eslintrc": "^3",
+    "@graphql-codegen/cli": "^5.0.5",
+    "@graphql-codegen/client-preset": "^4.8.0",
+    "@graphql-codegen/typescript": "^4.1.6",
+    "@graphql-codegen/typescript-resolvers": "^4.5.0",
+    "@graphql-eslint/eslint-plugin": "^4.4.0",
+    "@swc/core": "^1.11.21",
+    "@swc/jest": "^0.2.37",
+    "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "dotenv-cli": "^8.0.0",
+    "eslint": "^9",
+    "eslint-config-next": "15.2.5",
+    "graphql": "^16.11.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
+    "jest-config": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "punycode": "^2.3.1",
+    "ts-jest": "^29.3.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5"
+  }
+}
+</file>
+
+</files>
