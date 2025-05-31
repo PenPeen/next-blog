@@ -1,10 +1,10 @@
-import { GetPostDocument, GetPostQuery } from "@/app/graphql/generated";
+import { GetPostWithCommentsDocument, GetPostQuery } from "@/app/graphql/generated";
 import { query } from "@/app/apollo-client";
 import { cache } from "react";
 
 export const getPost = cache(async (id: string) => {
   const { data } = await query({
-    query: GetPostDocument,
+    query: GetPostWithCommentsDocument,
     variables: { id, first: 20 },
     context: {
       fetchOptions: {

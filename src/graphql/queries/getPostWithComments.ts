@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 import { POST_FRAGMENT } from '@/components/ui/PostContent/index';
 import { COMMENT_FRAGMENT } from '@/components/ui/Comment';
 
-export const GET_POST = gql`
-  query GetPost($id: ID!, $first: Int!) {
+export const GET_POST_WITH_COMMENTS = gql`
+  query GetPostWithComments($id: ID!, $first: Int!) {
     published {
       post(id: $id) {
         ...Post
