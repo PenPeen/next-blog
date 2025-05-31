@@ -3,6 +3,7 @@ import styles from './Comment.module.css'
 import { CommentItemFragment } from '@/app/graphql/generated'
 import FormattedDate from '@/components/ui/DateFormatter'
 import { gql } from '@apollo/client'
+import DOMPurify from 'isomorphic-dompurify'
 
 type CommentProps = {
   comment: CommentItemFragment
@@ -23,6 +24,12 @@ export const COMMENT_FRAGMENT = gql`
 `
 
 export default function Comment({ comment }: CommentProps) {
+  // isomorphic-dompurifyはサーバーサイドでも動作する
+  const sanitizedContent = DOMPurify.sanitize(comment.content, {
+    ALLOWED_TAGS: [],
+    ALLOWED_ATTR: []
+  });
+
   return (
     <div className={styles.commentItem} data-testid="comment-item">
       <div className={styles.commentHeader}>
@@ -32,7 +39,7 @@ export default function Comment({ comment }: CommentProps) {
         <FormattedDate date={comment.createdAt} />
       </div>
       <div className={styles.commentContent}>
-        {comment.content}
+        {sanitizedContent}
       </div>
     </div>
   )
