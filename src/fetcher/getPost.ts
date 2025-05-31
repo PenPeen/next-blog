@@ -13,5 +13,5 @@ export const getPost = cache(async (id: string) => {
       },
     },
   });
-  return { json: () => Promise.resolve<GetPostQuery['published']['post']>(data.published.post) };
+  return { json: () => Promise.resolve<GetPostQuery>(data) };
 });

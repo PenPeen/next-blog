@@ -4,15 +4,15 @@ import styles from './PostContent.module.css'
 import BackButton from '@/components/ui/BackButton'
 import MainTitle from '@/components/ui/MainTitle'
 import FormattedDate from '@/components/ui/DateFormatter'
-import CommentList from '@/components/ui/CommentList'
 import CommentForm from '@/components/ui/CommentForm'
 import Image from 'next/image'
 import { gql } from '@apollo/client'
 import { COMMENT_FRAGMENT } from '@/components/ui/Comment'
 import { getCurrentUser } from '@/fetcher'
+import CommentListContainer from '@/components/ui/CommentListContainer'
 
 type PostContentProps = {
-  post: PostFragment & { id: string }
+  post: PostFragment,
 }
 
 export const POST_FRAGMENT = gql`
@@ -22,9 +22,6 @@ export const POST_FRAGMENT = gql`
     content
     thumbnailUrl
     createdAt
-    comments {
-      ...CommentItem
-    }
   }
   ${COMMENT_FRAGMENT}
 `
@@ -59,8 +56,8 @@ export default async function PostContent({ post }: PostContentProps) {
         {post.content}
       </div>
 
-      <CommentList comments={post.comments} />
       <CommentForm postId={post.id} currentUser={currentUser} />
+      <CommentListContainer postId={post.id} />
     </article>
   )
 }

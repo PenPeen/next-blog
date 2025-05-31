@@ -13,7 +13,8 @@ async function fetchPost(id: string) {
 
 export async function generateMetadata({ params }: Params) {
   const { id } = await params;
-  const post = await fetchPost(id);
+  const data = await fetchPost(id);
+  const post = data.published.post;
 
   if (!post) {
     return {};
@@ -27,13 +28,14 @@ export async function generateMetadata({ params }: Params) {
 
 export default async function PostPage({ params }: Params) {
   const { id } = await params;
-  const post = await fetchPost(id);
+  const data = await fetchPost(id);
+  const post = data.published.post;
 
   if(!post) {
     notFound();
   }
 
   return (
-    <PostContent post={post} />
+    <PostContent post={post}/>
   )
 }
