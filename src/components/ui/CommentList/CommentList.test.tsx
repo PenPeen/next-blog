@@ -1,100 +1,231 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, act, waitFor } from "@testing-library/react";
 import CommentList from ".";
-import { Comment as CommentType } from "@/app/graphql/generated";
+import { CommentItemFragment } from "@/app/graphql/generated";
+import React from 'react';
+import { setFlash } from "@/actions/flash";
 
-jest.mock('@/components/ui/Comment', () => ({
-  __esModule: true,
-  default: function MockComment({ comment }: { comment: CommentType }) {
-    return <div data-testid={`comment-${comment.id}`}>{comment.content}</div>;
-  }
+const mockFetchMore = jest.fn();
+jest.mock('@apollo/client', () => ({
+  useQuery: () => ({
+    fetchMore: mockFetchMore
+  })
 }));
 
-describe('CommentList', () => {
-  const mockComments: CommentType[] = [
-    {
-      id: '1',
-      content: 'テストコメント1',
-      createdAt: '2023-01-01T00:00:00Z',
-      updatedAt: '2023-01-01T00:00:00Z',
-      user: {
-        id: '1',
-        name: 'テストユーザー1',
-        email: 'test1@example.com',
-        createdAt: '2023-01-01T00:00:00Z',
-        updatedAt: '2023-01-01T00:00:00Z',
-        userImage: null,
-        posts: null
-      },
-      post: {
-        id: '1',
-        title: 'テスト投稿',
-        content: 'テスト内容',
-        published: true,
-        createdAt: '2023-01-01T00:00:00Z',
-        updatedAt: '2023-01-01T00:00:00Z',
-        thumbnailUrl: null,
-        user: {
-          id: '1',
-          name: 'テストユーザー',
-          email: 'test@example.com',
-          createdAt: '2023-01-01T00:00:00Z',
-          updatedAt: '2023-01-01T00:00:00Z',
-          userImage: null,
-          posts: null
-        },
-        comments: []
-      }
-    },
-    {
-      id: '2',
-      content: 'テストコメント2',
-      createdAt: '2023-01-02T00:00:00Z',
-      updatedAt: '2023-01-02T00:00:00Z',
-      user: {
-        id: '2',
-        name: 'テストユーザー2',
-        email: 'test2@example.com',
-        createdAt: '2023-01-01T00:00:00Z',
-        updatedAt: '2023-01-01T00:00:00Z',
-        userImage: null,
-        posts: null
-      },
-      post: {
-        id: '1',
-        title: 'テスト投稿',
-        content: 'テスト内容',
-        published: true,
-        createdAt: '2023-01-01T00:00:00Z',
-        updatedAt: '2023-01-01T00:00:00Z',
-        thumbnailUrl: null,
-        user: {
-          id: '1',
-          name: 'テストユーザー',
-          email: 'test@example.com',
-          createdAt: '2023-01-01T00:00:00Z',
-          updatedAt: '2023-01-01T00:00:00Z',
-          userImage: null,
-          posts: null
-        },
-        comments: []
+jest.mock('@/components/ui/Comment', () => {
+  return function Comment ({ comment }: { comment: CommentItemFragment }) {
+    return <div data-testid={`comment-${comment.id}`}>{comment.content}</div>
+  }
+});
+
+jest.mock('@/actions/flash', () => ({
+  setFlash: jest.fn()
+}));
+
+class MockIntersectionObserver implements IntersectionObserver {
+  callback: IntersectionObserverCallback;
+  elements: Set<Element>;
+  root: Element | Document | null = null;
+  rootMargin: string = '0px';
+  thresholds: ReadonlyArray<number> = [0];
+
+  constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+    this.callback = callback;
+    this.elements = new Set();
+    if (options) {
+      this.root = options.root || null;
+      this.rootMargin = options.rootMargin || '0px';
+      this.thresholds = options.threshold ?
+        (Array.isArray(options.threshold) ? options.threshold : [options.threshold]) :
+        [0];
+    }
+  }
+
+  observe(element: Element) {
+    this.elements.add(element);
+  }
+
+  unobserve(element: Element) {
+    this.elements.delete(element);
+  }
+
+  disconnect() {
+    this.elements.clear();
+  }
+
+  takeRecords(): IntersectionObserverEntry[] {
+    return [];
+  }
+
+  triggerIntersection(isIntersecting: boolean) {
+    const entries: IntersectionObserverEntry[] = Array.from(this.elements).map(element => ({
+      isIntersecting,
+      target: element,
+      boundingClientRect: element.getBoundingClientRect(),
+      intersectionRatio: isIntersecting ? 1 : 0,
+      intersectionRect: isIntersecting ? element.getBoundingClientRect() : new DOMRect(),
+      rootBounds: null,
+      time: Date.now()
+    }));
+
+    this.callback(entries, this);
+  }
+}
+
+const createMockComment = (id: string): CommentItemFragment => ({
+  __typename: 'Comment',
+  id,
+  content: `Test comment ${id}`,
+  createdAt: new Date().toISOString(),
+  user: {
+    __typename: 'User',
+    name: `User ${id}`,
+    userImage: {
+      __typename: 'UserImage',
+      profile: null
+    }
+  }
+});
+
+const createMockFetchMoreResponse = (newComments: CommentItemFragment[], hasNextPage: boolean, endCursor: string) => ({
+  data: {
+    postCommentsCursor: {
+      edges: newComments.map(comment => ({
+        node: comment,
+        cursor: comment.id
+      })),
+      pageInfo: {
+        hasNextPage,
+        endCursor
       }
     }
-  ];
+  }
+});
 
-  it('コメントリストが正しく表示されること', () => {
-    render(<CommentList comments={mockComments} />);
+describe("CommentList", () => {
+  let originalIntersectionObserver: typeof IntersectionObserver;
+  let mockObserver: MockIntersectionObserver;
 
-    expect(screen.getByTestId('comment-list')).toBeInTheDocument();
-    expect(screen.getByText('コメント (2)')).toBeInTheDocument();
-    expect(screen.getByTestId('comment-1')).toBeInTheDocument();
-    expect(screen.getByTestId('comment-2')).toBeInTheDocument();
-    expect(screen.getByText('テストコメント1')).toBeInTheDocument();
-    expect(screen.getByText('テストコメント2')).toBeInTheDocument();
+  beforeAll(() => {
+    originalIntersectionObserver = window.IntersectionObserver;
+
+    window.IntersectionObserver = function(callback, options) {
+      mockObserver = new MockIntersectionObserver(callback, options);
+      return mockObserver;
+    };
   });
 
-  it('コメントがない場合', () => {
-    render(<CommentList comments={[]} />);
+  afterAll(() => {
+    window.IntersectionObserver = originalIntersectionObserver;
+  });
 
-    expect(screen.getByText('コメント (0)')).toBeInTheDocument();
+  beforeEach(() => {
+    mockFetchMore.mockReset();
+  });
+
+  describe('レンダリングテスト', () => {
+    it("コメントが表示される", () => {
+      render(<CommentList comments={[createMockComment("1"), createMockComment("2")]} postId="post1" endCursor="abc" />);
+      expect(screen.getByText("コメント")).toBeInTheDocument();
+      expect(screen.getByTestId("comment-1")).toBeInTheDocument();
+      expect(screen.getByTestId("comment-2")).toBeInTheDocument();
+    });
+
+    it("コメントが0件の時", () => {
+      render(<CommentList comments={[]} postId="post1" endCursor="" />);
+      expect(screen.getByText("コメント")).toBeInTheDocument();
+      expect(screen.getByText("まだコメントはありません")).toBeInTheDocument();
+    });
+  });
+
+  describe('動作テスト', () => {
+    it("ロード中表示が正しく表示される", async () => {
+
+      mockFetchMore.mockImplementation(() => new Promise(() => {}));
+
+      render(<CommentList comments={[createMockComment("1")]} postId="post1" endCursor="abc" />);
+      act(() => {
+        mockObserver.triggerIntersection(true);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText("コメントを読み込み中...")).toBeInTheDocument();
+      });
+    });
+
+    it("新しいコメントを読み込んで表示する", async () => {
+      const newComments = [createMockComment("3"), createMockComment("4")];
+
+      mockFetchMore.mockResolvedValue(
+        createMockFetchMoreResponse(newComments, true, "xyz")
+      );
+
+      render(<CommentList comments={[createMockComment("1"), createMockComment("2")]} postId="post1" endCursor="abc" />);
+
+      act(() => {
+        mockObserver.triggerIntersection(true);
+      });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("comment-3")).toBeInTheDocument();
+        expect(screen.getByTestId("comment-4")).toBeInTheDocument();
+      });
+
+      expect(mockFetchMore).toHaveBeenCalledWith({
+        variables: {
+          postId: "post1",
+          first: 20,
+          after: "abc",
+        },
+      });
+    });
+
+    it("エラー発生時の処理が正しく行われる", async () => {
+      mockFetchMore.mockRejectedValue(new Error("Error fetching comments"));
+
+      render(<CommentList comments={[createMockComment("1")]} postId="post1" endCursor="abc" />);
+
+      act(() => {
+        mockObserver.triggerIntersection(true);
+      });
+
+      await waitFor(() => {
+        expect(setFlash).toHaveBeenCalledWith(
+          {
+            type: 'error',
+            message: 'コメントの取得に失敗しました'
+          }
+        );
+      });
+    });
+
+    it("hasNextPageがfalseの場合、追加読み込みが行われない", async () => {
+      mockFetchMore.mockClear();
+      mockFetchMore.mockImplementationOnce(() => {
+        setTimeout(() => {
+
+          act(() => {
+            mockObserver.triggerIntersection(true);
+          });
+        }, 0);
+
+        return Promise.resolve(
+          createMockFetchMoreResponse([], false, "")
+        );
+      });
+
+      render(<CommentList comments={[createMockComment("1")]} postId="post1" endCursor="test-cursor" />);
+
+      act(() => {
+        mockObserver.triggerIntersection(true);
+      });
+
+      await waitFor(() => {
+        expect(mockFetchMore).toHaveBeenCalledTimes(1);
+      });
+
+      mockFetchMore.mockClear();
+      await new Promise(resolve => setTimeout(resolve, 100));
+      expect(mockFetchMore).not.toHaveBeenCalled();
+    });
   });
 });

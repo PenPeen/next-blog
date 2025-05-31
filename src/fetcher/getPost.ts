@@ -5,7 +5,7 @@ import { cache } from "react";
 export const getPost = cache(async (id: string) => {
   const { data } = await query({
     query: GetPostDocument,
-    variables: { id },
+    variables: { id, first: 20 },
     context: {
       fetchOptions: {
         cache: "force-cache",
@@ -13,5 +13,5 @@ export const getPost = cache(async (id: string) => {
       },
     },
   });
-  return { json: () => Promise.resolve<GetPostQuery['published']['post']>(data.published.post) };
+  return { json: () => Promise.resolve<GetPostQuery>(data) };
 });
