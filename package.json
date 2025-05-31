@@ -18,6 +18,8 @@
     "@as-integrations/next": "^3.2.0",
     "@graphql-codegen/typescript-document-nodes": "^4.0.16",
     "@hookform/resolvers": "^5.0.1",
+    "@types/dompurify": "^3.0.5",
+    "isomorphic-dompurify": "^2.25.0",
     "next": "15.2.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
