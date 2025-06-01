@@ -12,8 +12,7 @@ type Params = {
 
 export const generateMetadata = async ({ params }: Params) => {
   const { id } = await params;
-  const data = await getMyPost(id);
-  const post = await data.json();
+  const post = await getMyPost(id);
   if (!post) {
     return {}
   }
@@ -26,8 +25,7 @@ export const generateMetadata = async ({ params }: Params) => {
 
 export default async function MyPostPage({ params }: Params) {
   const { id } = await params;
-  const data = await getMyPost(id);
-  const post = await data.json();
+  const post = await getMyPost(id);
 
   if (!post) {
     notFound();
