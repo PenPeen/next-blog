@@ -3,10 +3,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import PostForm from '@/components/ui/PostForm';
-import { makeClient } from '@/app/ApolloWrapper';
 import { setFlash } from '@/actions/flash';
-import { CreatePostDocument } from '@/app/graphql/generated';
 import { PostFormData } from '@/lib/schema/post';
+import { createPost } from '@/mutations/createPost';
 
 export default function CreatePostForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -27,47 +26,20 @@ export default function CreatePostForm() {
     setErrorMessage('');
 
     try {
-      let thumbnail = undefined;
-      if (data.thumbnail && data.thumbnail.length > 0) {
-        const file = data.thumbnail[0];
-        const reader = new FileReader();
-        thumbnail = await new Promise<string>((resolve) => {
-          reader.onloadend = () => {
-            const base64 = reader.result as string;
-            resolve(base64);
-          };
-          reader.readAsDataURL(file);
-        });
-      }
+      const responseData = await createPost(data);
 
-      const client = makeClient();
-      const { data: responseData } = await client.mutate({
-        mutation: CreatePostDocument,
-        variables: {
-          input: {
-            postInput: {
-              title: data.title,
-              content: data.content,
-              published: data.status === 'published',
-              thumbnail
-            }
-          }
-        }
-      });
-
-      if (responseData?.createPost?.errors) {
-        setErrorMessage(responseData.createPost.errors.map((error: { message: string }) => error.message).join('\n'));
+      if (responseData.errors) {
+        setErrorMessage(responseData.errors.map((error: { message: string }) => error.message).join('\n'));
       } else {
-        if (responseData?.createPost?.post) {
+        if (responseData.post) {
           await setFlash({
             message: '記事を作成しました',
             type: 'success'
           });
-          router.push(`/account/my-posts/${responseData.createPost.post.id}`);
+          router.push(`/account/my-posts/${responseData.post.id}`);
         }
       }
-    } catch (error) {
-      console.error('作成エラー:', error);
+    } catch {
       setErrorMessage('作成中にエラーが発生しました。しばらく経ってから再度試してください。');
     } finally {
       setIsSubmitting(false);
