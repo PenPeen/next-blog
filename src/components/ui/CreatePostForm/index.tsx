@@ -2,10 +2,11 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import PostForm, { PostFormData } from '@/components/ui/PostForm';
+import PostForm from '@/components/ui/PostForm';
 import { makeClient } from '@/app/ApolloWrapper';
 import { setFlash } from '@/actions/flash';
 import { CreatePostDocument } from '@/app/graphql/generated';
+import { PostFormData } from '@/lib/schema/post';
 
 export default function CreatePostForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
