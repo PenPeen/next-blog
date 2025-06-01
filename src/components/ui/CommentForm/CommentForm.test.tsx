@@ -75,11 +75,7 @@ describe('CommentForm', () => {
     await user.click(screen.getByRole('button', { name: 'コメントを投稿' }));
 
     await waitFor(() => {
-      expect(createComment).toHaveBeenCalled();
-      const formData = (createComment as jest.Mock).mock.calls[0][0];
-      expect(formData).toBeInstanceOf(FormData);
-      expect(formData.get('postId')).toBe(postId);
-      expect(formData.get('content')).toBe('テストコメント');
+      expect(createComment).toHaveBeenCalledWith(postId, { content: 'テストコメント' });
     });
 
     await waitFor(() => {
