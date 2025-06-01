@@ -5,16 +5,14 @@ import { setFlash } from '@/actions/flash';
 import { getClient } from '@/app/apollo-client';
 import { CreateCommentDocument } from '@/app/graphql/generated';
 import { revalidatePath } from 'next/cache';
+import { CommentFormData } from '@/lib/schema/comment';
 
 type CreateCommentResult = {
   success: boolean;
 }
 
-export async function createComment(formData: FormData): Promise<CreateCommentResult> {
-  const postId = formData.get('postId') as string;
-  const content = formData.get('content') as string;
-
-  if (!postId || !content.trim()) {
+export async function createComment(postId: string, formData: CommentFormData): Promise<CreateCommentResult> {
+  if (!postId || !formData.content.trim()) {
     await setFlash({
       type: 'error',
       message: 'コメント内容を入力してください'
@@ -27,7 +25,7 @@ export async function createComment(formData: FormData): Promise<CreateCommentRe
 
   const { data } = await getClient().mutate({
     mutation: CreateCommentDocument,
-    variables: { input: { postId, content } },
+    variables: { input: { postId, content: formData.content } },
     context: {
       headers: {
         Cookie: cookie,

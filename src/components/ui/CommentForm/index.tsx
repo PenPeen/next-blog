@@ -33,11 +33,7 @@ export default function CommentForm({
   const onSubmit = async (data: CommentFormData) => {
     setIsSubmitting(true);
 
-    const formData = new FormData();
-    formData.append('postId', postId);
-    formData.append('content', data.content);
-
-    const result = await createComment(formData);
+    const result = await createComment(postId, data);
     if (result.success) {
       methods.reset({ content: '' });
     }
