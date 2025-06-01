@@ -8,9 +8,8 @@ type Params = {
 
 export default async function CommentListContainer({ postId }: Params) {
   const data = await getPost(postId);
-  const json = await data.json();
-  const initialComments = json.postCommentsCursor.edges.map(edge => edge.node) as CommentItemFragment[];
-  const endCursor = json.postCommentsCursor.pageInfo.endCursor || '';
+  const initialComments = data.postCommentsCursor.edges.map(edge => edge.node) as CommentItemFragment[];
+  const endCursor = data.postCommentsCursor.pageInfo.endCursor || '';
 
   return (
     <CommentList comments={initialComments} postId={postId} endCursor={endCursor} />
