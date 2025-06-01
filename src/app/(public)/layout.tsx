@@ -4,13 +4,16 @@ import PublicHeader from "@/components/layouts/PublicHeader/PublicHeader";
 
 export default function PublicLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <main className={styles.container}>
       <PublicHeader />
       {children}
+      {modal}
     </main>
   );
 }
