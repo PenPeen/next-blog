@@ -26,7 +26,7 @@ export default async function Home({ searchParams }: PageProps) {
     ? await getPublishedSearchPosts(titleQuery, currentPage, perPage )
     : await getPublishedPosts(currentPage, perPage);
 
-  const { posts, pagination } = await data.json();
+  const { posts, pagination } = data;
 
   return (
     <>

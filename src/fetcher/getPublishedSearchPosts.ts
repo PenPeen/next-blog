@@ -3,7 +3,7 @@ import { query } from "@/app/apollo-client";
 import { cache } from "react";
 
 export const getPublishedSearchPosts = cache(
-  async (title: string, page = 1, perPage = 15) => {
+  async (title: string, page = 1, perPage = 15): Promise<SearchPostsQuery['published']['searchPosts']> => {
     const { data } = await query({
       query: SearchPostsDocument,
       variables: { title, page, perPage },
@@ -14,6 +14,6 @@ export const getPublishedSearchPosts = cache(
         },
       },
     });
-    return { json: () => Promise.resolve<SearchPostsQuery['published']['searchPosts']>(data.published.searchPosts) };
+    return data.published.searchPosts;
   }
 );
