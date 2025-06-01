@@ -102,13 +102,10 @@ describe('LoginForm', () => {
     await user.click(screen.getByRole('button', { name: 'ログイン' }));
 
     await waitFor(() => {
-      expect(login).toHaveBeenCalled();
-
-
-      const formData = (login as jest.Mock).mock.calls[0][0];
-      expect(formData).toBeInstanceOf(FormData);
-      expect(formData.get('email')).toBe('test@example.com');
-      expect(formData.get('password')).toBe('password123');
+      expect(login).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        password: 'password123'
+    });
     });
   });
 });

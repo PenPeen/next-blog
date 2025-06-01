@@ -10,9 +10,11 @@ import Link from "next/link";
 import FormInput from "@/components/ui/FormInput";
 import { login } from "@/actions/login";
 import { LoginFormData, loginSchema } from "@/lib/schema/login";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const methods = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -21,13 +23,12 @@ export default function LoginForm() {
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
+    setErrorMessage('');
 
     try {
-      const formData = new FormData();
-      formData.append("email", data.email);
-      formData.append("password", data.password);
-
-      await login(formData);
+      await login(data);
+    } catch(error) {
+      if (!isRedirectError(error)) setErrorMessage('ログインに失敗しました。しばらく経ってから再度試してください。');
     } finally {
       setIsLoading(false);
     }
@@ -37,6 +38,7 @@ export default function LoginForm() {
     <div className={styles.formContainer}>
       <div className={styles.formWrapper}>
         <Card title="アカウントにログインする">
+          {errorMessage && <div className={styles.errorMessage}>{errorMessage}</div>}
           <FormProvider {...methods}>
             <form className={styles.form} onSubmit={methods.handleSubmit(onSubmit)}>
               <div className={styles.formFields}>
