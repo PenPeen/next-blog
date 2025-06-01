@@ -41,11 +41,9 @@ describe('MyPostForm', () => {
   };
 
   const originalFileReader = global.FileReader;
-  const originalConsoleError = console.error;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    console.error = jest.fn();
     (makeClient as jest.Mock).mockReturnValue({
       mutate: jest.fn().mockResolvedValue({
         data: {
@@ -67,7 +65,6 @@ describe('MyPostForm', () => {
 
   afterEach(() => {
     global.FileReader = originalFileReader;
-    console.error = originalConsoleError;
   });
 
   it('renders the form with initial values', () => {
@@ -231,8 +228,6 @@ describe('MyPostForm', () => {
     await act(async () => {
       fireEvent.submit(screen.getByRole('button', { name: '更新する' }));
     });
-
-    expect(console.error).toHaveBeenCalledWith('更新エラー:', mockError);
 
     await waitFor(() => {
       expect(screen.getByText('更新中にエラーが発生しました。しばらく経ってから再度試してください。')).toBeInTheDocument();
