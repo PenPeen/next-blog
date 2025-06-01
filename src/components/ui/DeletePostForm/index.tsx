@@ -4,10 +4,9 @@ import { useState } from 'react';
 import Modal from '../Modal';
 import useModal from '../Modal/useModal';
 import styles from './DeletePostForm.module.css';
-import { makeClient } from '@/app/ApolloWrapper';
 import { useRouter } from 'next/navigation';
-import { DeletePostDocument } from '@/app/graphql/generated';
 import { setFlash } from '@/actions/flash';
+import { deletePost } from '@/mutations/deletePost';
 
 type PostType = {
   id: string;
@@ -34,27 +33,18 @@ export default function DeletePostForm({ post }: DeletePostFormProps) {
     setErrorMessage('');
 
     try {
-      const client = makeClient();
-      const { data } = await client.mutate({
-        mutation: DeletePostDocument,
-        variables: {
-          input: {
-            id: post.id
-          }
-        }
-      });
+      const data = await deletePost(post.id);
 
-      if (data?.deletePost?.errors) {
-        setErrorMessage(data.deletePost.errors.map((error: { message: string }) => error.message).join('\n'));
-      } else if (data?.deletePost?.success) {
+      if (data.errors) {
+        setErrorMessage(data.errors.map((error: { message: string }) => error.message).join('\n'));
+      } else if (data.success) {
         await setFlash({
           message: '投稿を削除しました',
           type: 'success'
         });
         router.push('/account');
       }
-    } catch (error) {
-      console.error('削除エラー:', error);
+    } catch {
       setErrorMessage('削除中にエラーが発生しました。しばらく経ってから再度試してください。');
     } finally {
       setIsDeleting(false);

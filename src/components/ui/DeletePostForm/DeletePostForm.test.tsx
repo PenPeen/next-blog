@@ -164,8 +164,5 @@ describe('DeletePostForm', () => {
     });
 
     expect(mockRouter.push).not.toHaveBeenCalled();
-
-    // エラーログがキャプチャされたことを検証
-    expect(console.error).toHaveBeenCalled();
   });
 });
