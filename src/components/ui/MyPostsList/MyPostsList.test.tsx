@@ -9,15 +9,13 @@ jest.mock('@/fetcher', () => ({
 describe('初期表示', () => {
   beforeEach(() => {
     (getMyPosts as jest.Mock).mockResolvedValue({
-      json: jest.fn().mockResolvedValue({
-        posts: [
-          {
-            id: 1,
-            title: 'テストタイトル1',
-            published: true,
-          },
-        ],
-      }),
+      posts: [
+        {
+          id: 1,
+          title: 'テストタイトル1',
+          published: true,
+        },
+      ],
     });
   });
 
@@ -30,9 +28,7 @@ describe('初期表示', () => {
 describe('記事が存在しない場合', () => {
   beforeEach(() => {
     (getMyPosts as jest.Mock).mockResolvedValue({
-      json: jest.fn().mockResolvedValue({
-        posts: [],
-      }),
+      posts: [],
     });
   });
 
