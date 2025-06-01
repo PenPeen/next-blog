@@ -16,5 +16,6 @@ export const getMyPosts = cache(async (page = 1, perPage = 15) => {
       },
     },
   });
-  return { json: () => Promise.resolve(data.myPosts) };
+
+  return data.myPosts;
 });

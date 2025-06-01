@@ -13,8 +13,7 @@ type MyPostsListProps = {
 };
 
 export default async function MyPostsList({ currentPage, perPage }: MyPostsListProps) {
-  const data = await getMyPosts(currentPage, perPage);
-  const myPosts = await data.json();
+  const myPosts = await getMyPosts(currentPage, perPage);
 
   return (
     <div className={styles.container}>
