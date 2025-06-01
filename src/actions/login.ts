@@ -5,10 +5,11 @@ import { cookies } from 'next/headers';
 import { setFlash } from '@/actions/flash';
 import { redirect } from 'next/navigation';
 import { getClient } from '@/app/apollo-client';
+import { LoginFormData } from '@/lib/schema/login';
 
-export async function login(formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
+export async function login(formData: LoginFormData) {
+  const email = formData.email;
+  const password = formData.password;
 
   const cookieHeader = await cookies();
   const cookie = cookieHeader.toString();
@@ -23,13 +24,17 @@ export async function login(formData: FormData) {
     },
   });
 
+  if (!data || !data.login) {
+    throw new Error('ログインに失敗しました。しばらく経ってから再度試してください。');
+  }
+
   if (data?.login?.errors) {
     await setFlash({
       type: 'error',
       message: data.login.errors.map(error => error.message).join('\n')
     });
 
-    return redirect('/signin');
+    redirect('/signin');
   } else {
     const cookieStore = await cookies();
     cookieStore.set('ss_sid', data?.login?.token || '', {
@@ -44,6 +49,6 @@ export async function login(formData: FormData) {
       message: 'ログインしました'
     });
 
-    return redirect('/account');
+    redirect('/account');
   }
 }
