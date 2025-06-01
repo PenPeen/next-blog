@@ -6,14 +6,9 @@ type Params = {
   params: Promise<{ id: string }>
 }
 
-async function fetchPost(id: string) {
-  const data = await getPost(id);
-  return await data.json();
-}
-
 export async function generateMetadata({ params }: Params) {
   const { id } = await params;
-  const data = await fetchPost(id);
+  const data = await getPost(id);
   const post = data.published.post;
 
   if (!post) {
@@ -28,7 +23,7 @@ export async function generateMetadata({ params }: Params) {
 
 export default async function PostPage({ params }: Params) {
   const { id } = await params;
-  const data = await fetchPost(id);
+  const data = await getPost(id);
   const post = data.published.post;
 
   if(!post) {
