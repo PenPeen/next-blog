@@ -58,6 +58,8 @@ diff から読み取れないこと（背景、採らなかった案）は書か
 }
 ```
 
+セルの文字列が長いと折り返しが枠からはみ出す。ファイルパスは末尾 2 階層程度に縮める。
+
 他に書ける要素は `tools/pr-doc/node_modules/@minitype/minitype/dist/index.d.ts` を読む。
 `validateDocument` が構造を検証するので、通らなければエラーの `path` を見て直す。
 
