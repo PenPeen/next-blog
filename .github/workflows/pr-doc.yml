@@ -1,0 +1,71 @@
+name: PR Doc
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  pr-doc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve document path
+        id: doc
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          slug="${HEAD_REF//\//-}"
+          path="docs/pr/${slug}.json"
+          echo "slug=${slug}" >> "$GITHUB_OUTPUT"
+          echo "path=${path}" >> "$GITHUB_OUTPUT"
+          if [ -f "${path}" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::${path} が無いため PR ドキュメントの生成をスキップします"
+          fi
+
+      - name: Setup Node.js
+        if: steps.doc.outputs.found == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: tools/pr-doc/package-lock.json
+
+      - name: Install dependencies
+        if: steps.doc.outputs.found == 'true'
+        run: npm ci --prefix tools/pr-doc
+
+      # npm run --prefix は cwd を tools/pr-doc にする。minitype は同梱フォントの
+      # キャッシュを cwd に置くため、この経路以外で呼ばない。
+      - name: Build PDF
+        if: steps.doc.outputs.found == 'true'
+        run: npm run build --prefix tools/pr-doc -- "${{ steps.doc.outputs.path }}" "pr-doc.pdf"
+
+      # archive: false は単一ファイル限定で、ファイル名がそのまま artifact 名になる。
+      - name: Upload PDF
+        if: steps.doc.outputs.found == 'true'
+        id: upload
+        uses: actions/upload-artifact@v7
+        with:
+          path: pr-doc.pdf
+          archive: false
+          overwrite: true
+          retention-days: 14
+
+      - name: Update PR description
+        if: steps.doc.outputs.found == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh pr view "$PR_NUMBER" --json body --jq .body > pr-body.md
+          node tools/pr-doc/update-body.mjs pr-body.md "$ARTIFACT_URL" "$RUN_URL"
+          gh pr edit "$PR_NUMBER" --body-file pr-body.md
