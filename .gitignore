@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# pr-doc
+/tools/pr-doc/node_modules
+/pr-doc.pdf
+# minitype が cwd に置くフォントキャッシュ（80MB 超）
+font-caches.db*
