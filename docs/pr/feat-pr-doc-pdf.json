@@ -1,0 +1,76 @@
+[
+  {
+    "body": [
+      { "type": "text", "textType": "h1", "lines": [["PR ドキュメントの PDF 自動生成"]] },
+
+      { "type": "text", "textType": "h2", "lines": [["この PR で何をしたか"]] },
+      {
+        "type": "text",
+        "textType": "paragraph",
+        "lines": [
+          ["PR ごとにレビュー向けの読み合わせ資料を PDF で自動生成し、GitHub Actions の artifact に上げて PR 本文にリンクを載せる仕組みを入れた。"],
+          ["資料の中身はローカルの Claude Code Skill が書き、PDF 化と本文更新は CI が行う。"]
+        ]
+      },
+
+      { "type": "text", "textType": "h2", "lines": [["背景と目的"]] },
+      {
+        "type": "text",
+        "textType": "paragraph",
+        "lines": [
+          ["actions/upload-artifact v7 で入った archive: false と、TypeScript の組版エンジン minitype の 2 つを実際の運用に載せて試すのが目的。業務のリポジトリに持ち込めるかを判断する材料を取る。"],
+          ["archive: false は artifact を zip にせず単一ファイルのまま置ける機能で、GitHub 上の URL をそのまま共有できる。minitype は日本語組版に対応した PDF 生成ライブラリで、フォントを同梱しているため CI にフォントを入れずに済む。"]
+        ]
+      },
+
+      { "type": "text", "textType": "h2", "lines": [["変更の全体像"]] },
+      {
+        "type": "easytable",
+        "rows": [
+          ["ファイル", "役割"],
+          ["tools/pr-doc/build.mjs", "JSON を検証して minitype で PDF 化する"],
+          ["tools/pr-doc/update-body.mjs", "PR 本文のマーカー区間を差し替える"],
+          ["tools/pr-doc/package.json", "minitype の依存をアプリ本体から分離する"],
+          [".github/workflows/pr-doc.yml", "PR ごとに PDF を作り artifact に上げて本文を更新する"],
+          [".claude/skills/pr-doc/SKILL.md", "diff から資料の JSON を書く手順"],
+          ["docs/pr/feat-pr-doc-pdf.json", "この PR の資料の中身"]
+        ]
+      },
+
+      { "type": "text", "textType": "h2", "lines": [["ファイルごとの説明"]] },
+      {
+        "type": "text",
+        "textType": "paragraph",
+        "lines": [
+          ["build.mjs は docs/pr/<slug>.json を読み、validateDocument で構造を検証してから minitype に渡す。検証に落ちたら path 付きのエラーを出して終了する。表を素の構造で書くと 1 セル 10 行になるため、JSON 側は type: easytable と rows だけ書き、JSON.parse の reviver で本来の構造に展開している。"],
+          ["update-body.mjs は PR 本文のうち pr-doc:start と pr-doc:end に挟まれた範囲だけを書き換える。push のたびに artifact URL が変わるため、人が書いた本文を残したまま毎回差し替える必要がある。マーカーが無ければ本文末尾に追加する。"],
+          ["pr-doc.yml は head ブランチ名から slug を作り、対応する JSON が無ければ以降の step を skip する。ドキュメントを用意していない PR で赤くならないようにしている。"]
+        ]
+      },
+
+      { "type": "text", "textType": "h2", "lines": [["レビューで見てほしい点"]] },
+      {
+        "type": "text",
+        "textType": "paragraph",
+        "lines": [
+          ["minitype は同梱フォントのキャッシュを cwd に置く。80MB を超えるファイルなので、cwd がずれるとリポジトリルートに散らかる。npm run --prefix が cwd を tools/pr-doc に変えることに依存しており、この前提が崩れると事故る。.gitignore に font-caches.db* を入れて保険をかけてある。"],
+          ["minitype のライセンスは PolyForm Noncommercial 1.0.0 で、商用利用は作者への確認が要る。業務のリポジトリに持ち込むならここが最初の関門になる。今回アプリ本体の依存ツリーに入れず tools/pr-doc に分けたのは、切り離しやすくするため。"],
+          ["PDF を archive: false で上げたときに GitHub 上でブラウザ表示されるかは未確認。参考にした記事が挙げていたのは HTML と画像で、PDF の記載は無かった。この PR の Actions が出す URL を開いて確かめる。"]
+        ]
+      },
+
+      { "type": "text", "textType": "h2", "lines": [["検証したこと"]] },
+      {
+        "type": "easytable",
+        "rows": [
+          ["確認したこと", "結果"],
+          ["npm ci --prefix tools/pr-doc", "112 パッケージを取得"],
+          ["npm run build --prefix tools/pr-doc", "日本語の PDF を生成"],
+          ["update-body.mjs をマーカー無しの本文に適用", "末尾に追加"],
+          ["同じ本文にもう一度適用", "重複せず差し替え"],
+          ["upload-artifact の archive: false", "v7.0.1 の action.yml に実在"]
+        ]
+      }
+    ]
+  }
+]
