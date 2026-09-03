@@ -42,6 +42,14 @@ describe('FormattedDate', () => {
     expect(screen.getByText('たった今')).toBeVisible();
   })
 
+  it('falls back to the absolute date exactly at the seven day boundary', () => {
+    render(
+      <FormattedDate date="2025-04-03T12:00:00Z" />
+    );
+
+    expect(screen.getByText('2025年4月3日')).toBeVisible();
+  })
+
   it('falls back to the absolute date for a future post', () => {
     render(
       <FormattedDate date="2025-04-20T12:00:00Z" />
