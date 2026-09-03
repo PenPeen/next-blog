@@ -45,3 +45,5 @@ next-env.d.ts
 /pr-doc.pdf
 # minitype が cwd に置くフォントキャッシュ（80MB 超）
 font-caches.db*
+# Playwright MCP の作業ディレクトリ。キャプチャは docs/pr/assets へコピーして使う
+/.playwright-mcp
