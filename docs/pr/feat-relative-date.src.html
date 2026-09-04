@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>投稿日の相対表示</title>
+<style>
+  :root {
+    --bg: #fff; --fg: #1c1c1e; --muted: #6b6b70; --line: #e3e3e6;
+    --accent: #2563eb; --panel: #f7f7f8; --add: #1a7f37; --del: #cf222e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.8 -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 48px; max-width: 1180px; margin: 0 auto; padding: 40px 24px 96px; }
+  nav { position: sticky; top: 40px; align-self: start; font-size: 14px; }
+  nav .nav-title { font-weight: 700; margin-bottom: 12px; }
+  nav ol { list-style: none; margin: 0; padding: 0; }
+  nav li { margin: 0 0 8px; }
+  nav a { color: var(--muted); text-decoration: none; }
+  nav a:hover { color: var(--accent); }
+  header h1 { font-size: 28px; line-height: 1.4; margin: 0 0 8px; }
+  header .lead { color: var(--muted); margin: 0 0 8px; }
+  header .meta { color: var(--muted); font-size: 13px; margin: 0 0 32px; }
+  .callout { background: var(--panel); border-left: 3px solid var(--accent); padding: 12px 16px; margin: 0 0 40px; font-size: 14px; }
+  section { border-top: 1px solid var(--line); padding-top: 32px; margin-bottom: 48px; }
+  section h2 { font-size: 20px; margin: 0 0 16px; }
+  section h3 { font-size: 16px; margin: 32px 0 8px; }
+  p { margin: 0 0 16px; }
+  figure { margin: 24px 0; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; }
+  figcaption { color: var(--muted); font-size: 13px; margin-top: 8px; }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
+  .compare figure { margin: 0; }
+  .compare .tag { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 10px; margin-bottom: 8px; }
+  .compare .before .tag { background: #fbeaea; color: var(--del); }
+  .compare .after .tag { background: #e6f4ea; color: var(--add); }
+  .note { background: var(--panel); padding: 10px 14px; border-radius: 6px; font-size: 14px; margin: 0 0 16px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 0 0 24px; }
+  th, td { border-bottom: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--panel); border-bottom: 1px solid var(--line); font-weight: 600; }
+  code { background: var(--panel); padding: 1px 5px; border-radius: 4px; font-size: 90%; }
+  pre { background: var(--panel); padding: 14px 16px; border-radius: 6px; overflow-x: auto; font-size: 13px; line-height: 1.7; margin: 0 0 20px; }
+  pre code { background: none; padding: 0; }
+  pre .add { color: var(--add); }
+  pre .del { color: var(--del); }
+  ul { margin: 0 0 16px; padding-left: 22px; }
+  li { margin: 0 0 6px; }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; gap: 24px; }
+    nav { position: static; }
+    .compare { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav>
+    <div class="nav-title">目次</div>
+    <ol>
+      <li><a href="#s1">1. この PR で何をしたか</a></li>
+      <li><a href="#s2">2. 背景と目的</a></li>
+      <li><a href="#s3">3. 画面の変化</a></li>
+      <li><a href="#s4">4. 変更の全体像</a></li>
+      <li><a href="#s5">5. ファイルごとの説明</a></li>
+      <li><a href="#s6">6. レビューで見てほしい点</a></li>
+      <li><a href="#s7">7. 検証したこと</a></li>
+    </ol>
+  </nav>
+  <main>
+    <header>
+      <h1>投稿日の相対表示</h1>
+      <p class="lead">直近 1 週間の投稿日を「3時間前」「2日前」の形で出す。</p>
+      <p class="meta">feat/relative-date ／ PenPeen/next-blog #169 ／ 生成: 2026-09-04</p>
+    </header>
+
+    <div class="callout">
+      キャプチャはローカルの Rails API（rails_blog）と Next.js を繋いで撮った実データの画面。
+      投稿は seed で作った 100 件のうちの 1 件。
+    </div>
+
+    <section id="s1">
+      <h2>1. この PR で何をしたか</h2>
+      <p>
+        投稿日の表示を、直近 1 週間なら「3時間前」「2日前」のような相対表示に変えた。
+        1 週間より古い投稿と未来日付の投稿は、これまでどおり「2025年4月1日」の形で出る。
+      </p>
+      <p>あわせて <code>time</code> 要素の <code>dateTime</code> 属性を ISO 形式にした。</p>
+    </section>
+
+    <section id="s2">
+      <h2>2. 背景と目的</h2>
+      <p>
+        一覧に並ぶ投稿がどれくらい新しいかは、絶対日付だと今日の日付と引き算しないと分からない。
+        直近のものだけ相対表示にすると、投稿の新しさが一目で分かる。
+      </p>
+      <p>
+        古い投稿まで相対表示にすると「312日前」のように読み取れない値になるため、7 日で絶対表示に戻す。
+      </p>
+    </section>
+
+    <section id="s3">
+      <h2>3. 画面の変化</h2>
+      <p>
+        投稿詳細ページのタイトル下。seed で作ったばかりの投稿なので、変更後は「たった今」になる。
+      </p>
+
+      <div class="compare">
+        <figure class="before">
+          <span class="tag">変更前</span>
+          <img src="assets/feat-relative-date/before.png" alt="変更前の投稿詳細。日付が 2026年9月4日 と表示されている">
+        </figure>
+        <figure class="after">
+          <span class="tag">変更後</span>
+          <img src="assets/feat-relative-date/after.png" alt="変更後の投稿詳細。日付が たった今 と表示されている">
+        </figure>
+      </div>
+
+      <h3>表示パターンの一覧</h3>
+      <p>
+        経過時間ごとの出方。開発環境限定のプレビューページ
+        <code>/preview/date-formatter</code> で 4 パターンを並べたもの。
+      </p>
+      <figure>
+        <img src="assets/feat-relative-date/patterns.png" alt="30分前・3時間前・2日前・30日前の 4 パターンの表示比較">
+        <figcaption>30 日前は 7 日を超えているため絶対表示のまま</figcaption>
+      </figure>
+
+      <h3>一覧ページ</h3>
+      <p>一覧のカードには日付を出していないため、この変更の影響を受けない。</p>
+      <figure>
+        <img src="assets/feat-relative-date/list.png" alt="投稿一覧ページ。カードにサムネイル・タイトル・本文の抜粋が並ぶ">
+        <figcaption>投稿一覧。カードは日付を表示しない</figcaption>
+      </figure>
+    </section>
+
+    <section id="s4">
+      <h2>4. 変更の全体像</h2>
+      <table>
+        <thead>
+          <tr><th>ファイル</th><th>変更内容</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>DateFormatter/index.tsx</code></td>
+            <td>経過時間から表示文字列を決める処理を追加</td>
+          </tr>
+          <tr>
+            <td><code>DateFormatter/FormattedDate.test.tsx</code></td>
+            <td>時刻を固定して 6 パターンを検証</td>
+          </tr>
+          <tr>
+            <td><code>(dev)/preview/date-formatter/page.tsx</code></td>
+            <td>キャプチャ用のプレビュー。本番では <code>notFound()</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="s5">
+      <h2>5. ファイルごとの説明</h2>
+
+      <h3>index.tsx</h3>
+      <p>
+        <code>Date.now()</code> と投稿日の差を取り、7 日未満なら <code>formatElapsed</code> で
+        相対表示にする。1 時間未満は端数が意味を持たないので「たった今」に丸め、
+        24 時間未満は時間、それ以上は日で表す。境界の定数はファイル先頭に置いた。
+      </p>
+      <pre><code><span class="add">const HOUR_MS = 60 * 60 * 1000;</span>
+<span class="add">const DAY_MS = 24 * HOUR_MS;</span>
+<span class="add">const RELATIVE_LIMIT_MS = 7 * DAY_MS;</span>
+
+  const label = elapsedMs &gt;= 0 &amp;&amp; elapsedMs &lt; RELATIVE_LIMIT_MS
+    ? formatElapsed(elapsedMs)
+    : target.toLocaleDateString('ja-JP', { ... });</code></pre>
+      <p>
+        経過時間が負、つまり未来日付の投稿は相対表示の対象から外して絶対表示に落とす。
+        「-3日前」のような表示を出さないため。
+      </p>
+
+      <h3>FormattedDate.test.tsx</h3>
+      <p>
+        <code>jest.useFakeTimers</code> と <code>setSystemTime</code> で 2025-04-10 12:00 UTC に固定し、
+        絶対表示・時間・日・たった今・7 日ちょうど・未来日付の 6 パターンを見る。
+        時刻を固定しないと日が変わるたびに落ちる。
+      </p>
+
+      <h3>preview/date-formatter/page.tsx</h3>
+      <p>
+        PR ドキュメントのキャプチャを撮るためだけのページ。本番ビルドでは
+        <code>notFound()</code> を返す。変更前の表示はこのページ内で
+        <code>toLocaleDateString</code> を直接呼んで並べている。
+      </p>
+    </section>
+
+    <section id="s6">
+      <h2>6. レビューで見てほしい点</h2>
+      <ul>
+        <li>相対表示に切り替える境界を 7 日にした点。好みが分かれるので、短くすべき・長くすべきの意見があれば聞きたい。</li>
+        <li>1 時間未満を「たった今」に丸めた点。「45分前」まで出す選択肢もあるが、分単位の粒度が要る画面ではないと判断した。</li>
+        <li>7 日ちょうどは絶対表示になる。境界は「7 日未満なら相対」で、等しいときは含めない。</li>
+      </ul>
+      <div class="note">
+        <code>FormattedDate</code> はサーバコンポーネントとして描画されるため、相対表示は
+        ページを描画した時点で固定される。画面を開いたまま時間が経っても更新されない。
+      </div>
+    </section>
+
+    <section id="s7">
+      <h2>7. 検証したこと</h2>
+      <table>
+        <thead>
+          <tr><th>確認したこと</th><th>結果</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>npm test</code>（全体）</td><td>42 suites / 253 件すべて pass</td></tr>
+          <tr><td><code>npm test</code>（DateFormatter）</td><td>6 件 pass、カバレッジ 100%</td></tr>
+          <tr><td><code>npm run lint</code></td><td>今回の変更由来の警告なし</td></tr>
+          <tr><td>実データの画面</td><td>rails_blog を起こして投稿詳細で「たった今」を確認</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+</body>
+</html>
