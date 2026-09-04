@@ -19,7 +19,7 @@ jobs:
           HEAD_REF: ${{ github.head_ref }}
         run: |
           slug="${HEAD_REF//\//-}"
-          path="docs/pr/${slug}.json"
+          path="docs/pr/${slug}.src.html"
           echo "slug=${slug}" >> "$GITHUB_OUTPUT"
           echo "path=${path}" >> "$GITHUB_OUTPUT"
           if [ -f "${path}" ]; then
@@ -29,31 +29,19 @@ jobs:
             echo "::notice::${path} が無いため PR ドキュメントの生成をスキップします"
           fi
 
-      - name: Setup Node.js
+      # 画像を data URI にして 1 ファイルに畳む。archive: false は単一ファイルしか
+      # 受け付けないため、画像を別ファイルで持てない。
+      - name: Build single-file HTML
         if: steps.doc.outputs.found == 'true'
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: tools/pr-doc/package-lock.json
-
-      - name: Install dependencies
-        if: steps.doc.outputs.found == 'true'
-        run: npm ci --prefix tools/pr-doc
-
-      # npm run --prefix は cwd を tools/pr-doc にする。minitype は同梱フォントの
-      # キャッシュを cwd に置くため、この経路以外で呼ばない。
-      - name: Build PDF
-        if: steps.doc.outputs.found == 'true'
-        run: npm run build --prefix tools/pr-doc -- "${{ steps.doc.outputs.path }}" "pr-doc.pdf"
+        run: python3 tools/pr-doc/embed_images.py "${{ steps.doc.outputs.path }}" -o pr-doc.html
 
       # archive: false は単一ファイル限定で、ファイル名がそのまま artifact 名になる。
-      - name: Upload PDF
+      - name: Upload HTML
         if: steps.doc.outputs.found == 'true'
         id: upload
         uses: actions/upload-artifact@v7
         with:
-          path: pr-doc.pdf
+          path: pr-doc.html
           archive: false
           overwrite: true
           retention-days: 14

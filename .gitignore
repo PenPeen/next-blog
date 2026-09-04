@@ -41,9 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 # pr-doc
-/tools/pr-doc/node_modules
-/pr-doc.pdf
-# minitype が cwd に置くフォントキャッシュ（80MB 超）
-font-caches.db*
+/pr-doc.html
 # Playwright MCP の作業ディレクトリ。キャプチャは docs/pr/assets へコピーして使う
 /.playwright-mcp

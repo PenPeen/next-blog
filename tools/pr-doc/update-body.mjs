@@ -16,7 +16,7 @@ const section = [
   START,
   "## レビュー用ドキュメント",
   "",
-  `[pr-doc.pdf](${artifactUrl}) — 変更の背景と読みどころをまとめた PDF。GitHub にログインした状態で開く。`,
+  `[pr-doc.html](${artifactUrl}) — 変更の背景と読みどころ、画面のキャプチャをまとめたページ。GitHub にログインした状態で開くとブラウザで表示される。`,
   "",
   `生成: [${runUrl.split("/").pop()}](${runUrl}) / 保存期間 14 日`,
   END,
