@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+  :root {
+    --bg: #fff; --fg: #1c1c1e; --muted: #6b6b70; --line: #e3e3e6;
+    --accent: #2563eb; --panel: #f7f7f8; --add: #1a7f37; --del: #cf222e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.8 -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Noto Sans JP', sans-serif;
+  }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 48px; max-width: 1180px; margin: 0 auto; padding: 40px 24px 96px; }
+  nav { position: sticky; top: 40px; align-self: start; font-size: 14px; }
+  nav .nav-title { font-weight: 700; margin-bottom: 12px; }
+  nav ol { list-style: none; margin: 0; padding: 0; }
+  nav li { margin: 0 0 8px; }
+  nav a { color: var(--muted); text-decoration: none; }
+  nav a:hover { color: var(--accent); }
+  header h1 { font-size: 28px; line-height: 1.4; margin: 0 0 8px; }
+  header .lead { color: var(--muted); margin: 0 0 8px; }
+  header .meta { color: var(--muted); font-size: 13px; margin: 0 0 32px; }
+  .callout { background: var(--panel); border-left: 3px solid var(--accent); padding: 12px 16px; margin: 0 0 40px; font-size: 14px; }
+  section { border-top: 1px solid var(--line); padding-top: 32px; margin-bottom: 48px; }
+  section h2 { font-size: 20px; margin: 0 0 16px; }
+  section h3 { font-size: 16px; margin: 32px 0 8px; }
+  p { margin: 0 0 16px; }
+  figure { margin: 24px 0; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 6px; }
+  figcaption { color: var(--muted); font-size: 13px; margin-top: 8px; }
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 24px 0; }
+  .compare figure { margin: 0; }
+  .compare .tag { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 10px; margin-bottom: 8px; }
+  .compare .before .tag { background: #fbeaea; color: var(--del); }
+  .compare .after .tag { background: #e6f4ea; color: var(--add); }
+  .note { background: var(--panel); padding: 10px 14px; border-radius: 6px; font-size: 14px; margin: 0 0 16px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; margin: 0 0 24px; }
+  th, td { border-bottom: 1px solid var(--line); padding: 10px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--panel); border-bottom: 1px solid var(--line); font-weight: 600; }
+  code { background: var(--panel); padding: 1px 5px; border-radius: 4px; font-size: 90%; }
+  pre { background: var(--panel); padding: 14px 16px; border-radius: 6px; overflow-x: auto; font-size: 13px; line-height: 1.7; margin: 0 0 20px; }
+  pre code { background: none; padding: 0; }
+  pre .add { color: var(--add); }
+  pre .del { color: var(--del); }
+  ul { margin: 0 0 16px; padding-left: 22px; }
+  li { margin: 0 0 6px; }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; gap: 24px; }
+    nav { position: static; }
+    .compare { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav>
+    <div class="nav-title">目次</div>
+    <ol>
+      <li><a href="#s1">1. {{SECTION_TITLE}}</a></li>
+    </ol>
+  </nav>
+  <main>
+    <header>
+      <h1>{{TITLE}}</h1>
+      <p class="lead">{{LEAD}}</p>
+      <p class="meta">{{BRANCH}} ／ {{PR}} ／ 生成: {{DATE}}</p>
+    </header>
+
+    <div class="callout">{{CALLOUT}}</div>
+
+    <section id="s1">
+      <h2>1. {{SECTION_TITLE}}</h2>
+      <p>{{BODY}}</p>
+
+      <div class="compare">
+        <figure class="before">
+          <span class="tag">変更前</span>
+          <img src="assets/{{SLUG}}/before.png" alt="変更前">
+        </figure>
+        <figure class="after">
+          <span class="tag">変更後</span>
+          <img src="assets/{{SLUG}}/after.png" alt="変更後">
+        </figure>
+      </div>
+    </section>
+  </main>
+</div>
+</body>
+</html>
