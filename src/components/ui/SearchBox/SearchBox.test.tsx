@@ -45,6 +45,19 @@ describe('SearchBox', () => {
       jest.advanceTimersByTime(500);
     });
 
-    expect(mockPush).toHaveBeenCalledWith('/?title=test words');
+    expect(mockPush).toHaveBeenCalledWith('/?title=test%20words');
+  });
+
+  it('encodes reserved characters in the search term', async () => {
+    render(<SearchBox />);
+
+    const searchInput = screen.getByPlaceholderText('記事を検索...');
+    await user.type(searchInput, 'a&b');
+
+    await act(async () => {
+      jest.advanceTimersByTime(500);
+    });
+
+    expect(mockPush).toHaveBeenCalledWith('/?title=a%26b');
   });
 });

@@ -29,7 +29,7 @@ export default function SearchBox() {
 
   useEffect(() => {
     if (debouncedSearch && debouncedSearch.trim()) {
-      router.push(`/?title=${debouncedSearch.trim()}`);
+      router.push(`/?title=${encodeURIComponent(debouncedSearch.trim())}`);
     } else if (debouncedSearch !== null) {
       router.push('/');
     }
