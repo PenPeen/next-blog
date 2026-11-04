@@ -18,7 +18,7 @@ describe('Pagination', () => {
     render(<Pagination totalCount={100} limitValue={10} totalPages={10} currentPage={1} />);
 
     const paginationNav = screen.getByRole('navigation', { name: 'Pagination' });
-    const previousButton = screen.getByRole('link', { name: 'Previous page' });
+    const previousButton = screen.getByRole('button', { name: 'Previous page' });
     const nextButton = screen.getByRole('link', { name: 'Next page' });
     const currentPageLink = screen.getByRole('link', { current: 'page' });
 
@@ -27,8 +27,7 @@ describe('Pagination', () => {
     expect(nextButton).toBeVisible();
     expect(screen.getByText('全 100 件中 1 - 10 件表示')).toBeVisible();
     expect(currentPageLink).toHaveTextContent('1');
-    expect(previousButton).toHaveAttribute('aria-disabled', 'true');
-    expect(nextButton).toHaveAttribute('aria-disabled', 'false');
+    expect(previousButton).toBeDisabled();
   });
 
   it('総ページ数が1以下の場合は何も表示されない', () => {
@@ -45,15 +44,17 @@ describe('Pagination', () => {
     it('最初のページでは「戻る」ボタンが非活性であること', () => {
       render(<Pagination totalCount={100} limitValue={10} totalPages={10} currentPage={1} />);
 
-      const previousButton = screen.getByRole('link', { name: 'Previous page' });
-      expect(previousButton).toHaveAttribute('aria-disabled', 'true');
+      const previousButton = screen.getByRole('button', { name: 'Previous page' });
+      expect(previousButton).toBeDisabled();
+      expect(screen.queryByRole('link', { name: 'Previous page' })).toBeNull();
     });
 
     it('最後のページでは「次へ」ボタンが非活性であること', () => {
       render(<Pagination totalCount={100} limitValue={10} totalPages={10} currentPage={10} />);
 
-      const nextButton = screen.getByRole('link', { name: 'Next page' });
-      expect(nextButton).toHaveAttribute('aria-disabled', 'true');
+      const nextButton = screen.getByRole('button', { name: 'Next page' });
+      expect(nextButton).toBeDisabled();
+      expect(screen.queryByRole('link', { name: 'Next page' })).toBeNull();
     });
 
     it('中間のページでは「戻る」ボタンと「次へ」ボタンが活性であること', () => {
@@ -61,8 +62,10 @@ describe('Pagination', () => {
 
       const prevButton = screen.getByRole('link', { name: 'Previous page' });
       const nextButton = screen.getByRole('link', { name: 'Next page' });
-      expect(prevButton).toHaveAttribute('aria-disabled', 'false');
-      expect(nextButton).toHaveAttribute('aria-disabled', 'false');
+      expect(prevButton).toBeVisible();
+      expect(nextButton).toBeVisible();
+      expect(screen.queryByRole('button', { name: 'Previous page' })).toBeNull();
+      expect(screen.queryByRole('button', { name: 'Next page' })).toBeNull();
     });
   })
 
