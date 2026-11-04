@@ -31,6 +31,7 @@
   min-width: 2rem;
   height: 2rem;
   padding: 0 0.5rem;
+  font-family: inherit;
   font-size: 0.875rem;
   line-height: 1;
   border-radius: 4px;
@@ -55,11 +56,6 @@
 .pagination__button_disabled {
   color: rgb(174, 184, 188);
   cursor: not-allowed;
-}
-
-.pagination__button_disabled:hover {
-  background-color: #fff;
-  border-color: rgb(220, 220, 220);
 }
 
 .pagination__dots {
