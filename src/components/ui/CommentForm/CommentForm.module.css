@@ -45,6 +45,17 @@
   cursor: not-allowed;
 }
 
+.counter {
+  align-self: flex-end;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.counterOver {
+  color: #ef4444;
+}
+
 .errorMessage {
   color: #ef4444;
   font-size: 0.875rem;

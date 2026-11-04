@@ -5,7 +5,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import styles from './CommentForm.module.css';
 import Button from '@/components/ui/Button';
-import { CommentFormData, commentSchema } from '@/lib/schema/comment';
+import { COMMENT_MAX_LENGTH, CommentFormData, commentSchema } from '@/lib/schema/comment';
 import { User } from '@/app/graphql/generated';
 import { createComment } from '@/actions/createComment';
 import { useRouter } from 'next/navigation';
@@ -43,6 +43,7 @@ export default function CommentForm({
   };
 
   const isAuthenticated = !!currentUser;
+  const contentLength = methods.watch('content').length;
 
   return (
     <div className={styles.formContainer}>
@@ -60,6 +61,12 @@ export default function CommentForm({
               placeholder={isAuthenticated ? 'コメントを入力してください' : 'コメントを投稿するにはログインが必要です'}
               disabled={!isAuthenticated || isSubmitting}
             />
+            <p
+              data-testid="comment-counter"
+              className={`${styles.counter} ${contentLength > COMMENT_MAX_LENGTH ? styles.counterOver : ''}`}
+            >
+              {contentLength} / {COMMENT_MAX_LENGTH}
+            </p>
             {methods.formState.errors.content && (
               <p className={styles.errorMessage}>
                 {methods.formState.errors.content.message}
