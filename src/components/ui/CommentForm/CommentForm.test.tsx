@@ -63,7 +63,20 @@ describe('CommentForm', () => {
 
     const counter = screen.getByTestId('comment-counter');
     expect(counter).toHaveTextContent('3 / 255');
-    expect(counter.className).not.toContain('counterOver');
+    expect(counter).not.toHaveClass('counterOver');
+  });
+
+  it('上限ちょうどの255文字ではカウンターに超過のクラスが付かないこと', async () => {
+    render(<CommentForm postId={postId} currentUser={mockUser} />);
+
+    const user = userEvent.setup();
+    const textarea = screen.getByTestId('comment-textarea');
+    await user.click(textarea);
+    await user.paste('a'.repeat(255));
+
+    const counter = screen.getByTestId('comment-counter');
+    expect(counter).toHaveTextContent('255 / 255');
+    expect(counter).not.toHaveClass('counterOver');
   });
 
   it('256文字入力するとカウンターに超過のクラスが付くこと', async () => {
@@ -76,7 +89,7 @@ describe('CommentForm', () => {
 
     const counter = screen.getByTestId('comment-counter');
     expect(counter).toHaveTextContent('256 / 255');
-    expect(counter.className).toContain('counterOver');
+    expect(counter).toHaveClass('counterOver');
   });
 
   it('空のコメントを送信するとエラーが表示されること', async () => {
