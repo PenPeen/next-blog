@@ -20,15 +20,25 @@ type PaginationLinkProps = {
 
 const PaginationLink = ({ href, isDisabled, ariaLabel, children }: PaginationLinkProps) => (
   <li className={styles.pagination__item}>
-    <Link
-      href={href}
-      className={`${styles.pagination__button} ${isDisabled ? styles.pagination__button_disabled : ''}`}
-      aria-disabled={isDisabled}
-      aria-label={ariaLabel}
-      scroll={true}
-    >
-      {children}
-    </Link>
+    {isDisabled ? (
+      <button
+        type="button"
+        disabled
+        className={`${styles.pagination__button} ${styles.pagination__button_disabled}`}
+        aria-label={ariaLabel}
+      >
+        {children}
+      </button>
+    ) : (
+      <Link
+        href={href}
+        className={styles.pagination__button}
+        aria-label={ariaLabel}
+        scroll={true}
+      >
+        {children}
+      </Link>
+    )}
   </li>
 );
 
