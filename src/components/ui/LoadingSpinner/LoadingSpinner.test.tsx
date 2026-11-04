@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { LoadingSpinner } from './index';
 
 describe('Loading', () => {
@@ -13,5 +13,11 @@ describe('Loading', () => {
 
     const loadingContainer = container.querySelector('div[class*="loadingContainer"]');
     expect(loadingContainer).toBeInTheDocument();
+  });
+
+  it('exposes a status role with a loading message for screen readers', () => {
+    render(<LoadingSpinner />);
+
+    expect(screen.getByRole('status')).toHaveTextContent('読み込み中');
   });
 });
