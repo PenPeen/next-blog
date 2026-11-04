@@ -144,6 +144,22 @@ describe("PostContent", () => {
     expect(screen.getByText("投稿ID: 1, ログイン状態: ログイン中")).toBeInTheDocument();
   });
 
+  it("本文1200文字の投稿で「約3分で読めます」が表示されること", async () => {
+    (getCurrentUser as jest.Mock).mockResolvedValue(null);
+
+    render(await PostContent({ post: { ...mockPost, content: "あ".repeat(1200) } }));
+
+    expect(screen.getByText("約3分で読めます")).toBeInTheDocument();
+  });
+
+  it("短い本文では「約1分で読めます」が表示されること", async () => {
+    (getCurrentUser as jest.Mock).mockResolvedValue(null);
+
+    render(await PostContent({ post: mockPost }));
+
+    expect(screen.getByText("約1分で読めます")).toBeInTheDocument();
+  });
+
   it("未ログインユーザーに対して投稿内容が正しく表示されること", async () => {
     (getCurrentUser as jest.Mock).mockResolvedValue(null);
 

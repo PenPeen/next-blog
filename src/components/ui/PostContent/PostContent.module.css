@@ -8,6 +8,12 @@
   margin-bottom: 2rem;
 }
 
+.readingTime {
+  color: #666;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
 .backLink {
   display: inline-block;
   margin-bottom: 1rem;
