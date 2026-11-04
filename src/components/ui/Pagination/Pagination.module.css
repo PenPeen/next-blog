@@ -58,11 +58,6 @@
   cursor: not-allowed;
 }
 
-.pagination__button_disabled:hover {
-  background-color: #fff;
-  border-color: rgb(220, 220, 220);
-}
-
 .pagination__dots {
   display: flex;
   align-items: center;
