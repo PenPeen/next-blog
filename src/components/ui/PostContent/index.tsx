@@ -10,6 +10,7 @@ import { gql } from '@apollo/client'
 import { COMMENT_FRAGMENT } from '@/components/ui/Comment'
 import { getCurrentUser } from '@/fetcher'
 import CommentListContainer from '@/components/ui/CommentListContainer'
+import { calculateReadingMinutes } from '@/lib/readingTime'
 
 type PostContentProps = {
   post: PostFragment,
@@ -37,6 +38,9 @@ export default async function PostContent({ post }: PostContentProps) {
         </BackButton>
         <MainTitle>{post.title}</MainTitle>
         <FormattedDate date={post.createdAt} />
+        <p className={styles.readingTime}>
+          約{calculateReadingMinutes(post.content)}分で読めます
+        </p>
       </div>
 
       {post.thumbnailUrl && (
