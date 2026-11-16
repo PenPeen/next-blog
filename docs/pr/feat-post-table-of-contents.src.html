@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PR #176 レビュー解説</title>
+<style>
+:root{--bg:#fbfbfd;--ink:#1b1f2a;--mute:#5b6378;--line:rgba(0,0,0,.18);--card:#f0f1f6;--acc:#5b4bd6;--acc-t:#4a3cc0;--ok:#1a7f37;--warn:#b35900;--code-bg:#f6f8fa;--code-ink:#1f2328;--code-line:#d1d9e0;--code-cm:#59636e;--add-bg:#dafbe1;--add-mk:#1a7f37;--del-bg:#ffebe9;--del-mk:#cf222e}
+@media (prefers-color-scheme: dark){:root{--bg:#0b0e1a;--ink:#eef1f6;--mute:#96a0b8;--line:rgba(255,255,255,.18);--card:#141a2c;--acc:#8b7bff;--acc-t:#b3a8ff;--ok:#7ee787;--warn:#ffb86b;--code-bg:#0d1117;--code-ink:#e6edf3;--code-line:#3d444d;--code-cm:#9198a1;--add-bg:rgba(46,160,67,.15);--add-mk:#3fb950;--del-bg:rgba(248,81,73,.15);--del-mk:#f85149}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif;line-height:1.7;font-size:16px}
+main{max-width:920px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;line-height:1.4;margin:0 0 8px}
+h2{font-size:20px;margin:44px 0 10px;padding-bottom:6px;border-bottom:2px solid var(--ink)}
+h3{font-size:17px;margin:28px 0 6px}
+p{margin:6px 0}
+a{color:var(--acc-t)}
+.mut{color:var(--mute)}
+.lead{font-weight:700;margin:8px 0 12px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:14px;color:var(--mute)}
+.concl{background:var(--card);padding:14px 18px;margin:16px 0;font-weight:700}
+table{border-collapse:collapse;width:100%;font-size:14.5px;margin:8px 0}
+th{text-align:left;padding:6px 10px;border-bottom:2px solid var(--ink);font-weight:700}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+.ok{color:var(--ok);font-weight:700}
+.wn{color:var(--warn);font-weight:700}
+.na{color:var(--mute)}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:10px 0}
+.cd{background:var(--card);padding:12px 14px;border:2px solid transparent}
+.cd.on{border-color:var(--acc)}
+.cd .k{font-size:13px;color:var(--mute)}
+.cd .v{font-weight:700}
+dl.term{display:grid;grid-template-columns:120px 1fr;margin:8px 0;font-size:14.5px}
+dl.term dt{font-weight:700;color:var(--acc-t);padding:5px 10px 5px 0;border-bottom:1px solid var(--line)}
+dl.term dd{margin:0;padding:5px 0;border-bottom:1px solid var(--line)}
+pre{background:var(--code-bg);color:var(--code-ink);border:1px solid var(--code-line);padding:8px 0;overflow-x:auto;font-size:13px;line-height:1.6;margin:8px 0}
+pre span{display:block;padding:0 16px;white-space:pre}
+pre .add{background:var(--add-bg)}pre .add::first-letter{color:var(--add-mk)}
+pre .del{background:var(--del-bg)}pre .del::first-letter{color:var(--del-mk)}
+pre .cm{color:var(--code-cm)}
+code{font-family:'SF Mono',Menlo,monospace;font-size:.9em}
+.gl{font-size:13px;word-break:break-all}
+.chip{display:inline-block;font-size:12.5px;font-weight:700;padding:1px 8px;border:1.5px solid var(--acc);color:var(--acc-t);margin-left:8px;vertical-align:middle}
+.same{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;font-size:14px}
+.same span{background:var(--card);padding:4px 10px}
+.same b{color:var(--mute);font-weight:700;padding:4px 0}
+.bh{font-weight:700;margin:22px 0 4px}
+.lg{font-size:13px;color:var(--mute);display:flex;gap:18px;flex-wrap:wrap;margin:4px 0}
+.sw{display:inline-block;width:14px;height:14px;border:2.5px solid var(--acc);vertical-align:middle;margin-right:6px;box-sizing:border-box}
+.sw.g{border-color:var(--line);background:var(--card)}
+.ln{display:inline-block;width:26px;border-top:2px solid var(--mute);vertical-align:middle;margin-right:6px}
+.ln.d{border-top-style:dashed}
+.mx td.c{text-align:center;font-weight:700;width:130px}
+.mx td.c.ok{background:rgba(26,127,55,.12)}
+.mx td.c.wn{background:rgba(179,89,0,.12)}
+.gap{margin:10px 0;padding-left:22px;font-size:14.5px}
+table.dr td{vertical-align:middle;padding:10px}
+table.dr td.ok,table.dr td.wn{white-space:nowrap;width:170px}
+a.src{font-size:12.5px;font-weight:400;margin-left:6px}
+.rvs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:12px 0}
+.rv{background:var(--card);padding:12px 14px;display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-content:start;font-size:14px}
+.rv .rh{grid-column:1/-1;font-weight:700;font-size:15.5px}
+.rv .rp{grid-column:1/-1;color:var(--mute);margin-bottom:4px}
+.rv .rj{white-space:nowrap;font-weight:700}
+.rv .rr{line-height:1.55}
+@media (max-width:640px){.rvs{grid-template-columns:1fr}}
+/* 図 */
+svg.fig{width:100%;height:auto;display:block;margin:10px 0}
+svg.fig text{font-family:'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif}
+.bx{fill:var(--card);stroke:var(--line);stroke-width:1}
+.bx.on{stroke:var(--acc);stroke-width:2.5}
+.bx.off{fill:none;stroke:var(--line);stroke-dasharray:4 3}
+.bx.vok{stroke:var(--ok);stroke-width:2.5}
+.bx.vng{stroke:var(--warn);stroke-width:2;stroke-dasharray:6 4}
+.bd{fill:none;stroke:var(--line);stroke-width:1.5;stroke-dasharray:6 5}
+.tx{fill:var(--ink);font-size:15px;font-weight:700}
+.ts{fill:var(--mute);font-size:13px}
+.tl{fill:var(--mute);font-size:13px;font-weight:700}
+.ta{fill:var(--acc-t);font-size:13.5px;font-weight:700}
+.tw{fill:var(--warn);font-size:14px;font-weight:700}
+.tk{fill:var(--ok);font-size:14px;font-weight:700}
+.ar{stroke:var(--mute);stroke-width:1.6;fill:none;marker-end:url(#ah)}
+.ar.on{stroke:var(--acc);stroke-width:2.6;marker-end:url(#aha)}
+.ar.ds{stroke-dasharray:5 4}
+.ahf{fill:var(--mute)}.ahfa{fill:var(--acc)}
+.ghbg{fill:#fff}
+.ul{display:inline}.ud{display:none}
+@media (prefers-color-scheme: dark){.ul{display:none}.ud{display:inline}}
+@media (max-width:640px){.cards{grid-template-columns:1fr}dl.term{grid-template-columns:1fr}dl.term dt{border-bottom:none;padding-bottom:0}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="ahf" d="M0,0 L10,5 L0,10 z"/></marker>
+<marker id="aha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path class="ahfa" d="M0,0 L10,5 L0,10 z"/></marker>
+<marker id="ahw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path style="fill:var(--warn)" d="M0,0 L10,5 L0,10 z"/></marker>
+<symbol id="ic-user-l" viewBox="0 0 48 48"><path d="M6.025,44 C6.524,34.085 14.395,26.178 24,26.178 C27.248,26.178 30.43,27.092 33.205,28.822 C38.354,32.033 41.653,37.783 41.974,44 L6.025,44 Z M14.192,13.878 C14.192,8.432 18.592,4 24.001,4 C29.408,4 33.807,8.432 33.807,13.878 C33.807,19.325 29.408,23.757 24.001,23.757 C18.592,23.757 14.192,19.325 14.192,13.878 L14.192,13.878 Z M34.263,27.125 C32.53,26.044 30.65,25.26 28.698,24.771 C32.877,22.939 35.807,18.749 35.807,13.878 C35.807,7.329 30.51,2 24.001,2 C17.489,2 12.192,7.329 12.192,13.878 C12.192,18.755 15.13,22.95 19.317,24.778 C10.545,26.981 4,35.2 4,45 C4,45.552 4.447,46 5,46 L43,46 C43.552,46 44,45.552 44,45 C44,37.719 40.269,30.87 34.263,27.125 L34.263,27.125 Z" fill="#242F3E"/></symbol>
+<symbol id="ic-user-d" viewBox="0 0 48 48"><path d="M6.025,44 C6.524,34.085 14.395,26.178 24,26.178 C27.248,26.178 30.43,27.092 33.205,28.822 C38.354,32.033 41.653,37.783 41.974,44 L6.025,44 Z M14.192,13.878 C14.192,8.432 18.592,4 24.001,4 C29.408,4 33.807,8.432 33.807,13.878 C33.807,19.325 29.408,23.757 24.001,23.757 C18.592,23.757 14.192,19.325 14.192,13.878 L14.192,13.878 Z M34.263,27.125 C32.53,26.044 30.65,25.26 28.698,24.771 C32.877,22.939 35.807,18.749 35.807,13.878 C35.807,7.329 30.51,2 24.001,2 C17.489,2 12.192,7.329 12.192,13.878 C12.192,18.755 15.13,22.95 19.317,24.778 C10.545,26.981 4,35.2 4,45 C4,45.552 4.447,46 5,46 L43,46 C43.552,46 44,45.552 44,45 C44,37.719 40.269,30.87 34.263,27.125 L34.263,27.125 Z" fill="#FFFFFF"/></symbol>
+<symbol id="ic-gh" viewBox="0 0 98 96"><path d="M41.4395 69.3848C28.8066 67.8535 19.9062 58.7617 19.9062 46.9902C19.9062 42.2051 21.6289 37.0371 24.5 33.5918C23.2559 30.4336 23.4473 23.7344 24.8828 20.959C28.7109 20.4805 33.8789 22.4902 36.9414 25.2656C40.5781 24.1172 44.4062 23.543 49.0957 23.543C53.7852 23.543 57.6133 24.1172 61.0586 25.1699C64.0254 22.4902 69.2891 20.4805 73.1172 20.959C74.457 23.543 74.6484 30.2422 73.4043 33.4961C76.4668 37.1328 78.0937 42.0137 78.0937 46.9902C78.0937 58.7617 69.1934 67.6621 56.3691 69.2891C59.623 71.3945 61.8242 75.9883 61.8242 81.252L61.8242 91.2051C61.8242 94.0762 64.2168 95.7031 67.0879 94.5547C84.4102 87.9512 98 70.6289 98 49.1914C98 22.1074 75.9883 6.69539e-07 48.9043 4.309e-07C21.8203 1.92261e-07 -1.9479e-07 22.1074 -4.3343e-07 49.1914C-6.20631e-07 70.4375 13.4941 88.0469 31.6777 94.6504C34.2617 95.6074 36.75 93.8848 36.75 91.3008L36.75 83.6445C35.4102 84.2188 33.6875 84.6016 32.1562 84.6016C25.8398 84.6016 22.1074 81.1563 19.4277 74.7441C18.375 72.1602 17.2266 70.6289 15.0254 70.3418C13.877 70.2461 13.4941 69.7676 13.4941 69.1934C13.4941 68.0449 15.4082 67.1836 17.3223 67.1836C20.0977 67.1836 22.4902 68.9063 24.9785 72.4473C26.8926 75.2227 28.9023 76.4668 31.2949 76.4668C33.6875 76.4668 35.2187 75.6055 37.4199 73.4043C39.0469 71.7773 40.291 70.3418 41.4395 69.3848Z" fill="black"/></symbol>
+<symbol id="ic-ecs" viewBox="0 0 64 64"><rect width="64" height="64" fill="#ED7100"/><path d="M50,36.3822466 L44,33.3822885 L44,25.0004058 C44,24.6374109 43.803,24.3024156 43.485,24.1264181 L35,19.412484 L35,12.7495773 L50,21.5724538 L50,36.3822466 Z M51.507,20.1384739 L34.507,10.1386138 C34.199,9.95761637 33.815,9.95461641 33.504,10.1326139 C33.192,10.3106114 33,10.6416068 33,11.0006018 L33,20.0004758 C33,20.3634707 33.197,20.6984661 33.515,20.8744636 L42,25.5883976 L42,34.0002799 C42,34.3792746 42.214,34.7252697 42.553,34.8952674 L50.553,38.8952114 C50.694,38.9652104 50.847,39.0002099 51,39.0002099 C51.183,39.0002099 51.365,38.9502106 51.525,38.851212 C51.82,38.6682146 52,38.3472191 52,38.0002239 L52,21.0004618 C52,20.6464668 51.812,20.3184714 51.507,20.1384739 L51.507,20.1384739 Z M32,51.8280304 L15,41.4391758 L15,21.5544541 L29,12.8045765 L29,19.4464836 L21.47,24.1524177 C21.178,24.3354152 21,24.6554107 21,25.0004058 L21,38.0002239 C21,38.351219 21.185,38.6772144 21.485,38.8572119 L31.485,44.857128 C31.789,45.0401254 32.167,45.0481253 32.479,44.8781277 L42.988,39.1462079 L48.035,42.0291675 L32,51.8280304 Z M50.496,41.1321801 L43.496,37.1322361 C43.194,36.9592385 42.825,36.9562385 42.521,37.1222362 L32.023,42.8481561 L23,37.4342318 L23,25.5543981 L30.53,20.848464 C30.822,20.6654665 31,20.345471 31,20.0004758 L31,11.0006018 C31,10.6366069 30.803,10.3026115 30.484,10.125614 C30.168,9.9486165 29.778,9.95961634 29.47,10.1526136 L13.47,20.1524737 C13.178,20.3354711 13,20.6554667 13,21.0004618 L13,42.0001679 C13,42.3481631 13.182,42.6711585 13.479,42.854156 L31.479,53.854002 C31.639,53.9510007 31.819,54 32,54 C32.181,54 32.361,53.9510007 32.521,53.854002 L50.521,42.854156 C50.823,42.6691586 51.005,42.3391632 51.0001004,41.9851681 C50.995,41.6321731 50.803,41.3071776 50.496,41.1321801 L50.496,41.1321801 Z" fill="#FFFFFF"/></symbol>
+<symbol id="ic-s3" viewBox="0 0 64 64"><rect width="64" height="64" fill="#7AA116"/><g transform="translate(10.9998,10.0002)" fill="#FFFFFF"><path d="M36.759,23.948 L36.993,22.131 C39.166,23.385 39.842,24.121 40.037,24.424 C39.713,24.485 38.832,24.509 36.759,23.948 L36.759,23.948 Z M19.5,11 C9.125,11 2.382,8.488 2,6.696 L2,6.511 C2.349,5.392 8.14,2 19.5,2 C30.84,2 36.632,5.381 37,6.505 L37,6.616 C36.724,8.446 29.961,11 19.5,11 L19.5,11 Z M34.818,23.362 C30.053,21.797 23.912,18.979 21.594,17.888 C21.535,16.786 20.628,15.906 19.512,15.906 C18.358,15.906 17.418,16.845 17.418,18 C17.418,19.154 18.358,20.094 19.512,20.094 C19.969,20.094 20.389,19.942 20.733,19.693 C23.132,20.822 29.619,23.798 34.558,25.38 L32.837,38.724 C32.583,40.352 27.919,42 19.497,42 C11.072,42 6.405,40.352 6.155,38.751 L2.435,9.814 C5.945,11.915 12.749,13 19.5,13 C26.25,13 33.054,11.915 36.565,9.815 L34.818,23.362 Z M39,6.5 C39,3.431 30.661,0 19.5,0 C8.339,0 -3.55271368e-15,3.431 -3.55271368e-15,6.5 L-3.55271368e-15,7.043 L4.174,39.033 C4.875,43.516 15.123,44 19.497,44 C23.869,44 34.113,43.516 34.818,39.007 L36.501,25.947 C37.778,26.279 38.812,26.456 39.616,26.455 C40.606,26.455 41.273,26.203 41.697,25.697 C42.047,25.281 42.185,24.756 42.085,24.221 C41.857,23 40.403,21.712 37.37,20.044 L37.27,19.989 L39,7.044 L39,6.5 Z"/></g></symbol>
+<symbol id="ic-aurora" viewBox="0 0 64 64"><rect width="64" height="64" fill="#C925D1"/><path d="M36.2132007,16.011332 L34.1968006,16.011332 L34.1968006,14.005666 L36.2132007,14.005666 L36.2132007,12 L38.2296008,12 L38.2296008,14.005666 L40.2460008,14.005666 L40.2460008,16.011332 L38.2296008,16.011332 L38.2296008,18.016998 L36.2132007,18.016998 L36.2132007,16.011332 Z M45.2870009,24.033996 L43.2706009,24.033996 L43.2706009,22.02833 L45.2870009,22.02833 L45.2870009,20.022664 L47.303401,20.022664 L47.303401,22.02833 L49.319801,22.02833 L49.319801,24.033996 L47.303401,24.033996 L47.303401,25.036829 L47.303401,26.039662 L45.2870009,26.039662 L45.2870009,25.036829 L45.2870009,24.033996 Z M41.8530716,46.6739539 C40.357911,43.3816532 37.3706143,40.4112618 34.0606936,38.9240605 C37.3706143,37.4368591 40.357911,34.4654649 41.8530716,31.1731642 C43.3472241,34.4654649 46.3345208,37.4368591 49.6444415,38.9240605 C46.3345208,40.4112618 43.3472241,43.3816532 41.8530716,46.6739539 L41.8530716,46.6739539 Z M53.9918,37.9212275 C48.790496,37.9212275 42.8612717,32.0225637 42.8612717,26.8499511 C42.8612717,26.2953845 42.4095981,25.8471181 41.8530716,25.8471181 C41.295537,25.8471181 40.8448716,26.2953845 40.8448716,26.8499511 C40.8448716,32.0225637 34.9156473,37.9212275 29.7143433,37.9212275 C29.1568087,37.9212275 28.7061433,38.3694938 28.7061433,38.9240605 C28.7061433,39.4776243 29.1568087,39.9268935 29.7143433,39.9268935 C34.9156473,39.9268935 40.8448716,45.8245544 40.8448716,50.997167 C40.8448716,51.5507308 41.295537,52 41.8530716,52 C42.4095981,52 42.8612717,51.5507308 42.8612717,50.997167 C42.8612717,45.8245544 48.790496,39.9268935 53.9918,39.9268935 C54.5493346,39.9268935 55,39.4776243 55,38.9240605 C55,38.3694938 54.5493346,37.9212275 53.9918,37.9212275 L53.9918,37.9212275 Z M22.6025003,18.016998 C29.4522113,18.016998 33.1886006,20.004613 33.1886006,21.025497 C33.1886006,22.046381 29.4522113,24.033996 22.6025003,24.033996 C15.7527894,24.033996 12.0164001,22.046381 12.0164001,21.025497 C12.0164001,20.004613 15.7527894,18.016998 22.6025003,18.016998 L22.6025003,18.016998 Z M22.2526549,33.1667962 C17.2398844,33.1667962 13.6315365,32.1037932 12.0164001,30.9776118 L12.0164001,23.8635144 C14.3826455,25.2965628 18.503159,26.039662 22.6025003,26.039662 C26.7018416,26.039662 30.8223552,25.2965628 33.1886006,23.8635144 L33.1886006,30.3478326 C32.1733432,31.7538045 27.9419277,33.1667962 22.2526549,33.1667962 L22.2526549,33.1667962 Z M33.1886006,45.9749793 C33.1886006,47.4100333 29.0630461,49.4949232 22.5984675,49.4949232 C16.13893,49.4949232 12.0164001,47.4100333 12.0164001,45.9749793 L12.0164001,41.5675283 C14.2737599,42.9223557 18.0303132,43.7597212 22.2919747,43.7597212 C25.2339024,43.7597212 28.0780347,43.346554 30.3011157,42.5944293 L29.6508267,40.6960664 C27.6324103,41.3779928 25.0181476,41.7540552 22.2919747,41.7540552 C16.9011292,41.7540552 13.0397231,40.3520947 12.0164001,38.9932559 L12.0164001,33.2871362 C14.4270063,34.4634593 18.1291168,35.1724622 22.2526549,35.1724622 C26.1735448,35.1724622 30.5934937,34.4474139 33.1886006,32.9030511 L33.1886006,35.0651591 L35.2050007,35.0651591 L35.2050007,21.025497 C35.2050007,17.7331963 28.8654389,16.011332 22.6025003,16.011332 C16.3395618,16.011332 10,17.7331963 10,21.025497 L10,45.9749793 C10,49.5641186 16.4907918,51.5005892 22.5984675,51.5005892 C28.7101761,51.5005892 35.2050007,49.5641186 35.2050007,45.9749793 L35.2050007,43.0878231 L33.1886006,43.0878231 L33.1886006,45.9749793 Z" fill="#FFFFFF"/></symbol>
+</defs>
+</svg>
+<main>
+<style>
+.shots{display:grid;grid-template-columns:1fr;gap:14px;margin:10px 0}
+.shots figure{margin:0;border:1px solid var(--line);background:#fff}
+.shots figure.on{border:2.5px solid var(--acc)}
+.shots .tag{display:block;font-size:12.5px;font-weight:700;padding:4px 10px;background:var(--card);color:var(--mute)}
+.shots figure.on .tag{color:var(--acc-t)}
+.shots img{display:block;width:100%;height:auto}
+@media (max-width:640px){.shots{grid-template-columns:1fr}}
+</style>
+<h1>記事詳細に、本文の見出しから作った目次を表示する</h1>
+<p><a href="https://github.com/PenPeen/next-blog/pull/176">https://github.com/PenPeen/next-blog/pull/176</a></p>
+<div class="concl">記事詳細で、本文の見出しを一覧にした目次を出し、項目を押すとその見出しへ移動するようにした。見出しの行は、文字列のままではなく見出しとして表示する。単体テストに加えて、手元で起動した画面でも確かめた。</div>
+
+<h2>1. 仕組みと変更の場所</h2>
+<p class="lead">変わるのは、フロントエンドの記事詳細ページだけ。記事を返すバックエンドは変えていない。</p>
+<svg class="fig" viewBox="0 0 900 210" role="img" aria-label="記事詳細の表示の流れ">
+  <use class="ul" href="#ic-user-l" x="24" y="76" width="44" height="44"/><use class="ud" href="#ic-user-d" x="24" y="76" width="44" height="44"/>
+  <text class="tx" x="20" y="142">読者</text>
+  <path class="ar" d="M76,98 L246,98"/><text class="ts" x="86" y="88">① 記事詳細を開く</text>
+  <rect class="bd" x="230" y="14" width="330" height="180"/><text class="tl" x="242" y="34">フロントエンド（このリポジトリ）</text>
+  <rect class="bx on" x="250" y="48" width="290" height="124"/>
+  <text class="tx" x="264" y="74">next-blog</text><text class="ts" x="264" y="94">Next.js / 記事詳細ページ</text>
+  <text class="ta" x="264" y="124">本文を見出しと文章に分ける</text><text class="ta" x="264" y="146">目次を表示する</text>
+  <path class="ar" d="M540,98 L646,98"/><text class="ts" x="556" y="76">② 記事を取得</text><text class="ts" x="556" y="90" style="font-size:12px">GraphQL</text>
+  <rect class="bd" x="630" y="14" width="256" height="180"/><text class="tl" x="642" y="34">バックエンド（別リポジトリ）</text>
+  <rect class="bx" x="650" y="58" width="216" height="80"/>
+  <text class="tx" x="664" y="86">rails_blog</text><text class="ts" x="664" y="108">GraphQL API / 記事の本文</text>
+
+</svg>
+<div class="lg"><span><span class="sw"></span>この PR で変わる</span><span><span class="sw g"></span>変更なし</span></div>
+<dl class="term">
+<dt>記事詳細</dt><dd>記事 1 件のタイトル、サムネイル、本文、コメントを表示するページ（<code>/posts/[id]</code>）</dd>
+<dt>本文</dt><dd>API が返す 1 つの文字列。Markdown としては表示していない</dd>
+<dt>見出し</dt><dd>本文のうち、行頭が <code>#</code> 1〜3 個と空白で始まる行</dd>
+</dl>
+
+<h2>2. 振る舞いの変化</h2>
+<p class="lead">見出しのある記事に目次が付き、見出しの行が見出しとして表示される。</p>
+
+<p class="bh">記事詳細の表示（見出しが 2 つある記事）</p>
+<svg class="fig" viewBox="0 0 900 420" role="img" aria-label="記事詳細の表示の変更前と変更後">
+  <text class="tl" x="20" y="22">変更前</text>
+  <rect class="bx" x="20" y="32" width="400" height="376" style="fill:none"/>
+  <rect class="bx" x="40" y="50" width="360" height="36"/><text class="tx" x="52" y="74">タイトル・投稿日</text>
+  <rect class="bx" x="40" y="96" width="360" height="56"/><text class="ts" x="52" y="130">サムネイル</text>
+  <rect class="bx" x="40" y="164" width="360" height="150"/>
+  <text class="tl" x="52" y="186">本文（1 つの文字列をそのまま表示）</text>
+  <text x="52" y="216" style="fill:var(--ink);font-size:14px">前置きの文章 <tspan style="fill:var(--warn);font-weight:700"># はじめに</tspan> 本文の文章</text>
+  <text x="52" y="240" style="fill:var(--ink);font-size:14px"><tspan style="fill:var(--warn);font-weight:700">## 詳細</tspan> 本文の文章…</text>
+  <text class="tw" x="52" y="290" style="font-size:12.5px">見出しの行も # の付いた文字として続けて出る</text>
+  <rect class="bx" x="40" y="326" width="360" height="64"/><text class="ts" x="52" y="364">コメント</text>
+
+  <text class="tl" x="480" y="22">変更後</text>
+  <rect class="bx" x="480" y="32" width="400" height="376" style="fill:none"/>
+  <rect class="bx" x="500" y="50" width="360" height="36"/><text class="tx" x="512" y="74">タイトル・投稿日</text>
+  <rect class="bx" x="500" y="96" width="360" height="40"/><text class="ts" x="512" y="122">サムネイル</text>
+  <rect class="bx on" x="500" y="146" width="230" height="78"/>
+  <text class="ta" x="512" y="168">目次</text>
+  <text x="512" y="190" style="fill:var(--ink);font-size:14px">はじめに</text>
+  <text x="528" y="212" style="fill:var(--ink);font-size:14px">詳細</text>
+  <rect class="bx" x="500" y="234" width="360" height="110"/>
+  <text x="512" y="256" style="fill:var(--ink);font-size:13.5px">前置きの文章</text>
+  <text x="512" y="282" style="fill:var(--acc-t);font-size:16px;font-weight:700">はじめに</text>
+  <text x="512" y="304" style="fill:var(--ink);font-size:13.5px">本文の文章</text>
+  <text x="512" y="330" style="fill:var(--acc-t);font-size:15px;font-weight:700">詳細</text>
+  <path class="ar on" d="M590,186 L790,186 L790,276 L600,276"/><text class="ta" x="744" y="176" style="font-size:12.5px">押すと移動</text>
+  <rect class="bx" x="500" y="354" width="360" height="40"/><text class="ts" x="512" y="380">コメント</text>
+</svg>
+<div class="lg"><span><span class="sw"></span>この PR で変わる</span><span><span class="sw g"></span>変更なし</span></div>
+
+<div class="same"><b>変化なし:</b><span>見出しの無い記事には目次を出さない</span><span>記事一覧の説明文</span><span>コメントの表示と投稿</span></div>
+
+<h2>3. 影響範囲</h2>
+<p class="lead">表示が変わるのは記事詳細だけ。同じ本文を表示する記事一覧は、これまでどおり文字列のまま出す。</p>
+<svg class="fig" viewBox="0 0 900 300" role="img" aria-label="変更が及ぶ範囲">
+  <use class="ul" href="#ic-user-l" x="24" y="118" width="44" height="44"/><use class="ud" href="#ic-user-d" x="24" y="118" width="44" height="44"/>
+  <text class="tx" x="20" y="184">読者</text>
+  <rect class="bd" x="150" y="14" width="440" height="272"/><text class="tl" x="162" y="34">フロントエンド（next-blog）</text>
+  <path class="ar" d="M76,130 L166,74"/>
+  <path class="ar" d="M76,140 L166,140"/>
+  <rect class="bx on" x="170" y="46" width="400" height="64"/>
+  <text class="tx" x="184" y="72">記事詳細</text><text class="ta" x="184" y="94" style="font-size:12.5px">目次が付く。見出しの行は見出しとして出る</text>
+  <rect class="bx" x="170" y="122" width="400" height="64"/>
+  <text class="tx" x="184" y="148">記事一覧</text><text class="ts" x="184" y="170">本文を説明文としてそのまま出す（# も出る）</text>
+  <rect class="bx" x="170" y="198" width="400" height="64"/>
+  <text class="tx" x="184" y="224">記事の投稿・編集</text><text class="ts" x="184" y="246">本文の入力欄は変更なし</text>
+  <path class="ar" d="M570,140 L676,140"/><text class="ts" x="584" y="130">記事を取得</text>
+  <rect class="bx" x="680" y="100" width="200" height="80"/>
+  <text class="tx" x="694" y="128">rails_blog</text><text class="ts" x="694" y="150">本文の保存形式は変更なし</text>
+</svg>
+<div class="lg"><span><span class="sw"></span>この PR で変わる</span><span><span class="sw g"></span>変更なし</span></div>
+<ul class="gap">
+<li>行頭が <code>#</code> と空白で始まる行を本文に書いていた既存の記事は、記事詳細でその行が見出しになり、目次が付く。該当する記事があるかは調べていない</li>
+<li>見出しの id は出現順の連番。見出しを足したり消したりすると、それより後ろの見出しへのリンク（<code>#heading-2</code> など）の行き先が変わる</li>
+</ul>
+
+<h2>4. 検証</h2>
+<p class="lead">単体テストと、手元で起動した実際の画面で確かめた。</p>
+<svg class="fig" viewBox="0 0 900 330" role="img" aria-label="検証できた場所">
+  <rect class="bd" x="14" y="14" width="872" height="302"/><text class="tl" x="26" y="34">フロントエンド（next-blog）</text>
+  <rect class="bx vok" x="34" y="48" width="400" height="76"/>
+  <text class="tx" x="48" y="74">本文を見出しで分ける処理</text><text class="tk" x="48" y="104" style="font-size:13px">単体 ●</text>
+  <rect class="bx vok" x="466" y="48" width="400" height="76"/>
+  <text class="tx" x="480" y="74">目次の部品</text><text class="tk" x="480" y="104" style="font-size:13px">単体 ●</text>
+  <rect class="bx vok" x="34" y="150" width="832" height="150"/>
+  <text class="tx" x="48" y="176">記事詳細ページ</text>
+  <text class="ts" x="48" y="204">見出しのある記事に目次が出る</text><text class="tk" x="560" y="204" style="font-size:13px">単体 ●</text><text class="tk" x="660" y="204" style="font-size:13px">画面 ●</text>
+  <text class="ts" x="48" y="232">目次の項目を押すと、その見出しへ移動する</text><text class="tk" x="660" y="232" style="font-size:13px">画面 ●</text>
+  <text class="ts" x="48" y="260">見出しの無い記事には目次が出ない</text><text class="tk" x="560" y="260" style="font-size:13px">単体 ●</text><text class="tk" x="660" y="260" style="font-size:13px">画面 ●</text>
+  <text class="ts" x="48" y="288">スマートフォンの幅での見た目</text><text class="tw" x="660" y="288" style="font-size:13px">画面 ▲ 未実施</text>
+</svg>
+<div class="lg"><span class="ok"><span class="sw" style="border-color:var(--ok)"></span>確かめた</span><span>単体 = ユニットテスト（<code>npm test</code> 44 スイート 261 件 PASS）</span><span>画面 = 手元で起動したアプリを Chrome で操作</span></div>
+
+<p class="bh">同じ記事を、変更前と変更後で開いた画面</p>
+<div class="shots">
+  <figure><span class="tag">変更前</span><img src="assets/feat-post-table-of-contents/before.jpg" alt="変更前の記事詳細。見出しの行が # の付いた文字として続けて表示されている"></figure>
+  <figure class="on"><span class="tag">変更後</span><img src="assets/feat-post-table-of-contents/after.jpg" alt="変更後の記事詳細。タイトルの下に目次があり、本文の見出しが見出しとして表示されている"></figure>
+</div>
+<p class="bh">目次の「使い方」を押したあとの画面 / 見出しの無い記事の画面</p>
+<div class="shots">
+  <figure class="on"><span class="tag">「使い方」へ移動</span><img src="assets/feat-post-table-of-contents/after-jump.jpg" alt="目次の「使い方」を押したあと。「使い方」の見出しが画面の上のほうに来ている"></figure>
+  <figure><span class="tag">見出しの無い記事</span><img src="assets/feat-post-table-of-contents/after-plain.jpg" alt="見出しの無い記事。目次は表示されていない"></figure>
+</div>
+<ul class="gap">
+<li>画面は、バックエンドを手元の Docker で起動し、見出しのある記事と無い記事を 1 件ずつ入れて確かめた</li>
+<li>スマートフォンの幅と、Chrome 以外のブラウザでは確かめていない</li>
+<li><code>npm run lint</code> はエラーなし</li>
+</ul>
+
+<h2>5. ファイルごとの変更</h2>
+<p class="lead">記事詳細の部品（1）が、本文を分ける処理（2）の結果を目次の部品（3）に渡す。</p>
+<svg class="fig" viewBox="0 0 900 258" role="img" aria-label="変更ファイルの置き場所と呼び出し関係">
+  <rect class="bd" x="14" y="14" width="872" height="230"/><text class="tl" x="26" y="34">フロントエンド（next-blog）</text>
+  <rect class="bx on" x="34" y="50" width="250" height="64"/><text class="tx" x="48" y="76">1 記事詳細の部品</text><text class="ts" x="48" y="98">PostContent/index.tsx</text>
+  <path class="ar" d="M284,70 L326,70"/><text class="ts" x="288" y="60" style="font-size:12px">分ける</text>
+  <rect class="bx on" x="330" y="46" width="250" height="52"/><text class="tx" x="344" y="68">2 本文を見出しで分ける</text><text class="ts" x="344" y="88">lib/postHeadings.ts</text>
+  <path class="ar" d="M284,104 L326,134"/><text class="ts" x="204" y="134" style="font-size:12px">見出しを渡す</text>
+  <rect class="bx on" x="330" y="110" width="250" height="52"/><text class="tx" x="344" y="132">3 目次の部品</text><text class="ts" x="344" y="152">TableOfContents/index.tsx</text>
+  <rect class="bx on" x="620" y="50" width="246" height="64"/><text class="tx" x="634" y="76">4 見た目</text><text class="ts" x="634" y="98">CSS 2 ファイル</text>
+  <rect class="bx on" x="34" y="176" width="832" height="52"/><text class="tx" x="48" y="208">5〜7 テスト</text><text class="ts" x="170" y="208">postHeadings.test.ts、TableOfContents.test.tsx、PostContent.test.tsx</text>
+  <path class="ar ds" d="M160,176 L160,118"/><path class="ar ds" d="M455,176 L455,166"/><text class="ts" x="170" y="150">確かめる</text>
+</svg>
+<div class="lg"><span><span class="sw"></span>変更したファイル</span><span><span class="ln"></span>呼び出し</span><span><span class="ln d"></span>確かめる</span></div>
+
+<h3>1/7 src/components/ui/PostContent/index.tsx<span class="chip">記事詳細</span></h3>
+<p>本文を見出しと文章に分け、サムネイルの下に目次を置く。見出しは <code>h2</code>〜<code>h4</code>、文章は段落として表示する。</p>
+<pre><span class="add">+   const blocks = splitByHeadings(post.content);</span><span class="add">+   const headings = blocks.filter((block) =&gt; block.type === 'heading');</span><span class="cm">  // ...</span><span class="add">+       &lt;TableOfContents headings={headings} /&gt;</span><span class="cm">  </span><span>        &lt;div className={styles.content}&gt;</span><span class="del">-         {post.content}</span><span class="add">+         {blocks.map((block, index) =&gt; {</span><span class="add">+           if (block.type === 'text') {</span><span class="add">+             return &lt;p key={index}&gt;{block.text}&lt;/p&gt;</span><span class="add">+           }</span><span class="add">+           const HeadingTag = `h${block.level + 1}` as 'h2' | 'h3' | 'h4'</span><span class="cm">  // ...</span></pre>
+<p class="gl"><a href="https://github.com/PenPeen/next-blog/blob/756f51cc3aaf3ce68a49a0b2dbb650d34df187d5/src/components/ui/PostContent/index.tsx#L31-L73">PostContent/index.tsx#L31-L73</a></p>
+
+<h3>2/7 src/lib/postHeadings.ts<span class="chip">記事詳細</span></h3>
+<p>本文を 1 行ずつ見て、見出しの行とそれ以外の文章に分ける。見出しには出現順に <code>heading-1</code> からの id を振る。</p>
+<pre><span class="add">+ const HEADING_LINE = /^(#{1,3})\s+(.+)$/</span><span class="cm">  // ...</span><span class="add">+     headingCount += 1</span><span class="add">+     blocks.push({</span><span class="add">+       type: 'heading',</span><span class="add">+       id: `heading-${headingCount}`,</span><span class="add">+       level: match[1].length,</span><span class="add">+       text: match[2].trim(),</span><span class="add">+     })</span></pre>
+<p class="gl"><a href="https://github.com/PenPeen/next-blog/blob/756f51cc3aaf3ce68a49a0b2dbb650d34df187d5/src/lib/postHeadings.ts#L7-L42">postHeadings.ts#L7-L42</a></p>
+
+<h3>3/7 src/components/ui/TableOfContents/index.tsx<span class="chip">記事詳細</span></h3>
+<p>見出しの一覧を、それぞれの id へのリンクとして並べる。見出しが 0 件なら何も出さない。</p>
+<pre><span class="add">+   if (headings.length === 0) return null</span><span class="cm">  // ...</span><span class="add">+           &lt;li key={heading.id} className={styles[`level${heading.level}`]}&gt;</span><span class="add">+             &lt;a href={`#${heading.id}`} className={styles.link}&gt;</span><span class="add">+               {heading.text}</span><span class="add">+             &lt;/a&gt;</span></pre>
+<p class="gl"><a href="https://github.com/PenPeen/next-blog/blob/756f51cc3aaf3ce68a49a0b2dbb650d34df187d5/src/components/ui/TableOfContents/index.tsx#L4-L21">TableOfContents/index.tsx#L4-L21</a></p>
+
+<h3>4/7 CSS（2 ファイル）<span class="chip">記事詳細</span></h3>
+<p>目次の枠と字下げ、本文の見出しの余白を足した。</p>
+<p class="gl"><a href="https://github.com/PenPeen/next-blog/blob/756f51cc3aaf3ce68a49a0b2dbb650d34df187d5/src/components/ui/TableOfContents/TableOfContents.module.css">TableOfContents.module.css</a>、<a href="https://github.com/PenPeen/next-blog/blob/756f51cc3aaf3ce68a49a0b2dbb650d34df187d5/src/components/ui/PostContent/PostContent.module.css#L42-L46">PostContent.module.css#L42-L46</a></p>
+
+<h3>5〜7/7 テスト<span class="chip">記事詳細</span></h3>
+<ul class="tests">
+<li><a href="https://github.com/PenPeen/next-blog/blob/756f51cc3aaf3ce68a49a0b2dbb650d34df187d5/src/lib/postHeadings.test.ts">postHeadings.test.ts</a>（新規）: 見出しと文章の分け方、id の連番、<code>#</code> が 4 個以上の行と空白の無い行を見出しにしないこと</li>
+<li><a href="https://github.com/PenPeen/next-blog/blob/756f51cc3aaf3ce68a49a0b2dbb650d34df187d5/src/components/ui/TableOfContents/TableOfContents.test.tsx">TableOfContents.test.tsx</a>（新規）: 見出しごとのリンク、見出しが無いときに何も出さないこと</li>
+<li><a href="https://github.com/PenPeen/next-blog/blob/756f51cc3aaf3ce68a49a0b2dbb650d34df187d5/src/components/ui/PostContent/PostContent.test.tsx">PostContent.test.tsx</a>: 目次のリンク先と見出しの id が一致すること、見出しが無い記事に目次が出ないこと</li>
+</ul>
+
+<h2>6. 設計レビュー</h2>
+<p class="lead">提案が 1 つある（見出しの id の作り方）。アンチパターンは見つからなかった。</p>
+<table class="dr">
+<tr><th>PR が採った方式</th><th>一般的なやり方</th><th>リポジトリの慣習</th></tr>
+<tr><td>見出しは行頭の <code>#</code> 1〜3 個で判定する</td><td class="na">△ 仕様より狭い <a class="src" href="https://spec.commonmark.org/0.31.2/#atx-headings">CommonMark</a></td><td class="na">ー 前例なし</td></tr>
+<tr><td>見出しの id は出現順の連番</td><td class="na">△ 別の方式もある <a class="src" href="https://github.com/rehypejs/rehype-slug">rehype-slug</a></td><td class="na">ー 前例なし</td></tr>
+<tr><td>目次は <code>nav</code> とページ内リンク</td><td class="ok">● 合う <a class="src" href="https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/nav">MDN</a></td><td class="ok">● 合う <a class="src" href="https://github.com/PenPeen/next-blog/blob/756f51cc3aaf3ce68a49a0b2dbb650d34df187d5/src/components/ui/Pagination/index.tsx#L82">似た実装</a></td></tr>
+<tr><td>本文の見出しは <code>h2</code> から始める</td><td class="wn">▲ 未確認</td><td class="ok">● 合う <a class="src" href="https://github.com/PenPeen/next-blog/blob/756f51cc3aaf3ce68a49a0b2dbb650d34df187d5/src/components/ui/MainTitle/index.tsx#L5">題名が h1</a></td></tr>
+<tr><td>分ける処理は <code>src/lib</code>、目次は <code>ui</code> の部品</td><td class="wn">▲ 未確認</td><td class="ok">● 合う <a class="src" href="https://github.com/PenPeen/next-blog/tree/756f51cc3aaf3ce68a49a0b2dbb650d34df187d5/src/components/ui/BackButton">似た実装</a></td></tr>
+</table>
+<div class="lg"><span class="ok">● 合う</span><span>△ 一般には別の方法もあるが、避けるべきとはされていない</span><span class="wn">▲ 一次情報で確かめられていない</span><span>ー 比べる実装が無い</span></div>
+<p class="bh">提案: 見出しの id を、連番ではなく見出しの文言から作る</p>
+<table>
+<tr><th></th><th>PR のやり方（連番）</th><th>代案（文言から作る）</th></tr>
+<tr><td style="white-space:nowrap">得るもの</td><td>実装が小さい。同じ文言の見出しがあっても重ならない</td><td>見出しを足しても消しても、ほかの見出しの id が変わらない</td></tr>
+<tr><td>失うもの</td><td>見出しを足すと、後ろの見出しへのリンクの行き先が変わる</td><td>日本語や記号の扱いと、同じ文言に番号を足す処理が要る</td></tr>
+</table>
+<p class="mut">PR 本文は「同じ文言でも重ならない」ことを連番の理由にしている。<a href="https://github.com/rehypejs/rehype-slug">rehype-slug</a> は、文言から id を作ったうえで、同じ文言には <code>elit</code>、<code>elit-1</code> のように番号を足して重なりを避けている。</p>
+<p class="bh">気になる点（軽微）</p>
+<ul class="gap">
+<li>見出しの段階を表す値の型が数値のままで、<code>h2</code>〜<code>h4</code> に収まることを型で示せていない</li>
+<li>目次の <code>aria-label</code> は日本語（「目次」）、ページ送りは英語（「Pagination」）で、言語がそろっていない</li>
+</ul>
+
+</main>
+</body>
+</html>
