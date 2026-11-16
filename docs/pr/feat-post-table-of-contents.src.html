@@ -105,7 +105,7 @@ svg.fig text{font-family:'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif}
 </svg>
 <main>
 <style>
-.shots{display:grid;grid-template-columns:1fr;gap:14px;margin:10px 0}
+.shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:10px 0;align-items:start}
 .shots figure{margin:0;border:1px solid var(--line);background:#fff}
 .shots figure.on{border:2.5px solid var(--acc)}
 .shots .tag{display:block;font-size:12.5px;font-weight:700;padding:4px 10px;background:var(--card);color:var(--mute)}
@@ -219,13 +219,13 @@ svg.fig text{font-family:'Hiragino Sans','Noto Sans JP','Yu Gothic',sans-serif}
 
 <p class="bh">同じ記事を、変更前と変更後で開いた画面</p>
 <div class="shots">
-  <figure><span class="tag">変更前</span><img src="assets/feat-post-table-of-contents/before.jpg" alt="変更前の記事詳細。見出しの行が # の付いた文字として続けて表示されている"></figure>
-  <figure class="on"><span class="tag">変更後</span><img src="assets/feat-post-table-of-contents/after.jpg" alt="変更後の記事詳細。タイトルの下に目次があり、本文の見出しが見出しとして表示されている"></figure>
+  <figure><span class="tag">変更前</span><img src="assets/feat-post-table-of-contents/app-before.jpg" alt="変更前の記事詳細。見出しの行が # の付いた文字として続けて表示されている"></figure>
+  <figure class="on"><span class="tag">変更後</span><img src="assets/feat-post-table-of-contents/app-after.jpg" alt="変更後の記事詳細。タイトルの下に目次があり、本文の見出しが見出しとして表示されている"></figure>
 </div>
 <p class="bh">目次の「使い方」を押したあとの画面 / 見出しの無い記事の画面</p>
 <div class="shots">
-  <figure class="on"><span class="tag">「使い方」へ移動</span><img src="assets/feat-post-table-of-contents/after-jump.jpg" alt="目次の「使い方」を押したあと。「使い方」の見出しが画面の上のほうに来ている"></figure>
-  <figure><span class="tag">見出しの無い記事</span><img src="assets/feat-post-table-of-contents/after-plain.jpg" alt="見出しの無い記事。目次は表示されていない"></figure>
+  <figure class="on"><span class="tag">「使い方」へ移動</span><img src="assets/feat-post-table-of-contents/app-jump.jpg" alt="目次の「使い方」を押したあと。「使い方」の見出しが画面の上のほうに来ている"></figure>
+  <figure><span class="tag">見出しの無い記事</span><img src="assets/feat-post-table-of-contents/app-plain.jpg" alt="見出しの無い記事。目次は表示されていない"></figure>
 </div>
 <ul class="gap">
 <li>画面は、バックエンドを手元の Docker で起動し、見出しのある記事と無い記事を 1 件ずつ入れて確かめた</li>
