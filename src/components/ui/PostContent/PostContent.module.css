@@ -39,6 +39,12 @@
   color: #333;
 }
 
+.heading {
+  margin: 2rem 0 0.75rem;
+  font-weight: bold;
+  scroll-margin-top: 1rem;
+}
+
 @media (max-width: 768px) {
   .container {
     margin: 1rem auto;
