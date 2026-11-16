@@ -167,4 +167,24 @@ describe("PostContent", () => {
     expect(screen.getByText("テスト投稿")).toBeInTheDocument();
     expect(screen.getByText("テスト内容")).toBeInTheDocument();
   });
+
+  it("本文に見出しがある場合、目次のリンク先と同じ id の見出しが表示されること", async () => {
+    (getCurrentUser as jest.Mock).mockResolvedValue(null);
+
+    render(await PostContent({
+      post: { ...mockPost, content: "前置き\n# はじめに\n本文" },
+    }));
+
+    expect(screen.getByRole("link", { name: "はじめに" })).toHaveAttribute("href", "#heading-1");
+    expect(screen.getByRole("heading", { name: "はじめに" })).toHaveAttribute("id", "heading-1");
+    expect(screen.getByText("本文")).toBeInTheDocument();
+  });
+
+  it("本文に見出しがない場合、目次が表示されないこと", async () => {
+    (getCurrentUser as jest.Mock).mockResolvedValue(null);
+
+    render(await PostContent({ post: mockPost }));
+
+    expect(screen.queryByRole("navigation", { name: "目次" })).not.toBeInTheDocument();
+  });
 });

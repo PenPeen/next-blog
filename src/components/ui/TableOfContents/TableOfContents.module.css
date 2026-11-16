@@ -1,0 +1,33 @@
+.container {
+  margin-bottom: 2rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+}
+
+.title {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.list {
+  list-style: none;
+}
+
+.level2 {
+  padding-left: 1rem;
+}
+
+.level3 {
+  padding-left: 2rem;
+}
+
+.link {
+  color: #666;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.link:hover {
+  color: #000;
+}

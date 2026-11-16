@@ -10,6 +10,8 @@ import { gql } from '@apollo/client'
 import { COMMENT_FRAGMENT } from '@/components/ui/Comment'
 import { getCurrentUser } from '@/fetcher'
 import CommentListContainer from '@/components/ui/CommentListContainer'
+import TableOfContents from '@/components/ui/TableOfContents'
+import { splitByHeadings } from '@/lib/postHeadings'
 
 type PostContentProps = {
   post: PostFragment,
@@ -28,6 +30,8 @@ export const POST_FRAGMENT = gql`
 
 export default async function PostContent({ post }: PostContentProps) {
   const currentUser = await getCurrentUser() as User | null;
+  const blocks = splitByHeadings(post.content);
+  const headings = blocks.filter((block) => block.type === 'heading');
 
   return (
     <article className={styles.container}>
@@ -52,8 +56,20 @@ export default async function PostContent({ post }: PostContentProps) {
         </div>
       )}
 
+      <TableOfContents headings={headings} />
+
       <div className={styles.content}>
-        {post.content}
+        {blocks.map((block, index) => {
+          if (block.type === 'text') {
+            return <p key={index}>{block.text}</p>
+          }
+          const HeadingTag = `h${block.level + 1}` as 'h2' | 'h3' | 'h4'
+          return (
+            <HeadingTag key={block.id} id={block.id} className={styles.heading}>
+              {block.text}
+            </HeadingTag>
+          )
+        })}
       </div>
 
       <CommentForm postId={post.id} currentUser={currentUser} />
